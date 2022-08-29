@@ -1,0 +1,80 @@
+ifeq ($(LIBRETRO_COMM_DIR),)
+	LIBRETRO_COMM_DIR = $(CORE_DIR)/libretro-common
+endif
+
+INCFLAGS = -I$(LIBRETRO_COMM_DIR)/include -I$(CORE_DIR)/alport -I$(CORE_DIR) -I$(CORE_DIR)/zc
+
+ifneq (,$(findstring msvc2003,$(platform)))
+INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
+endif
+
+SOURCES_C   := $(LIBRETRO_COMM_DIR)/rthreads/rthreads.c \
+				$(LIBRETRO_COMM_DIR)/memmap/memalign.c
+
+SOURCES_CXX := $(CORE_DIR)/alport/3d.cpp \
+				$(CORE_DIR)/alport/bitmap.cpp \
+				$(CORE_DIR)/alport/datafile.cpp \
+				$(CORE_DIR)/alport/file.cpp \
+				$(CORE_DIR)/alport/fix.cpp \
+				$(CORE_DIR)/alport/font.cpp \
+				$(CORE_DIR)/alport/gme.cpp \
+				$(CORE_DIR)/alport/lzss.cpp \
+				$(CORE_DIR)/alport/midi.cpp \
+				$(CORE_DIR)/alport/mp3.cpp \
+				$(CORE_DIR)/alport/packfile.cpp \
+				$(CORE_DIR)/alport/palette.cpp \
+				$(CORE_DIR)/alport/polygon.cpp \
+				$(CORE_DIR)/alport/primitive2.cpp \
+				$(CORE_DIR)/alport/primitive.cpp \
+				$(CORE_DIR)/alport/rotate.cpp \
+				$(CORE_DIR)/alport/sound.cpp \
+				$(CORE_DIR)/alport/stream.cpp \
+				$(CORE_DIR)/alport/vorbis.cpp \
+				$(CORE_DIR)/alport/gme/abstract_file.cpp \
+				$(CORE_DIR)/alport/gme/Classic_Emu.cpp \
+				$(CORE_DIR)/alport/gme/Gb_Apu.cpp \
+				$(CORE_DIR)/alport/gme/Gb_Oscs.cpp \
+				$(CORE_DIR)/alport/gme/Multi_Buffer.cpp \
+				$(CORE_DIR)/alport/gme/Nes_Apu.cpp \
+				$(CORE_DIR)/alport/gme/Nes_Fme7_Apu.cpp \
+				$(CORE_DIR)/alport/gme/Nes_Oscs.cpp \
+				$(CORE_DIR)/alport/gme/Nsf_Emu.cpp \
+				$(CORE_DIR)/alport/gme/Spc_Cpu.cpp \
+				$(CORE_DIR)/alport/gme/Spc_Emu.cpp \
+				$(CORE_DIR)/alport/gme/Blip_Buffer.cpp \
+				$(CORE_DIR)/alport/gme/Fir_Resampler.cpp \
+				$(CORE_DIR)/alport/gme/Gb_Cpu.cpp \
+				$(CORE_DIR)/alport/gme/Gbs_Emu.cpp \
+				$(CORE_DIR)/alport/gme/Music_Emu.cpp \
+				$(CORE_DIR)/alport/gme/Nes_Cpu.cpp \
+				$(CORE_DIR)/alport/gme/Nes_Namco_Apu.cpp \
+				$(CORE_DIR)/alport/gme/Nes_Vrc6_Apu.cpp \
+				$(CORE_DIR)/alport/gme/Snes_Spc.cpp \
+				$(CORE_DIR)/alport/gme/Spc_Dsp.cpp
+
+SOURCES_CXX += $(CORE_DIR)/zc/custom.cpp \
+				$(CORE_DIR)/zc/defdata.cpp \
+				$(CORE_DIR)/zc/ffscript.cpp \
+				$(CORE_DIR)/zc/guys.cpp \
+				$(CORE_DIR)/zc/link.cpp \
+				$(CORE_DIR)/zc/pal.cpp \
+				$(CORE_DIR)/zc/qst.cpp \
+				$(CORE_DIR)/zc/sprite.cpp \
+				$(CORE_DIR)/zc/text.cpp \
+				$(CORE_DIR)/zc/title.cpp \
+				$(CORE_DIR)/zc/zcmusic.cpp \
+				$(CORE_DIR)/zc/zelda.cpp \
+				$(CORE_DIR)/zc/decorations.cpp \
+				$(CORE_DIR)/zc/ending.cpp \
+				$(CORE_DIR)/zc/gamedata.cpp \
+				$(CORE_DIR)/zc/items.cpp \
+				$(CORE_DIR)/zc/maps.cpp \
+				$(CORE_DIR)/zc/particles.cpp \
+				$(CORE_DIR)/zc/scriptdraw.cpp \
+				$(CORE_DIR)/zc/subscr.cpp \
+				$(CORE_DIR)/zc/tiles.cpp \
+				$(CORE_DIR)/zc/weapons.cpp \
+				$(CORE_DIR)/zc/zcsys.cpp \
+				$(CORE_DIR)/zc/zscriptversion.cpp
+
+SOURCES_CXX += $(CORE_DIR)/libretro.cpp
