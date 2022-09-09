@@ -286,7 +286,7 @@ void sprite::draw(BITMAP *dest)
             BITMAP *temp;
 
          case 1:
-            temp = create_bitmap_ex(8, 16, 32);
+            temp = create_bitmap(16, 32);
             blit(dest, temp, sx, sy - 16, 0, 0, 16, 32);
 
             if (drawstyle == 0 || drawstyle == 3)
@@ -312,7 +312,7 @@ void sprite::draw(BITMAP *dest)
             break;
 
          case 2:
-            temp = create_bitmap_ex(8, 48, 32);
+            temp = create_bitmap(48, 32);
             blit(dest, temp, sx - 16, sy - 16, 0, 0, 48, 32);
 
             if (drawstyle == 0 || drawstyle == 3)

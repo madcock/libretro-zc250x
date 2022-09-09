@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string>
+#include <stdarg.h>
 #include <map>
 #include <vector>
 
@@ -47,29 +47,6 @@ extern int directItemB;
 int favorite_combos[MAXFAVORITECOMBOS];
 int favorite_comboaliases[MAXFAVORITECOMBOALIASES];
 
-volatile int logic_counter = 0;
-void update_logic_counter()
-{
-   ++logic_counter;
-}
-END_OF_FUNCTION(update_logic_counter)
-
-void throttleFPS()
-{
-   if (Throttlefps)
-   {
-      int t = 0;
-      while (logic_counter < 1)
-      {
-         int ms = t >= 16 ? 0 : 1;
-         rest(ms);
-         t++;
-      }
-   }
-
-   logic_counter = 0;
-}
-
 int dmap_list_size = MAXDMAPS;
 bool dmap_list_zero = true;
 
@@ -77,14 +54,18 @@ bool dmap_list_zero = true;
 /******** Global Variables ********/
 /**********************************/
 
+/* pointers to bitmap and palette objects used by Libretro */
+BITMAP *zc_canvas;
+RGB *zc_palette;
+
 RGB_MAP rgb_table;
 COLOR_MAP trans_table, trans_table2;
 
-BITMAP     *framebuf, *scrollbuf, *tmp_scr, *msgdisplaybuf, *pricesdisplaybuf, *real_screen, *prim_bmp,
+BITMAP     *framebuf, *scrollbuf, *tempbuf, *msgdisplaybuf, *pricesdisplaybuf, *prim_bmp,
            *lens_scr = NULL;
 DATAFILE   *data, *sfxdata, *fontsdata, *mididata;
 FONT       *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *pfont, *mfont, *ztfont, *sfont, *sfont2,
-           *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont,
+           *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont, *font,
            *goronfont, *zoranfont, *hylian1font, *hylian2font, *hylian3font, *hylian4font, *gboraclefont, *gboraclepfont,
            *dsphantomfont, *dsphantompfont;
 PALETTE    RAMpal;
@@ -121,7 +102,6 @@ int    Bpos;
 byte screengrid[22];
 byte ffcgrid[4];
 bool screenscrolling = false;
-bool close_button_quit = false;
 PALETTE tempbombpal;
 bool usebombpal;
 
@@ -129,16 +109,15 @@ bool fake_pack_writing = false;
 combo_alias
 combo_aliases[MAXCOMBOALIASES];  //Temporarily here so ZC can compile. All memory from this is freed after loading the quest file.
 
-SAMPLE customsfxdata[WAV_COUNT];
+SAMPLE customsfxdata[SFX_COUNT];
 int sfxdat = 1;
 
-int fullscreen;
 int homescr, currscr, frame = 0, currmap = 0, dlevel, warpscr, worldscr;
 int newscr_clk = 0, opendoors = 0, currdmap = 0, fadeclk = -1, currgame = 0, listpos = 0;
 int lastentrance = 0, lastentrance_dmap = 0, prices[3], loadside, Bwpn, Awpn;
-int digi_volume, midi_volume, sfx_volume, emusic_volume, currmidi, hasitem, whistleclk, pan_style;
-int Akey, Bkey, Skey, Lkey, Rkey, Pkey, Exkey1, Exkey2, Exkey3, Exkey4, Quit = 0;
-int DUkey, DDkey, DLkey, DRkey;
+int master_vol, music_vol, sfx_vol, mix_quality, sel_music, hasitem, whistleclk, pan_style;
+int Akey, Bkey, Ekey, Skey, Lkey, Rkey, Mkey, Ckey, Exkey1, Exkey2, Exkey3, Exkey4, zc_state = 0;
+int DUkey, DDkey, DLkey, DRkey, Mx, My, Mz, Mb;
 int hs_startx, hs_starty, hs_xdist, hs_ydist, clockclk, clock_zoras[eMAXGUYS];
 int cheat_goto_dmap = 0, cheat_goto_screen = 0, currcset;
 int gfc, gfc2, pitx, pity, refill_what, refill_why, heart_beep_timer = 0, new_enemy_tile_start = 1580;
@@ -148,9 +127,8 @@ int magicdrainclk = 0, conveyclk = 3;
 int checkx, checky;
 int skipcont = 0;
 
-bool Throttlefps, ShowFPS;
-bool playing, TransLayers;
-bool refreshpal, blockpath, loaded_guys, freeze_guys,
+bool playing, trans_layers, heart_beep, allow_cheats;
+bool zc_sync_pal, blockpath, loaded_guys, freeze_guys,
      loaded_enemies, drawguys, watch;
 bool darkroom = false, naturaldark = false, BSZ;
 bool Udown, Ddown, Ldown, Rdown, Adown, Bdown, Sdown, Mdown, LBdown, RBdown, Pdown, Ex1down, Ex2down, Ex3down, Ex4down,
@@ -158,7 +136,7 @@ bool Udown, Ddown, Ldown, Rdown, Adown, Bdown, Sdown, Mdown, LBdown, RBdown, Pdo
      NESquit, boughtsomething = false,
               fixed_door = false, hookshot_used = false, hookshot_frozen = false,
               pull_link = false, add_chainlink = false, del_chainlink = false, hs_fix = false,
-              cheat_superman = false, checklink = true, didpit = false, heart_beep = true,
+              cheat_superman = false, checklink = true, didpit = false,
               castnext = false, add_df1asparkle, add_df1bsparkle, add_nl1asparkle, add_nl1bsparkle, add_nl2asparkle, add_nl2bsparkle,
               is_on_conveyor, activated_timed_warp = false;
 
@@ -197,10 +175,6 @@ byte arrayOwner[MAX_ZCARRAY_SIZE];
 //script bitmap drawing
 ZScriptDrawingRenderTarget *zscriptDrawingRenderTarget;
 
-int resx, resy, scrx, scry;
-bool sbig;                                                  // big screen
-int screen_scale = 2; //default = 2 (640x480)
-
 // quest file data
 zquestheader QHeader;
 byte                quest_rules[QUESTRULES_SIZE];
@@ -217,9 +191,6 @@ dword               quest_map_pos[MAPSCRS * MAXMAPS2];
 
 char     quest_path[1024] = {'\0'};
 gamedata *saves = NULL;
-
-volatile int lastfps = 0;
-volatile int framecnt = 0;
 
 bool blockmoving;
 movingblock mblock2;
@@ -509,7 +480,7 @@ void Z_eventlog(const char *format, ...)
       va_start(ap, format);
       vsprintf(buf, format, ap);
       va_end(ap);
-      al_trace("%s", buf);
+      zc_message("%s", buf);
    }
 }
 
@@ -523,7 +494,7 @@ void Z_scripterrlog(const char *const format, ...)
       va_start(ap, format);
       vsprintf(buf, format, ap);
       va_end(ap);
-      al_trace("%s", buf);
+      zc_error("%s", buf);
    }
 }
 
@@ -592,7 +563,7 @@ void ALLOFF(bool messagesToo, bool decorationsToo)
    if (usebombpal)
    {
       memcpy(RAMpal, tempbombpal, PAL_SIZE * sizeof(RGB));
-      refreshpal = true;
+      zc_sync_pal = true;
       usebombpal = false;
    }
 }
@@ -939,7 +910,7 @@ int init_game()
    if (isdungeon() && currdmap > 0) // currdmap>0 is weird, but at least one quest (Mario's Insane Rampage) depends on it
       Link.stepforward(get_bit(quest_rules, qr_LTTPWALK) ? 11 : 12, false);
 
-   if (!Quit)
+   if (!zc_state)
       playLevelMusic();
 
    if (firstplay)
@@ -1030,14 +1001,6 @@ int cont_game()
    else
       game->set_life(game->get_cont_hearts()*HP_PER_HEART);
 
-   /*
-     else
-     game->life=3*HP_PER_HEART;
-     */
-
-   //  for(int i=0; i<128; i++)
-   //    key[i]=0;
-
    update_subscreens();
    playing = true;
    map_bkgsfx(true);
@@ -1047,7 +1010,7 @@ int cont_game()
    dointro();
    loadguys();
 
-   if (!Quit)
+   if (!zc_state)
    {
       playLevelMusic();
 
@@ -1112,7 +1075,7 @@ void restart_level()
    show_subscreen_life = true;
    loadguys();
 
-   if (!Quit)
+   if (!zc_state)
    {
       playLevelMusic();
 
@@ -1703,8 +1666,8 @@ void game_loop()
       {
          if (Link.animate(0))
          {
-            if (!Quit)
-               Quit = qGAMEOVER;
+            if (!zc_state)
+               zc_state = ZC_GAMEOVER;
 
             return;
          }
@@ -1885,50 +1848,15 @@ bool no_subscreen()
 /********** Main **********/
 /**************************/
 
-// Returns the first no switch (-) argv param
-char *get_cmd_arg(int argc, char *argv[])
+bool zc_init(const char *qpath)
 {
-   // assumes a switch won't be in argv[0] since it is the exe name.
-   for (int i = 1; i < argc; i++)
-      if (argv[i][0] != '-')
-         return argv[i];
-   return NULL;
-}
+   zc_message("Zelda Classic %s (Build %d)\n", VerStr(ZELDA_VERSION), VERSION_BUILD);
 
-int main(int argc, char *argv[])
-{
-   Z_message("Zelda Classic %s (Build %d)\n", VerStr(ZELDA_VERSION), VERSION_BUILD);
-
-   // Before anything else, let's register our custom trace handler:
-   register_trace_handler(zc_trace_handler);
-
-   set_uformat(U_ASCII);
-
-   Z_message("Initializing Allegro...\n");
-   if (allegro_init() != 0)
-   {
-      Z_error("Failed Init!");
-      exit(-1);
-   }
-
-   Z_message("OK\n");
-
-   three_finger_flag = false;
-
-   // Get the quest file to run.
-   char *temp = get_cmd_arg(argc, argv);
-
-   if (temp != NULL)
-      strcpy(quest_path, temp);
-
-   if (strlen(quest_path) == 0)
-   {
-      printf("Provide a quest name as the first command argument:\n\t%s quest.qst\n", argv[0]);
-      exit(-1);
-   }
+   if (qpath != NULL)
+      strcpy(quest_path, qpath);
 
    // Validate that the quest file really exists.
-   if (!exists(quest_path))
+   if (!file_exists(quest_path))
    {
       printf("Quest file doesn't exist or it's invalid: %s\n", quest_path);
       exit(-1);
@@ -1937,51 +1865,25 @@ int main(int argc, char *argv[])
    // allocate quest data buffers
    if (!get_qst_buffers())
    {
-      Z_error("Error");
-      quit_game();
-   }
-
-   // set and load game configurations
-   set_config_file("ag.cfg");
-   load_game_configs();
-
-   if (install_timer() < 0)
-   {
-      Z_error(allegro_error);
-      quit_game();
-   }
-
-   if (install_keyboard() < 0)
-   {
-      Z_error(allegro_error);
-      quit_game();
-   }
-
-   LOCK_VARIABLE(logic_counter);
-   LOCK_FUNCTION(update_logic_counter);
-   install_int_ex(update_logic_counter, BPS_TO_TIMER(60));
-
-   if (!Z_init_timers())
-   {
-      Z_error("Couldn't Allocate Timers");
-      quit_game();
+      zc_error("Error");
+      zc_deinit();
    }
 
    // allocate bitmap buffers
-   Z_message("Allocating bitmap buffers... ");
+   zc_message("Allocating bitmap buffers... ");
 
-   framebuf  = create_bitmap_ex(8, 256, 224);
-   scrollbuf = create_bitmap_ex(8, 512, 406);
-   tmp_scr   = create_bitmap_ex(8, 320, 224);
-   prim_bmp  = create_bitmap_ex(8, 512, 512);
-   msgdisplaybuf = create_bitmap_ex(8, 256, 176);
-   msgbmpbuf = create_bitmap_ex(8, 512 + 16, 512 + 16);
-   pricesdisplaybuf = create_bitmap_ex(8, 256, 176);
+   framebuf  = create_bitmap(256, 224);
+   scrollbuf = create_bitmap(512, 406);
+   tempbuf   = create_bitmap(320, 224);
+   prim_bmp  = create_bitmap(512, 512);
+   msgdisplaybuf = create_bitmap(256, 176);
+   msgbmpbuf = create_bitmap(512 + 16, 512 + 16);
+   pricesdisplaybuf = create_bitmap(256, 176);
 
-   if (!framebuf || !scrollbuf || !tmp_scr || !prim_bmp || !msgdisplaybuf || !msgbmpbuf || !pricesdisplaybuf)
+   if (!framebuf || !scrollbuf || !tempbuf || !prim_bmp || !msgdisplaybuf || !msgbmpbuf || !pricesdisplaybuf)
    {
-      Z_error("Error");
-      quit_game();
+      zc_error("Error");
+      zc_deinit();
    }
 
    clear_bitmap(scrollbuf);
@@ -1990,74 +1892,74 @@ int main(int argc, char *argv[])
    set_clip_state(msgdisplaybuf, 1);
    clear_bitmap(pricesdisplaybuf);
    set_clip_state(pricesdisplaybuf, 1);
-   Z_message("OK\n");
+   zc_message("OK\n");
 
-   zcmusic_init();
+   zcmusic_init(1 / TIMING_FPS);
 
    // load the data files
-   Z_message("Loading data files:\n");
+   zc_message("Loading data files:\n");
 
    sprintf(zeldadat_sig, "Zelda.Dat %s Build %d", VerStr(ZELDADAT_VERSION), ZELDADAT_BUILD);
    sprintf(sfxdat_sig, "SFX.Dat %s Build %d", VerStr(SFXDAT_VERSION), SFXDAT_BUILD);
    sprintf(fontsdat_sig, "Fonts.Dat %s Build %d", VerStr(FONTSDAT_VERSION), FONTSDAT_BUILD);
 
    packfile_password(NULL);
-   Z_message("Zelda.Dat...");
+   zc_message("Zelda.Dat...");
 
    if ((data = load_datafile("zelda.dat")) == NULL)
    {
-      Z_error("failed");
-      quit_game();
+      zc_error("failed");
+      zc_deinit();
    }
 
    if (strncmp((char *)data[0].dat, zeldadat_sig, 24))
    {
-      Z_error("\nIncompatible version of zelda.dat.\nPlease upgrade to %s Build %d", VerStr(ZELDADAT_VERSION),
+      zc_error("\nIncompatible version of zelda.dat.\nPlease upgrade to %s Build %d", VerStr(ZELDADAT_VERSION),
               ZELDADAT_BUILD);
-      quit_game();
+      zc_deinit();
    }
 
-   Z_message("OK\n");
+   zc_message("OK\n");
    packfile_password(DATA_PASSWORD);
 
-   Z_message("Fonts.Dat...");
+   zc_message("Fonts.Dat...");
 
    if ((fontsdata = load_datafile("fonts.dat")) == NULL)
    {
-      Z_error("failed");
-      quit_game();
+      zc_error("failed");
+      zc_deinit();
    }
 
    if (strncmp((char *)fontsdata[0].dat, fontsdat_sig, 24))
    {
-      Z_error("\nIncompatible version of fonts.dat.\nPlease upgrade to %s Build %d", VerStr(FONTSDAT_VERSION),
+      zc_error("\nIncompatible version of fonts.dat.\nPlease upgrade to %s Build %d", VerStr(FONTSDAT_VERSION),
               FONTSDAT_BUILD);
-      quit_game();
+      zc_deinit();
    }
 
-   Z_message("OK\n");
+   zc_message("OK\n");
 
    packfile_password(NULL);
 
-   Z_message("SFX.Dat...");
+   zc_message("SFX.Dat...");
 
    if ((sfxdata = load_datafile("sfx.dat")) == NULL)
    {
-      Z_error("failed");
-      quit_game();
+      zc_error("failed");
+      zc_deinit();
    }
 
    if (strncmp((char *)sfxdata[0].dat, sfxdat_sig, 22) || sfxdata[Z35].type != DAT_ID('S', 'A', 'M', 'P'))
    {
-      Z_error("\nIncompatible version of sfx.dat.\nPlease upgrade to %s Build %d", VerStr(SFXDAT_VERSION), SFXDAT_BUILD);
-      quit_game();
+      zc_error("\nIncompatible version of sfx.dat.\nPlease upgrade to %s Build %d", VerStr(SFXDAT_VERSION), SFXDAT_BUILD);
+      zc_deinit();
    }
 
-   Z_message("OK\n");
+   zc_message("OK\n");
 
    mididata = (DATAFILE *)data[ZC_MIDI].dat;
 
-   deffont = font;
+   //deffont = (FONT *)fontsdata[FONT_DEF_FONT].dat;
    nfont = (FONT *)fontsdata[FONT_GUI_PROP].dat;
    font = nfont;
    pfont = (FONT *)fontsdata[FONT_8xPROP_THIN].dat;
@@ -2094,7 +1996,7 @@ int main(int argc, char *argv[])
          memset(&custom_subscreen[i].objects[j], 0, sizeof(subscreen_object));
    }
 
-   for (int i = 0; i < WAV_COUNT; i++)
+   for (int i = 0; i < SFX_COUNT; i++)
       customsfxdata[i].data = NULL;
 
    for (int i = 0; i < ITEMCNT; i++)
@@ -2108,73 +2010,51 @@ int main(int argc, char *argv[])
    //script drawing bitmap allocation
    zscriptDrawingRenderTarget = new ZScriptDrawingRenderTarget();
 
-   Z_message("Initializing sound driver... ");
-
-   if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL))
-   {
-      //      Z_error(allegro_error);
-      Z_message("Sound driver not available.  Sound disabled.\n");
-   }
-   else
-      Z_message("OK\n");
+   zc_message("Initializing sound driver... ");
 
    Z_init_sound();
 
-   int tempmode = GFX_AUTODETECT;
-   set_color_conversion(COLORCONV_NONE);
-   set_color_depth(8);
-   tempmode = fullscreen ? GFX_AUTODETECT_FULLSCREEN : GFX_AUTODETECT_WINDOWED;
-
-   //set scale
-   if (resx < 320) resx = 320;
-   if (resy < 240) resy = 240;
-   screen_scale = zc_max(zc_min(resx / 320, resy / 240), 1);
-
-   if (!game_vid_mode(tempmode, 20))
-      Z_error(allegro_error);
-
-   Z_message("set gfx mode successful at -%d %dbpp %d x %d \n", tempmode, get_color_depth(), resx, resy);
-   sbig = (screen_scale > 1);
-   real_screen = screen;
-
-   set_window_title("Zelda Classic");
-
+   zc_palette = RAMpal;
+   
    packfile_password(DATA_PASSWORD);
    int ret = loadquest(quest_path, &QHeader, &QMisc, tunes + ZC_MIDI_COUNT);
    if (ret)
    {
-      Z_message("FAIL (Error loading:  %s: %s)\n", quest_path, qst_error[ret]);
+      zc_message("FAIL (Error loading:  %s: %s)\n", quest_path, qst_error[ret]);
       exit(-1);
    }
 
    // load saved games
-   Z_message("Loading saved games... ");
+   zc_message("Loading saved games... ");
    packfile_password(NULL);
    if (load_savedgames() != 0)
    {
-      Z_error("Insufficient memory");
-      quit_game();
+      zc_error("Insufficient memory");
+      zc_deinit();
    }
 
-   Z_message("OK\n");
+   zc_message("OK\n");
 
-   clear_to_color(screen, BLACK);
-   Quit = qRESET;
-
+   zc_state = ZC_RESET;
    rgb_map = &rgb_table;
 
    // set up an initial game save slot (for the list_saves function)
    game = new gamedata;
    game->Clear();
 
-   while (Quit != qEXIT)
+   return true;
+}
+
+void zc_gameloop(void *arg)
+{
+   while (zc_state != ZC_EXIT)
    {
       titlescreen();
 
       setup_combo_animations();
       setup_combo_animations2();
 
-      while (!Quit)
+      while (!zc_state)
       {
          game_loop();
          advanceframe(true);
@@ -2183,10 +2063,10 @@ int main(int argc, char *argv[])
       tmpscr->flags3 = 0;
       playing = false;
 
-      switch (Quit)
+      switch (zc_state)
       {
-         case qQUIT:
-         case qGAMEOVER:
+         case ZC_QUIT:
+         case ZC_GAMEOVER:
          {
             Link.setDontDraw(false);
             show_subscreen_dmap_dots = true;
@@ -2206,7 +2086,7 @@ int main(int argc, char *argv[])
          }
          break;
 
-         case qWON:
+         case ZC_WON:
          {
             Link.setDontDraw(false);
             show_subscreen_dmap_dots = true;
@@ -2224,71 +2104,42 @@ int main(int argc, char *argv[])
 
       kill_sfx();
       music_stop();
-      clear_to_color(screen, BLACK);
    }
+}
 
+void zc_deinit(void)
+{
    // clean up
-
    music_stop();
    kill_sfx();
 
-   show_saving(screen);
    save_savedgames();
-   save_game_configs();
-   set_gfx_mode(GFX_TEXT, 80, 25, 0, 0);
 
-   quit_game();
-   Z_message("Armageddon Games web site: http://www.armageddongames.com\n");
-   Z_message("Zelda Classic web site: http://www.zeldaclassic.com\n");
+   script_drawing_commands.Dispose(); //for allegro bitmaps
 
-   allegro_exit();
-   return 0;
-}
-END_OF_MAIN()
-
-
-void remove_installed_timers()
-{
-   Z_message("Removing timers. \n");
-   remove_int(update_logic_counter);
-   Z_remove_timers();
-}
-
-
-void delete_everything_else() //blarg.
-{
    delete_combo_aliases();
    reset_subscr_items();
    delete_selectors();
    Sitems.clear();
 
-}
-
-void quit_game()
-{
-   script_drawing_commands.Dispose(); //for allegro bitmaps
-
-   remove_installed_timers();
-   delete_everything_else();
-
-   Z_message("Freeing Data: \n");
+   zc_message("Freeing Data: \n");
 
    if (game) delete game;
    if (data) unload_datafile(data);
    if (fontsdata) unload_datafile(fontsdata);
    if (sfxdata) unload_datafile(sfxdata);
 
-   Z_message("Bitmaps... \n");
+   zc_message("Bitmaps... \n");
    destroy_bitmap(framebuf);
    destroy_bitmap(scrollbuf);
-   destroy_bitmap(tmp_scr);
+   destroy_bitmap(tempbuf);
    destroy_bitmap(prim_bmp);
    destroy_bitmap(msgdisplaybuf);
    destroy_bitmap(msgbmpbuf);
    destroy_bitmap(pricesdisplaybuf);
    if (lens_scr) destroy_bitmap(lens_scr);
 
-   Z_message("Subscreens... \n");
+   zc_message("Subscreens... \n");
 
    for (int i = 0; i < 4; i++)
    {
@@ -2305,16 +2156,16 @@ void quit_game()
       }
    }
 
-   Z_message("SFX... \n");
    zcmusic_exit();
+   zc_message("SFX... \n");
 
-   for (int i = 0; i < WAV_COUNT; i++)
+   for (int i = 0; i < SFX_COUNT; i++)
    {
       if (customsfxdata[i].data != NULL)
          free(customsfxdata[i].data);
    }
 
-   Z_message("Misc... \n");
+   zc_message("Misc... \n");
 
    for (int i = 0; i < ITEMCNT; i++)
       delete [] item_string[i];
@@ -2322,12 +2173,15 @@ void quit_game()
    for (int i = 0; i < eMAXGUYS; i++)
       delete [] guy_string[i];
 
-   Z_message("Script buffers... \n");
+   zc_message("Script buffers... \n");
 
    delete_scripts();
 
    delete zscriptDrawingRenderTarget;
 
-   Z_message("Deleting quest buffers... \n");
+   zc_message("Deleting quest buffers... \n");
    del_qst_buffers();
+
+   zc_message("Armageddon Games web site: http://www.armageddongames.com\n");
+   zc_message("Zelda Classic web site: http://www.zeldaclassic.com\n");
 }

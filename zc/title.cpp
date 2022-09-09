@@ -462,7 +462,7 @@ int load_savedgames()
    PACKFILE *f = NULL;
 
    /* Calculate the savefile name based on the quest filename */
-   replace_extension(SAVE_FILE, quest_path, "sav", sizeof(SAVE_FILE));
+   replace_extension(SAVE_FILE, quest_path, "sav");
 
    if (saves == NULL)
    {
@@ -476,10 +476,10 @@ int load_savedgames()
       saves[i].Clear();
 
    // see if it's there
-   if (!exists(SAVE_FILE))
+   if (!file_exists(SAVE_FILE))
       goto newdata;
 
-   if (file_size_ex(SAVE_FILE) == 0)
+   if (file_size(SAVE_FILE) == 0)
    {
       if (errno == 0) // No error, file's empty
          goto init;
@@ -500,18 +500,18 @@ int load_savedgames()
    return 0;
 
 newdata:
-   Z_message("Save file not found: %s. Creating new save file.", SAVE_FILE);
+   zc_message("Save file not found: %s. Creating new save file.", SAVE_FILE);
    goto init;
 
 cantopen:
-   Z_message("Can't Open Saved Game File: %s, exiting...", SAVE_FILE);
+   zc_message("Can't Open Saved Game File: %s, exiting...", SAVE_FILE);
    exit(1);
 
 reset:
    if (f)
       pack_fclose(f);
 
-   Z_message("Format error or entries don't match with quest: %s. Resetting game data... ", SAVE_FILE);
+   zc_message("Format error or entries don't match with quest: %s. Resetting game data... ", SAVE_FILE);
 
    for (int i = 0; i < MAXSAVES; i++)
       saves[i].Clear();
@@ -807,7 +807,7 @@ static int savecnt;
 
 static void list_save(int save_num, int ypos)
 {
-   bool r = refreshpal;
+   bool r = zc_sync_pal;
 
    if (save_num < savecnt)
    {
@@ -839,7 +839,7 @@ static void list_save(int save_num, int ypos)
 
    textout_ex(framebuf, zfont, "-", 136, ypos + 16, 1, -1);
 
-   refreshpal = r;
+   zc_sync_pal = r;
 }
 
 static void list_saves()
@@ -890,8 +890,7 @@ static bool register_name()
 
    memset(name, 0, 9);
    register_mode();
-   clear_keybuf();
-   refreshpal = true;
+   zc_sync_pal = true;
    bool done = false;
    bool cancel = false;
 
@@ -1044,7 +1043,7 @@ static bool register_name()
       draw_cursor(0);
       advanceframe(true);
    }
-   while (!done && !Quit);
+   while (!done && !zc_state);
 
    if (x < 0 || cancel)
       done = false;
@@ -1138,7 +1137,7 @@ static int game_details(int file)
    if (saves[file].get_quest() == 0)
       return 0;
 
-   BITMAP *info = create_bitmap_ex(8, 160, 26);
+   BITMAP *info = create_bitmap(160, 26);
    blit(framebuf, info, 48, pos * 24 + 70, 0, 0, 160, 26);
    rectfill(framebuf, 40, 60, 216, 192, 0);
    frame2x2(framebuf, &QMisc, 24, 48, QMisc.colors.blueframe_tile, QMisc.colors.blueframe_cset, 26, 20, 0, 1, 0);
@@ -1177,7 +1176,7 @@ static int game_details(int file)
    textout_ex(framebuf, zfont, "START: PLAY GAME", 56, 152, 1, -1);
    textout_ex(framebuf, zfont, "    B: CANCEL", 56, 168, 1, -1);
 
-   while (!Quit)
+   while (!zc_state)
    {
       advanceframe(true);
       load_control_state();
@@ -1217,7 +1216,7 @@ static void select_game()
       pos = 3;
 
    bool done = false;
-   refreshpal = true;
+   zc_sync_pal = true;
 
    do
    {
@@ -1238,7 +1237,7 @@ static void select_game()
                else
                   pos = (savecnt - 1) % 3;
 
-               refreshpal = true;
+               zc_sync_pal = true;
                break;
 
             case 4:
@@ -1249,7 +1248,7 @@ static void select_game()
                   copy_mode();
                }
 
-               refreshpal = true;
+               zc_sync_pal = true;
                break;
 
             case 5:
@@ -1260,7 +1259,7 @@ static void select_game()
                   delete_mode();
                }
 
-               refreshpal = true;
+               zc_sync_pal = true;
                break;
 
             default:
@@ -1278,7 +1277,7 @@ static void select_game()
                      {
                         mode = 0;
                         pos = (savecnt - 1) % 3;
-                        refreshpal = true;
+                        zc_sync_pal = true;
                      }
 
                      break;
@@ -1288,7 +1287,7 @@ static void select_game()
                      {
                         mode = 0;
                         pos = 3;
-                        refreshpal = true;
+                        zc_sync_pal = true;
                      }
 
                      break;
@@ -1319,14 +1318,14 @@ static void select_game()
       {
          listpos -= 3;
          sfx(WAV_CHIME);
-         refreshpal = true;
+         zc_sync_pal = true;
       }
 
       if (rRight() && listpos + 3 < savecnt)
       {
          listpos += 3;
          sfx(WAV_CHIME);
-         refreshpal = true;
+         zc_sync_pal = true;
       }
 
       if (rBbtn() && mode)
@@ -1349,7 +1348,7 @@ static void select_game()
          }
       }
    }
-   while (!Quit && !done);
+   while (!zc_state && !done);
 
    saveslot = -1;
 }
@@ -1360,18 +1359,18 @@ static void select_game()
 
 void titlescreen()
 {
-   int q = Quit;
+   int q = zc_state;
 
-   Quit = 0;
+   zc_state = 0;
    playing = false;
 
-   if (q == qCONT)
+   if (q == ZC_CONTINUE)
    {
       cont_game();
       return;
    }
 
-   if (q == qRESET)
+   if (q == ZC_RESET)
    {
       show_subscreen_dmap_dots = true;
       show_subscreen_numbers = true;
@@ -1381,10 +1380,10 @@ void titlescreen()
       reset_combo_animations2();
    }
 
-   if (!Quit)
+   if (!zc_state)
       select_game();
 
-   if (!Quit)
+   if (!zc_state)
       init_game();
 }
 
@@ -1392,13 +1391,12 @@ void game_over(int type)
 {
    kill_sfx();
    music_stop();
-   clear_to_color(screen, BLACK);
    loadfullpal();
 
-   if (Quit == qGAMEOVER)
+   if (zc_state == ZC_GAMEOVER)
       jukebox(ZC_MIDI_GAMEOVER);
 
-   Quit = 0;
+   zc_state = 0;
 
    clear_bitmap(framebuf);
    textout_ex(framebuf, zfont, "CONTINUE", 88, 72, QMisc.colors.msgtext, -1);
@@ -1484,7 +1482,7 @@ void game_over(int type)
       puttile8(framebuf, htile, 72, pos * (type ? 12 : 24) + 72, 1, 0);
       advanceframe(true);
    }
-   while (!Quit && !done);
+   while (!zc_state && !done);
 
    clear_bitmap(framebuf);
    advanceframe(true);
@@ -1492,15 +1490,14 @@ void game_over(int type)
    if (done)
    {
       if (pos)
-         Quit = qQUIT;
+         zc_state = ZC_QUIT;
       else
-         Quit = qCONT;
+         zc_state = ZC_CONTINUE;
 
       if (pos == 1 && (!type))
       {
          saves[currgame] = *game;
          load_game_icon(saves + currgame);
-         show_saving(screen);
          save_savedgames();
       }
    }
@@ -1518,14 +1515,12 @@ void save_game(bool savepoint)
 
    saves[currgame] = *game;
    load_game_icon(saves + currgame);
-   show_saving(screen);
    save_savedgames();
 }
 
 bool save_game(bool savepoint, int type)
 {
    kill_sfx();
-   clear_to_color(screen, BLACK);
    loadfullpal();
 
    int htile = 2;
@@ -1601,7 +1596,7 @@ bool save_game(bool savepoint, int type)
          puttile8(framebuf, htile, 72, pos * 24 + 72, 1, 0);
          advanceframe(true);
       }
-      while (!Quit && !done2);
+      while (!zc_state && !done2);
 
       //reset_combo_animations();
       clear_bitmap(framebuf);
@@ -1622,13 +1617,12 @@ bool save_game(bool savepoint, int type)
 
             saves[currgame] = *game;
             load_game_icon(saves + currgame);
-            show_saving(screen);
             save_savedgames();
             saved = true;
 
             if (type)
             {
-               Quit = qQUIT;
+               zc_state = ZC_QUIT;
                done = true;
                skipcont = 1;
             }
@@ -1692,20 +1686,20 @@ bool save_game(bool savepoint, int type)
                puttile8(framebuf, htile, 72, pos2 * 24 + 96, 1, 0);
                advanceframe(true);
             }
-            while (!Quit && !done3);
+            while (!zc_state && !done3);
 
             clear_bitmap(framebuf);
 
             if (pos2 == 0)
             {
-               Quit = qQUIT;
+               zc_state = ZC_QUIT;
                done = true;
                skipcont = 1;
             }
          }
       }
    }
-   while (!Quit && !done);
+   while (!zc_state && !done);
 
    ringcolor(false);
    loadlvlpal(DMaps[currdmap].color);

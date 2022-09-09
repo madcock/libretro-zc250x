@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include "subscr.h"
@@ -1889,12 +1890,9 @@ void textprintf_styled_aligned_ex(BITMAP *bmp, const FONT *f, int x, int y, int 
 
    char buf[512];
    va_list ap;
-   ASSERT(bmp);
-   ASSERT(f);
-   ASSERT(format);
 
    va_start(ap, format);
-   uvszprintf(buf, sizeof(buf), format, ap);
+   vsprintf(buf, format, ap);
    va_end(ap);
 
    textout_styled_aligned_ex(bmp, f, buf, x, y, textstyle, alignment, color, shadow, bg);
@@ -1907,28 +1905,20 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
    int y1 = y;
    int x1;
    int len;
-   char s[16];
-   char text[16];
-   char space[16];
-   char *printed = text;
-   char *scanned = text;
-   char *oldscan = text;
+   char *printed;
+   char *scanned;
+   char *oldscan;
    char *ignore = NULL;
    char *tmp, *ptmp;
    int width;
    int i = 0;
    int noignore;
 
-   usetc(s + usetc(s, '.'), 0);
-   usetc(text + usetc(text, ' '), 0);
-   usetc(space + usetc(space, ' '), 0);
+   if (!thetext)
+      return;
 
-   /* find the correct text */
-   if (thetext != NULL)
-   {
-      printed = thetext;
-      scanned = thetext;
-   }
+   printed = thetext;
+   scanned = thetext;
 
    /* loop over the entire string */
    for (;;)
@@ -1936,23 +1926,18 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
       width = 0;
 
       /* find the next break */
-      while (ugetc(scanned))
+      while (*scanned)
       {
          /* check for a forced break */
-         if (ugetc(scanned) == '\n')
+         if (*scanned == '\n')
          {
-            scanned += uwidth(scanned);
+            scanned++;
             /* we are done parsing the line end */
             break;
          }
 
          /* the next character length */
-         usetc(s + usetc(s, ugetc(scanned)), 0);
-         len = text_length(tempfont, s);
-
-         /* modify length if its a tab */
-         if (ugetc(s) == '\t')
-            len = tabsize * text_length(tempfont, space);
+         len = (*scanned == '\t') ? (tabsize * char_length(tempfont, ' ')) : char_length(tempfont, *scanned);
 
          /* check for the end of a line by excess width of next char */
          if (width + len >= w)
@@ -1965,7 +1950,7 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
                noignore = FALSE;
 
                /* go backwards looking for start of word */
-               while (!uisspace(ugetc(scanned)))
+               while (!isspace(*scanned))
                {
                   /* don't wrap too far */
                   if (scanned == printed)
@@ -1976,7 +1961,7 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
                      while (ptmp != oldscan)
                      {
                         ptmp = tmp;
-                        tmp += uwidth(tmp);
+                        tmp++;
                      }
 
                      scanned = ptmp;
@@ -1990,7 +1975,7 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
                   while (tmp < scanned)
                   {
                      ptmp = tmp;
-                     tmp += uwidth(tmp);
+                     tmp++;
                   }
 
                   scanned = ptmp;
@@ -2000,14 +1985,14 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
                if (!noignore)
                {
                   ignore = scanned;
-                  scanned += uwidth(scanned);
+                  scanned++;
                }
                else
                   ignore = NULL;
 
                /* check for endline at the convenient place */
-               if (ugetc(scanned) == '\n')
-                  scanned += uwidth(scanned);
+               if (*scanned == '\n')
+                  scanned++;
             }
 
             /* we are done parsing the line end */
@@ -2015,7 +2000,7 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
          }
 
          /* the character can be added */
-         scanned += uwidth(scanned);
+         scanned++;
          width += len;
       }
 
@@ -2029,7 +2014,7 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
          while (printed != scanned)
          {
             /* do special stuff for each charater */
-            switch (ugetc(printed))
+            switch (*printed)
             {
                case '\r':
                case '\n':
@@ -2038,25 +2023,17 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
 
                /* possibly expand the tabs */
                case '\t':
-                  for (i = 0; i < tabsize; i++)
-                  {
-                     usetc(s + usetc(s, ' '), 0);
-                     tempw += text_length(tempfont, s);
-                  }
-
+                  tempw += tabsize * char_length(tempfont, ' ');
                   break;
 
                /* print a normal character */
                default:
                   if (printed != ignore)
-                  {
-                     usetc(s + usetc(s, ugetc(printed)), 0);
-                     tempw += text_length(tempfont, s);
-                  }
+                     tempw += char_length(tempfont, *printed);
             }
 
             /* goto the next character */
-            printed += uwidth(printed);
+            printed++;
          }
 
          printed = tempprinted;
@@ -2081,7 +2058,7 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
          while (printed != scanned)
          {
             /* do special stuff for each charater */
-            switch (ugetc(printed))
+            switch (*printed)
             {
 
                case '\r':
@@ -2093,9 +2070,8 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
                case '\t':
                   for (i = 0; i < tabsize; i++)
                   {
-                     usetc(s + usetc(s, ' '), 0);
-                     textout_styled_aligned_ex(dest, tempfont, s, x1, y1, textstyle, sstaLEFT, color, shadowcolor, backcolor);
-                     x1 += text_length(tempfont, s);
+                     textout_styled_aligned_ex(dest, tempfont, " ", x1, y1, textstyle, sstaLEFT, color, shadowcolor, backcolor);
+                     x1 += char_length(tempfont, ' ');
                   }
 
                   break;
@@ -2104,26 +2080,27 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
                default:
                   if (printed != ignore)
                   {
-                     usetc(s + usetc(s, ugetc(printed)), 0);
-                     textout_styled_aligned_ex(dest, tempfont, s, x1, y1, textstyle, sstaLEFT, color, shadowcolor, backcolor);
-                     x1 += text_length(tempfont, s);
+                     char ch[2];
+                     sprintf(ch, "%c", *printed);
+                     textout_styled_aligned_ex(dest, tempfont, ch, x1, y1, textstyle, sstaLEFT, color, shadowcolor, backcolor);
+                     x1 += char_length(tempfont, *printed);
                   }
             }
 
             /* goto the next character */
-            printed += uwidth(printed);
+            printed++;
          }
 
          /* print the line end */
          y1 += text_height(tempfont);
       }
       else
-         scanned += uwidth(scanned);
+         scanned++;
 
       printed = scanned;
 
       /* check if we are at the end of the string */
-      if (!ugetc(printed))
+      if (!(*printed))
          return;
    }
 }
@@ -3281,12 +3258,7 @@ void animate_selectors()
 void show_custom_subscreen(BITMAP *dest, miscQdata *misc, subscreen_group *css, int xofs, int yofs, bool showtime,
                            int pos2)
 {
-   //this is not a good place to be clearing the bitmap
-   //other stuff might already have been drawn on it that needs to be kept
-   //(eg the game screen when pulling down the subscreen) -DD
-   //clear_to_color(dest, 0);
    color_map = &trans_table;
-   set_trans_blender(0, 0, 0, 128);
 
    //doing animation here leads to 2x speed when drawing both active and passive subscreen -DD
    if (!sel_a || !sel_b)
@@ -3360,20 +3332,20 @@ void show_custom_subscreen(BITMAP *dest, miscQdata *misc, subscreen_group *css, 
             case ssoLINE:
             {
                if (css->objects[i].d4)
-                  drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+                  drawing_mode(DRAW_MODE_TRANS);
 
                line(dest, x, y, x + css->objects[i].w - 1, y + css->objects[i].h - 1, subscreen_color(misc, css->objects[i].colortype1,
                      css->objects[i].color1));
 
                if (css->objects[i].d4)
-                  drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+                  drawing_mode(DRAW_MODE_SOLID);
             }
             break;
 
             case ssoRECT:
             {
                if (css->objects[i].d2)
-                  drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+                  drawing_mode(DRAW_MODE_TRANS);
 
                if (css->objects[i].d1 != 0)
                   rectfill(dest, x, y, x + css->objects[i].w - 1, y + css->objects[i].h - 1, subscreen_color(misc,
@@ -3383,7 +3355,7 @@ void show_custom_subscreen(BITMAP *dest, miscQdata *misc, subscreen_group *css, 
                      css->objects[i].color1));
 
                if (css->objects[i].d2)
-                  drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+                  drawing_mode(DRAW_MODE_SOLID);
             }
             break;
 
@@ -3402,12 +3374,12 @@ void show_custom_subscreen(BITMAP *dest, miscQdata *misc, subscreen_group *css, 
             case ssoBUTTONITEM:
             {
                if (css->objects[i].d2)
-                  drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+                  drawing_mode(DRAW_MODE_TRANS);
 
                buttonitem(dest, css->objects[i].d1, x, y);
 
                if (css->objects[i].d2)
-                  drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+                  drawing_mode(DRAW_MODE_SOLID);
             }
             break;
 
@@ -4035,10 +4007,10 @@ void puttriframe(BITMAP *dest, miscQdata *misc, int x, int y, int triframecolor,
          {
             line(dest, x + 47, y, x + 1, y + 46, triframecolor);
             line(dest, x + 48, y, x + 94, y + 46, triframecolor);
-            _allegro_hline(dest, x, y + 47, x + 95, triframecolor);
+            hline(dest, x, y + 47, x + 95, triframecolor);
             line(dest, x + 47, y + 7, x + 15, y + 39, triframecolor);
             line(dest, x + 48, y + 7, x + 80, y + 39, triframecolor);
-            _allegro_hline(dest, x + 15, y + 40, x + 80, triframecolor);
+            hline(dest, x + 15, y + 40, x + 80, triframecolor);
          }
       }
 
@@ -4075,31 +4047,31 @@ void puttriframe(BITMAP *dest, miscQdata *misc, int x, int y, int triframecolor,
             if (!get_bit(quest_rules, qr_4TRI))
             {
                //left inside vertical
-               _allegro_vline(dest, x + 31, y + 56, y + 103, triframecolor);
-               _allegro_vline(dest, x + 32, y + 56, y + 103, triframecolor);
+               vline(dest, x + 31, y + 56, y + 103, triframecolor);
+               vline(dest, x + 32, y + 56, y + 103, triframecolor);
 
                //center inside vertical top
-               _allegro_vline(dest, x + 55, y + 8, y + 55, triframecolor);
-               _allegro_vline(dest, x + 56, y + 8, y + 55, triframecolor);
+               vline(dest, x + 55, y + 8, y + 55, triframecolor);
+               vline(dest, x + 56, y + 8, y + 55, triframecolor);
 
                //right inside vertical
-               _allegro_vline(dest, x + 79, y + 56, y + 103, triframecolor);
-               _allegro_vline(dest, x + 80, y + 56, y + 103, triframecolor);
+               vline(dest, x + 79, y + 56, y + 103, triframecolor);
+               vline(dest, x + 80, y + 56, y + 103, triframecolor);
 
                if (!get_bit(quest_rules, qr_3TRI))
                {
                   //center inside vertical bottom
-                  _allegro_vline(dest, x + 55, y + 56, y + 103, triframecolor);
-                  _allegro_vline(dest, x + 56, y + 56, y + 103, triframecolor);
+                  vline(dest, x + 55, y + 56, y + 103, triframecolor);
+                  vline(dest, x + 56, y + 56, y + 103, triframecolor);
                }
             }
 
             //middle inside horizontal
-            _allegro_hline(dest, x + 32, y + 55, x + 79, triframecolor);
-            _allegro_hline(dest, x + 32, y + 56, x + 79, triframecolor);
+            hline(dest, x + 32, y + 55, x + 79, triframecolor);
+            hline(dest, x + 32, y + 56, x + 79, triframecolor);
 
             //bottom outside horizontal
-            _allegro_hline(dest, x + 8, y + 103, x + 103, triframecolor);
+            hline(dest, x + 8, y + 103, x + 103, triframecolor);
 
             //left outside diagonal
             line(dest, x + 8, y + 103, x + 55, y + 8, triframecolor);
@@ -4222,7 +4194,7 @@ void putBmap(BITMAP *dest, miscQdata *misc, int x, int y, bool showmap, bool sho
       }
       else
       {
-         BITMAP *bmp = create_bitmap_ex(8, 8, 8);
+         BITMAP *bmp = create_bitmap(8, 8);
 
          if (!bmp)
             return;
@@ -4279,13 +4251,13 @@ void putBmap(BITMAP *dest, miscQdata *misc, int x, int y, bool showmap, bool sho
             {
                rectfill(dest, x2 + 1, y2 + 1, x2 + 6, y2 + 6, roomcolor);
 
-               if (get_bmaps(si) & 1) _allegro_hline(dest, x2 + 3, y2,  x2 + 4, roomcolor); //top door
+               if (get_bmaps(si) & 1) hline(dest, x2 + 3, y2,  x2 + 4, roomcolor); //top door
 
-               if (get_bmaps(si) & 2) _allegro_hline(dest, x2 + 3, y2 + 7, x2 + 4, roomcolor); //bottom door
+               if (get_bmaps(si) & 2) hline(dest, x2 + 3, y2 + 7, x2 + 4, roomcolor); //bottom door
 
-               if (get_bmaps(si) & 4) _allegro_vline(dest, x2,  y2 + 3, y2 + 4, roomcolor); //left door
+               if (get_bmaps(si) & 4) vline(dest, x2,  y2 + 3, y2 + 4, roomcolor); //left door
 
-               if (get_bmaps(si) & 8) _allegro_vline(dest, x2 + 7, y2 + 3, y2 + 4, roomcolor); //right door
+               if (get_bmaps(si) & 8) vline(dest, x2 + 7, y2 + 3, y2 + 4, roomcolor); //right door
             }
 
             ++si;
@@ -4452,7 +4424,7 @@ void dosubscr(miscQdata *misc)
    {
       memcpy(temppal, RAMpal, PAL_SIZE * sizeof(RGB));
       memcpy(RAMpal, tempbombpal, PAL_SIZE * sizeof(RGB));
-      refreshpal = true;
+      zc_sync_pal = true;
    }
 
    int miny;
@@ -4514,7 +4486,7 @@ void dosubscr(miscQdata *misc)
       put_active_subscr(misc, y, sspSCROLLING);
       advanceframe(false);
 
-      if (Quit)
+      if (zc_state)
          return;
    }
 
@@ -4600,10 +4572,10 @@ void dosubscr(miscQdata *misc)
       if (NESquit && Up() && cAbtn() && cBbtn())
       {
          Udown = true;
-         Quit = qQUIT;
+         zc_state = ZC_QUIT;
       }
 
-      if (Quit)
+      if (zc_state)
          return;
 
       if (rSbtn())
@@ -4635,7 +4607,7 @@ void dosubscr(miscQdata *misc)
       put_active_subscr(misc, y, sspSCROLLING);
       advanceframe(false);
 
-      if (Quit)
+      if (zc_state)
          return;
    }
 

@@ -84,7 +84,7 @@ void putendmsg(const char *s, int x, int y, int speed, void(proc)())
    int i = 0;
    int c = (int)strlen(s) * speed;
 
-   for (int f = 0; f < c && !Quit; f++)
+   for (int f = 0; f < c && !zc_state; f++)
    {
       if ((f % speed) == 0)
       {
@@ -122,7 +122,7 @@ void endingpal()
    colordata = pal;
    loadpalset(csBOSS, 0);
    colordata = hold;
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 void ending()
@@ -166,7 +166,7 @@ void ending()
    music_stop();
    kill_sfx();
    sfx(WAV_ZELDA);
-   Quit = 0;
+   zc_state = 0;
 
    draw_screen_clip_rect_x1 = 0;
    draw_screen_clip_rect_x2 = 255;
@@ -203,7 +203,7 @@ void ending()
       draw_screen(tmpscr);
       advanceframe(true);
 
-      if (Quit) return;
+      if (zc_state) return;
    }
 
    clear_bitmap(msgdisplaybuf);
@@ -234,7 +234,7 @@ void ending()
       putendmsg(tmpmsg[2], 32, 112, 6, NULL);
    }
 
-   BITMAP *tmp_bmp = create_bitmap_ex(8, 32, 32);
+   BITMAP *tmp_bmp = create_bitmap(32, 32);
 
    for (int f = 408; f < 927; f++)
    {
@@ -282,7 +282,7 @@ void ending()
       {
          static byte flash[4] = {0x12, 0x16, 0x2A, 0x0F};
          RAMpal[16] = NESpal(flash[(f - 733) & 3]);
-         refreshpal = true;
+         zc_sync_pal = true;
       }
 
       if (f == 861)
@@ -305,7 +305,7 @@ void ending()
 
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          return;
    }
 
@@ -332,7 +332,7 @@ void ending()
 
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          return;
    }
 
@@ -428,7 +428,7 @@ void ending()
       blit(scrollbuf, framebuf, 0, 0, 0, 0, 256, 224);
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          return;
 
       load_control_state();
@@ -447,7 +447,7 @@ void ending()
 
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          return;
 
       load_control_state();
@@ -462,6 +462,5 @@ void ending()
    game->set_continue_dmap(zinit.start_dmap);
    game->set_continue_scrn(0xFF);
    game->set_cont_hearts(zinit.cont_heart);
-   show_saving(scrollbuf);
    save_savedgames();
 }

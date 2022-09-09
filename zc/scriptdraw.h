@@ -54,7 +54,7 @@ public:
          return 0;
 
       if (!_bitmap[target])
-         _bitmap[target] = create_bitmap_ex(8, BitmapWidth, BitmapHeight);
+         _bitmap[target] = create_bitmap(BitmapWidth, BitmapHeight);
 
       return _bitmap[target];
    }
@@ -95,7 +95,7 @@ public:
       for (int i(0); i < 4; ++i)
       {
          for (int j(0); j < 4; ++j)
-            _bmp[i][j] = create_bitmap_ex(8, size[i], size[j]);
+            _bmp[i][j] = create_bitmap(size[i], size[j]);
       }
 
       is_init = true;
@@ -172,12 +172,12 @@ public:
    {
       return AquireSubBitmap(0, 0, w, h);
    }
-   
+
    inline BITMAP *AquireSubBitmap(int x, int y, int w, int h)
    {
       //todo: can currently only partition out one bitmap at a time.
       if (!_parent_bmp)
-         _parent_bmp  = create_bitmap_ex(8, 512, 512);
+         _parent_bmp  = create_bitmap(512, 512);
 
       BITMAP *bmp = _parent_bmp;
 

@@ -171,7 +171,7 @@ extern bool fake_pack_writing;
 #define ZQ_TILES        0
 #define ZQ_CHEATS2      5
 #define ZQ_MAXDATA      20
-#define WAV_COUNT       256
+#define SFX_COUNT       256
 
 #define MAXSCREENS 128
 #define MAXCUSTOMMIDIS192b177 32                                  // uses bit string for midi flags, so 32 bytes
@@ -1910,7 +1910,7 @@ public:
       if (data) switch (format)
          {
             case MFORMAT_MIDI:
-               destroy_midi((MIDI *) data);
+               destroy_midi(data);
                break;
 
             default:

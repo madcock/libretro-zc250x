@@ -315,7 +315,7 @@ public:
 
    static INLINE int checkSFXID(const long32 ID, const char *const str)
    {
-      return checkBounds(ID, 0, WAV_COUNT - 1, str);
+      return checkBounds(ID, 0, SFX_COUNT - 1, str);
    }
 
    static INLINE int checkBounds(const long32 n, const long32 boundlow, const long32 boundup, const char *const funcvar)
@@ -1255,24 +1255,24 @@ long32 get_register(const long32 arg)
 
       case INPUTMOUSEX:
       {
-         int leftOffset = (resx / 2) - (128 * screen_scale);
-         ret = ((gui_mouse_x() - leftOffset) / screen_scale) * 10000;
+         int leftOffset = 32;
+         ret = ((Mx - leftOffset)) * 10000;
          break;
       }
 
       case INPUTMOUSEY:
       {
-         int topOffset = (resy / 2) - ((112 - PLAYFIELD_OFFSET) * screen_scale);
-         ret = ((gui_mouse_y() - topOffset) / screen_scale) * 10000;
+         int topOffset = 8;
+         ret = ((My - topOffset)) * 10000;
          break;
       }
 
       case INPUTMOUSEZ:
-         ret = (gui_mouse_z()) * 10000;
+         ret = Mz * 10000;
          break;
 
       case INPUTMOUSEB:
-         ret = (gui_mouse_b()) * 10000;
+         ret = Mb * 10000;
          break;
 
       case INPUTPRESSSTART:
@@ -2346,7 +2346,7 @@ long32 get_register(const long32 arg)
          break;
 
       case GETMIDI:
-         ret = (currmidi - (ZC_MIDI_COUNT - 1)) * 10000;
+         ret = (sel_music - (ZC_MIDI_COUNT - 1)) * 10000;
          break;
 
       case CURDSCR:
@@ -3161,20 +3161,20 @@ void set_register(const long32 arg, const long32 value)
 
       case INPUTMOUSEX:
       {
-         int leftOffset = (resx / 2) - (128 * screen_scale);
-         position_mouse((value / 10000)*screen_scale + leftOffset, gui_mouse_y());
+         int leftOffset = 32;
+         Mx = (value / 10000) + leftOffset;
          break;
       }
 
       case INPUTMOUSEY:
       {
-         int topOffset = (resy / 2) - ((112 - PLAYFIELD_OFFSET) * screen_scale);
-         position_mouse(gui_mouse_x(), (value / 10000)*screen_scale + topOffset);
+         int topOffset = 8;
+         My = (value / 10000) + topOffset;
          break;
       }
 
       case INPUTMOUSEZ:
-         position_mouse_z(value / 10000);
+         Mz = value / 10000;
          break;
 
       ///----------------------------------------------------------------------------------------------------//
@@ -4759,7 +4759,7 @@ void do_allocatemem(const bool v, const bool local, const byte i)
 
       if (ptrval >= game->globalRAM.size())
       {
-         Z_message("Invalid pointer value of %d passed to global allocate\n", ptrval);
+         zc_message("Invalid pointer value of %d passed to global allocate\n", ptrval);
          //this shouldn't happen, unless people are putting ALLOCATEGMEM in their ZASM scripts where they shouldn't be
       }
 
@@ -4775,10 +4775,6 @@ void do_allocatemem(const bool v, const bool local, const byte i)
 
 
    set_register(sarg1, ptrval * 10000);
-
-   // If this happens once per frame, it can drown out every other message. -L
-   /*Z_eventlog("Allocated %s array of size %d, pointer address %ld\n",
-               local ? "local": "global", size, ptrval);*/
 }
 
 void do_deallocatemem()
@@ -5545,8 +5541,6 @@ void do_loadlweapon(const bool v)
    else
    {
       ri->lwpn = Lwpns.spr(index)->getUID();
-      // This is too trivial to log. -L
-      //Z_eventlog("Script loaded lweapon with UID = %ld\n", ri->lwpn);
    }
 }
 
@@ -5559,7 +5553,6 @@ void do_loadeweapon(const bool v)
    else
    {
       ri->ewpn = Ewpns.spr(index)->getUID();
-      //Z_eventlog("Script loaded eweapon with UID = %ld\n", ri->ewpn);
    }
 }
 
@@ -5572,7 +5565,6 @@ void do_loaditem(const bool v)
    else
    {
       ri->itemref = items.spr(index)->getUID();
-      //Z_eventlog("Script loaded item with UID = %ld\n", ri->itemref);
    }
 }
 
@@ -5585,7 +5577,6 @@ void do_loaditemdata(const bool v)
       return;
 
    ri->idata = ID;
-   //Z_eventlog("Script loaded itemdata with ID = %ld\n", ri->idata);
 }
 
 void do_loadnpc(const bool v)
@@ -5597,7 +5588,6 @@ void do_loadnpc(const bool v)
    else
    {
       ri->guyref = guys.spr(index)->getUID();
-      //Z_eventlog("Script loaded NPC with UID = %ld\n", ri->guyref);
    }
 }
 
@@ -5960,14 +5950,14 @@ void do_trace(bool v)
    sprintf(tmp, (temp < 0 ? "%06d" : "%05d"), temp);
    string s2(tmp);
    s2 = s2.substr(0, s2.size() - 4) + "." + s2.substr(s2.size() - 4, 4);
-   Z_message("%s\n", s2.c_str());
+   zc_message("%s\n", s2.c_str());
 }
 
 void do_tracebool(const bool v)
 {
    long32 temp = SH::get_arg(sarg1, v);
 
-   Z_message("%s\n", temp ? "true" : "false");
+   zc_message("%s\n", temp ? "true" : "false");
 }
 
 void do_tracestring()
@@ -5975,17 +5965,17 @@ void do_tracestring()
    long32 arrayptr = get_register(sarg1) / 10000;
    string str;
    ArrayH::getString(arrayptr, str, 512);
-   Z_message("%s", str.c_str());
+   zc_message("%s", str.c_str());
 }
 
 void do_tracenl()
 {
-   Z_message("\n");
+   zc_message("\n");
 }
 
 void do_cleartrace()
 {
-   zc_trace_clear();
+   /* zc_trace_clear();*/
 }
 
 string inttobase(word base, long32 x, word mindigits)
@@ -6040,7 +6030,7 @@ void do_tracetobase()
          break;
    }
 
-   Z_message("%s\n", s2.c_str());
+   zc_message("%s\n", s2.c_str());
 }
 
 ///----------------------------------------------------------------------------------------------------//
@@ -6271,19 +6261,9 @@ void do_combotile(const bool v)
 //                                       Run the script                                                //
 ///----------------------------------------------------------------------------------------------------//
 
-INLINE void check_quit()
-{
-   if (key[KEY_F4] && (key[KEY_ALT] || key[KEY_ALTGR]))
-   {
-      quit_game();
-      exit(101);
-   }
-}
-
 // Let's do this
 int run_script(const byte type, const word script, const byte i)
 {
-
    switch (type)
    {
       case SCRIPT_FFC:
@@ -6330,7 +6310,7 @@ int run_script(const byte type, const word script, const byte i)
       break;
 
       default:
-         Z_message("No other scripts are currently supported\n");
+         zc_message("No other scripts are currently supported\n");
          return 1;
          break;
    }
@@ -6344,8 +6324,6 @@ int run_script(const byte type, const word script, const byte i)
 
    while (scommand != 0xFFFF && scommand != WAITFRAME && scommand != WAITDRAW)
    {
-      check_quit();
-
       switch (scommand)
       {
          case QUIT:
@@ -7169,7 +7147,7 @@ int run_script(const byte type, const word script, const byte i)
             break;
 
          case GAMEEND:
-            Quit = qQUIT;
+            zc_state = ZC_QUIT;
             skipcont = 1;
             scommand = 0xFFFF;
             break;

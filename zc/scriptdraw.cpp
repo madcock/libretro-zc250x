@@ -341,7 +341,7 @@ void do_rectr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    int color = sdci[6] / 10000;
 
    if (sdci[12] / 10000 <= 127) //translucent
-      drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+      drawing_mode(DRAW_MODE_TRANS);
 
    if (sdci[10] == 0) //no rotation
    {
@@ -391,7 +391,7 @@ void do_rectr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
       }
    }
 
-   drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+   drawing_mode(DRAW_MODE_SOLID);
 }
 
 
@@ -426,7 +426,7 @@ void do_circler(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    int color = sdci[5] / 10000;
 
    if (sdci[11] / 10000 <= 127) //translucent
-      drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+      drawing_mode(DRAW_MODE_TRANS);
 
    if (sdci[9] != 0 && (sdci[2] != sdci[7] || sdci[3] != sdci[8])) //rotation
    {
@@ -449,7 +449,7 @@ void do_circler(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    else //outline
       circle(bmp, x1 + xoffset, y1 + yoffset, r, color);
 
-   drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+   drawing_mode(DRAW_MODE_SOLID);
 }
 
 
@@ -546,10 +546,10 @@ void do_arcr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    else
    {
       if (sdci[14] / 10000 <= 127) //translucent
-         drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+         drawing_mode(DRAW_MODE_TRANS);
 
       arc(bmp, cx + xoffset, cy + yoffset, sa, ea, int(r), color);
-      drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+      drawing_mode(DRAW_MODE_SOLID);
    }
 }
 
@@ -685,7 +685,7 @@ void do_liner(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    int color = sdci[6] / 10000;
 
    if (sdci[11] / 10000 <= 127) //translucent
-      drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+      drawing_mode(DRAW_MODE_TRANS);
 
    if (sdci[10] != 0) //rotation
    {
@@ -707,7 +707,7 @@ void do_liner(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    }
 
    line(bmp, x1 + xoffset, y1 + yoffset, x2 + xoffset, y2 + yoffset, color);
-   drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+   drawing_mode(DRAW_MODE_SOLID);
 }
 
 
@@ -722,11 +722,11 @@ void do_spliner(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
                    };
 
    if (sdci[11] / 10000 < 128) //translucent
-      drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+      drawing_mode(DRAW_MODE_TRANS);
 
    spline(bmp, points, sdci[10] / 10000);
 
-   drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+   drawing_mode(DRAW_MODE_SOLID);
 }
 
 
@@ -745,7 +745,7 @@ void do_putpixelr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    int color = sdci[4] / 10000;
 
    if (sdci[8] / 10000 <= 127) //translucent
-      drawing_mode(DRAW_MODE_TRANS, NULL, 0, 0);
+      drawing_mode(DRAW_MODE_TRANS);
 
    if (sdci[7] != 0) //rotation
    {
@@ -763,7 +763,7 @@ void do_putpixelr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    }
 
    putpixel(bmp, x1 + xoffset, y1 + yoffset, color);
-   drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+   drawing_mode(DRAW_MODE_SOLID);
 }
 
 
@@ -840,7 +840,7 @@ void do_drawtiler(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
          if (canscale) //scale first
          {
             //damnit all, .. fixme.
-            BITMAP *tempbit = create_bitmap_ex(8, xscale > 512 ? 512 : xscale, yscale > 512 ? 512 : yscale);
+            BITMAP *tempbit = create_bitmap(xscale > 512 ? 512 : xscale, yscale > 512 ? 512 : yscale);
             clear_bitmap(tempbit);
 
             stretch_sprite(tempbit, pbitty, 0, 0, xscale, yscale);
@@ -991,7 +991,7 @@ void do_drawcombor(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
 
          if (canscale) //scale first
          {
-            BITMAP *tempbit = create_bitmap_ex(8, xscale > 512 ? 512 : xscale, yscale > 512 ? 512 : yscale);
+            BITMAP *tempbit = create_bitmap(xscale > 512 ? 512 : xscale, yscale > 512 ? 512 : yscale);
             clear_bitmap(tempbit);
 
             stretch_sprite(tempbit, pbitty, 0, 0, xscale, yscale);
@@ -1302,7 +1302,7 @@ void do_drawstringr(BITMAP *bmp, int i, int *sdci, int xoffset, int yoffset)
 
    if (!str)
    {
-      Z_message("String pointer is null! Internal error. \n");
+      zc_message("String pointer is null! Internal error. \n");
       return;
    }
 
@@ -1398,7 +1398,7 @@ void do_drawquadr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
 
    if (((w - 1) & w) != 0 || ((h - 1) & h) != 0)
    {
-      Z_message("Quad() : Args h, w, must be in powers of two! Power of 2 error with %i, %i.", w, h);
+      zc_message("Quad() : Args h, w, must be in powers of two! Power of 2 error with %i, %i.", w, h);
       return; //non power of two error
    }
 
@@ -1415,7 +1415,7 @@ void do_drawquadr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    if (!tex)
    {
       mustDestroyBmp = true;
-      tex = create_bitmap_ex(8, tex_width, tex_height);
+      tex = create_bitmap(tex_width, tex_height);
       clear_bitmap(tex);
    }
 
@@ -1500,7 +1500,7 @@ void do_drawtriangler(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
    if (!tex)
    {
       mustDestroyBmp = true;
-      tex = create_bitmap_ex(8, tex_width, tex_height);
+      tex = create_bitmap(tex_width, tex_height);
       clear_bitmap(tex);
    }
 
@@ -1583,8 +1583,8 @@ void do_drawbitmapr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
 
    if (!sourceBitmap)
    {
-      Z_message("Warning: Screen->DrawBitmap(%d) contains invalid data or is not initialized.\n", bitmapIndex);
-      Z_message("[Note* Deferred drawing or layering order possibly not set right.]\n");
+      zc_message("Warning: Screen->DrawBitmap(%d) contains invalid data or is not initialized.\n", bitmapIndex);
+      zc_message("[Note* Deferred drawing or layering order possibly not set right.]\n");
       return;
    }
 
@@ -1671,7 +1671,7 @@ void do_drawquad3dr(BITMAP *bmp, int i, int *sdci, int xoffset, int yoffset)
 
    if (!v_ptr)
    {
-      Z_message("Quad3d: Vector pointer is null! Internal error. \n");
+      zc_message("Quad3d: Vector pointer is null! Internal error. \n");
       return;
    }
 
@@ -1704,7 +1704,7 @@ void do_drawquad3dr(BITMAP *bmp, int i, int *sdci, int xoffset, int yoffset)
    if (!tex)
    {
       mustDestroyBmp = true;
-      tex = create_bitmap_ex(8, tex_width, tex_height);
+      tex = create_bitmap(tex_width, tex_height);
       clear_bitmap(tex);
    }
 
@@ -1748,7 +1748,7 @@ void do_drawtriangle3dr(BITMAP *bmp, int i, int *sdci, int xoffset, int yoffset)
 
    if (!v_ptr)
    {
-      Z_message("Quad3d: Vector pointer is null! Internal error. \n");
+      zc_message("Quad3d: Vector pointer is null! Internal error. \n");
       return;
    }
 
@@ -1781,7 +1781,7 @@ void do_drawtriangle3dr(BITMAP *bmp, int i, int *sdci, int xoffset, int yoffset)
    if (!tex)
    {
       mustDestroyBmp = true;
-      tex = create_bitmap_ex(8, tex_width, tex_height);
+      tex = create_bitmap(tex_width, tex_height);
       clear_bitmap(tex);
    }
 
@@ -1886,7 +1886,7 @@ void do_drawlayerr(BITMAP *bmp, int *sdci, int xoffset, int yoffset, bool isOffS
 
    if (index >= TheMaps.size())
    {
-      Z_message("DrawLayer: invalid map index \"%i\". Map count is %ld.\n", index, TheMaps.size());
+      zc_message("DrawLayer: invalid map index \"%i\". Map count is %ld.\n", index, TheMaps.size());
       return;
    }
 
@@ -1955,7 +1955,7 @@ void do_drawscreenr(BITMAP *bmp, int *sdci, int xoffset, int yoffset, bool isOff
 
    if (index >= TheMaps.size())
    {
-      Z_message("DrawScreen: invalid map or screen index. \n");
+      zc_message("DrawScreen: invalid map or screen index. \n");
       return;
    }
 

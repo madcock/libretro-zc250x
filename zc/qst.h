@@ -17,7 +17,7 @@
       break;        \
    default:      \
       pack_fclose(f);\
-      if(deletefilename[0] && exists(deletefilename))\
+      if(deletefilename[0] && file_exists(deletefilename))\
          delete_file(deletefilename);\
       return ret;   \
       break;        \

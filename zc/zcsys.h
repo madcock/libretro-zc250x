@@ -3,13 +3,7 @@
 
 #include "zdefs.h"
 
-bool game_vid_mode(int mode, int wait);
-int Z_init_timers();
-void Z_remove_timers();
 void Z_init_sound();
-
-void load_game_configs();
-void save_game_configs();
 
 void draw_lens_under(BITMAP *dest, bool layer);
 void draw_lens_over();
@@ -88,10 +82,6 @@ bool DrunkrPbtn();
 
 enum {bosCIRCLE = 0, bosOVAL, bosTRIANGLE, bosSMAS, bosMAX};
 
-void show_fps(BITMAP *target);
-void show_saving(BITMAP *target);
-bool game_vid_mode(int mode, int wait);
-
 extern int black_opening_count;
 extern int black_opening_x, black_opening_y;
 extern int black_opening_shape;
@@ -124,7 +114,6 @@ void play_DmapMusic();
 void music_pause();
 void music_resume();
 void music_stop();
-void master_volume(int dv, int mv);
 int  sfx_count();
 void sfx_cleanup();
 bool sfx_init(int index);
@@ -154,12 +143,6 @@ int decode_file_007(const char *srcfile, const char *destfile, const char *heade
 int  get_bit(byte *bitstr, int bit);
 void set_bit(byte *bitstr, int bit, byte val);
 
-void Z_error(const char *format, ...);
-void Z_message(const char *format, ...);
-
 int anim_3_4(int clk, int speed);
-
-int zc_trace_handler(const char *);
-void zc_trace_clear();
 
 #endif                                                      // _ZCSYS_H_

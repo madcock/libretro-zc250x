@@ -1945,7 +1945,7 @@ bool weapon::animate(int)
                            RAMpal[i] = NESpal(reverse_NESpal(RAMpal[i]) & 0x30);
                      }
 
-                     refreshpal = true;
+                     zc_sync_pal = true;
                   }
                }
 
@@ -1954,7 +1954,7 @@ bool weapon::animate(int)
                   // undo grayscale
                   usebombpal = false;
                   memcpy(RAMpal, tempbombpal, PAL_SIZE * sizeof(RGB));
-                  refreshpal = true;
+                  zc_sync_pal = true;
                }
             }
 

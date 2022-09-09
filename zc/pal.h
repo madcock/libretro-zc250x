@@ -49,8 +49,8 @@ extern void rehydratelake(bool instant);
 extern void reset_pal_cycling();
 extern void cycle_palette();
 
-extern void create_zc_trans_table(COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, int b);
-extern void create_rgb_table_range(RGB_MAP *table, AL_CONST PALETTE pal, unsigned char start, unsigned char end);
+extern void create_zc_trans_table(COLOR_MAP *table, const PALETTE pal, int r, int g, int b);
+extern void create_rgb_table_range(RGB_MAP *table, const PALETTE pal, unsigned char start, unsigned char end);
 
 INLINE RGB NESpal(int i)
 {

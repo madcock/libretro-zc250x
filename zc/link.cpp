@@ -4412,7 +4412,7 @@ bool LinkClass::startwpn(int itemid)
          {
             advanceframe(true);
 
-            if (Quit)
+            if (zc_state)
                return false;
          }
 
@@ -9771,9 +9771,9 @@ void LinkClass::checkspecial2(int *ls)
                   zcmusic->track != DMaps[tdm].tmusictrack)
                music_stop();
          }
-         else if (DMaps[tmpscr->tilewarpdmap[index]].midi != (currmidi - ZC_MIDI_COUNT + 4) &&
+         else if (DMaps[tmpscr->tilewarpdmap[index]].midi != (sel_music - ZC_MIDI_COUNT + 4) &&
                   TheMaps[(DMaps[tdm].map * MAPSCRS + (tmpscr[t].tilewarpscr[index] + DMaps[tdm].xoff))].screen_midi !=
-                  (currmidi - ZC_MIDI_COUNT + 4))
+                  (sel_music - ZC_MIDI_COUNT + 4))
             music_stop();
       }
 
@@ -10639,7 +10639,7 @@ bool LinkClass::dowarp(int type, int index)
             if (!(wtype == wtSCROLL) || !(get_bit(quest_rules, qr_NOSCROLLCONTINUE)))
             {
                game->set_continue_scrn(homescr);
-               //Z_message("continue_scrn = %02X e/e\n",game->get_continue_scrn());
+               //zc_message("continue_scrn = %02X e/e\n",game->get_continue_scrn());
             }
             else if (currdmap != game->get_continue_dmap())
                game->set_continue_scrn(DMaps[currdmap].cont + DMaps[currdmap].xoff);
@@ -10649,20 +10649,20 @@ bool LinkClass::dowarp(int type, int index)
             if (currdmap != game->get_continue_dmap())
             {
                game->set_continue_scrn(DMaps[currdmap].cont + DMaps[currdmap].xoff);
-               //Z_message("continue_scrn = %02X dlevel\n",game->get_continue_scrn());
+               //zc_message("continue_scrn = %02X dlevel\n",game->get_continue_scrn());
             }
          }
       }
       else
       {
          game->set_continue_scrn(DMaps[currdmap].cont + DMaps[currdmap].xoff);
-         //Z_message("continue_scrn = %02X\n !dlevel\n",game->get_continue_scrn());
+         //zc_message("continue_scrn = %02X\n !dlevel\n",game->get_continue_scrn());
       }
 
       game->set_continue_dmap(currdmap);
       lastentrance_dmap = currdmap;
       lastentrance = game->get_continue_scrn();
-      //Z_message("continue_map = %d\n",game->get_continue_dmap());
+      //zc_message("continue_map = %d\n",game->get_continue_dmap());
    }
 
    if (tmpscr->flags4 & fAUTOSAVE)
@@ -10874,7 +10874,7 @@ void LinkClass::stepforward(int steps, bool adjust)
       draw_screen(tmpscr);
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          return;
    }
 
@@ -10922,7 +10922,7 @@ void LinkClass::walkdown(bool opening) //entering cave
       draw_screen(tmpscr);
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 
@@ -10975,7 +10975,7 @@ void LinkClass::walkdown2(bool opening) //exiting cave 2
       draw_screen(tmpscr);
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 
@@ -11028,7 +11028,7 @@ void LinkClass::walkup(bool opening) //exiting cave
       draw_screen(tmpscr);
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 
@@ -11074,7 +11074,7 @@ void LinkClass::walkup2(bool opening) //entering cave2
       draw_screen(tmpscr);
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 
@@ -11946,7 +11946,7 @@ void LinkClass::scrollscr(int scrolldir, int destscr, int destdmap)
 
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
       {
          screenscrolling = false;
          return;
@@ -12082,7 +12082,7 @@ void LinkClass::scrollscr(int scrolldir, int destscr, int destdmap)
 
    for (word i = 0; cx >= 0 && delay != 0; i++, cx--) //Go!
    {
-      if (Quit)
+      if (zc_state)
       {
          screenscrolling = false;
          return;
@@ -13831,7 +13831,7 @@ void LinkClass::getTriforce(int id2)
             if ((f & 3) == 0)
             {
                fade_interpolate(RAMpal, flash_pal, RAMpal, 42, 0, CSET(6) - 1);
-               refreshpal = true;
+               zc_sync_pal = true;
             }
 
             if ((f & 3) == 2)
@@ -13854,7 +13854,7 @@ void LinkClass::getTriforce(int id2)
                      RAMpal[CSET(cs2) + i] = flash_pal[CSET(cs2) + i];
                }
 
-               refreshpal = true;
+               zc_sync_pal = true;
             }
 
             if ((f & 7) == 4)
@@ -13919,7 +13919,7 @@ void LinkClass::getTriforce(int id2)
       advanceframe(true);
       ++f;
    }
-   while (f < 408 || midi_pos > 0 || (zcmusic != NULL
+   while (f < 408 || midi_isplaying() || (zcmusic != NULL
                                       && zcmusic->position < 800)); // 800 may not be just right, but it works
 
    action = none;
@@ -13963,7 +13963,7 @@ void red_shift()
       }
    }
 
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 
@@ -14065,7 +14065,7 @@ void setup_red_screen_old()
       RAMpal[i].b = r >> 4;
    }
 
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 
@@ -14079,7 +14079,7 @@ void slide_in_color(int color)
       RAMpal[CSET(2) + i]   = NESpal(color);
    }
 
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 void LinkClass::gameover()
@@ -14116,7 +14116,7 @@ void LinkClass::gameover()
    int tmp_link_dot = QMisc.colors.link_dot;
    QMisc.colors.link_dot = 255;
 
-   BITMAP *subscrbmp = create_bitmap_ex(8, framebuf->w, framebuf->h);
+   BITMAP *subscrbmp = create_bitmap(framebuf->w, framebuf->h);
    clear_bitmap(subscrbmp);
    put_passive_subscr(subscrbmp, &QMisc, 0, 0, false, sspUP);
    QMisc.colors.link_dot = tmp_link_dot;
@@ -14218,7 +14218,7 @@ void LinkClass::gameover()
                      trans_table2.data[q][q] = q;
                   }
 
-                  refreshpal = true;
+                  zc_sync_pal = true;
                }
             }
             else //f>=170
@@ -14233,7 +14233,7 @@ void LinkClass::gameover()
                      RAMpal[i] = _RGB(g, g, g);
                   }
 
-                  refreshpal = true;
+                  zc_sync_pal = true;
                }
 
                //draw only link. otherwise black layers might cover him.
@@ -14283,7 +14283,7 @@ void LinkClass::gameover()
                   RAMpal[CSET(2) + i + 2] = NESpal(0x26);
                }
 
-               refreshpal = true;
+               zc_sync_pal = true;
             }
 
             if (f == 139)
@@ -14308,7 +14308,7 @@ void LinkClass::gameover()
                   RAMpal[CSET(6) + i]   = NESpal(0x10);
                   RAMpal[CSET(6) + i + 1] = NESpal(0x30);
                   RAMpal[CSET(6) + i + 2] = NESpal(0x00);
-                  refreshpal = true;
+                  zc_sync_pal = true;
                }
             }
 
@@ -14355,7 +14355,7 @@ void LinkClass::gameover()
       advanceframe(true);
       ++f;
    }
-   while (f < 353 && !Quit);
+   while (f < 353 && !zc_state);
 
    destroy_bitmap(subscrbmp);
    action = none;
@@ -14398,7 +14398,7 @@ void LinkClass::ganon_intro()
    //not good, as this only returns the highest level that Link possesses. -DD
    //getHighestLevelOfFamily(game, itemsbuf, itype_triforcepiece, false));
 
-   for (int f = 0; f < 271 && !Quit; f++)
+   for (int f = 0; f < 271 && !zc_state; f++)
    {
       if (f == 47)
       {
@@ -14467,7 +14467,7 @@ void LinkClass::saved_Zelda()
 {
    playing = false;
    action = won;
-   Quit = qWON;
+   zc_state = ZC_WON;
    hclk = 0;
    x = 136;
    y = (isdungeon() && currscr < 128) ? 75 : 73;

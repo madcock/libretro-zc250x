@@ -241,7 +241,7 @@ void free_newtilebuf()
 
 void del_qst_buffers()
 {
-   Z_message("Cleaning maps. \n");
+   zc_message("Cleaning maps. \n");
 
    if (ZCMaps) free(ZCMaps);
 
@@ -255,10 +255,10 @@ void del_qst_buffers()
 
    if (colordata) free(colordata);
 
-   Z_message("Cleaning tile buffers. \n");
+   zc_message("Cleaning tile buffers. \n");
    free_newtilebuf();
 
-   Z_message("Cleaning misc. \n");
+   zc_message("Cleaning misc. \n");
 
    // See get_qst_buffers
    if (itemsbuf)
@@ -272,84 +272,6 @@ void del_qst_buffers()
    if (guysbuf) free(guysbuf);
 
    if (combo_class_buf) free(combo_class_buf);
-}
-
-static void *read_block(PACKFILE *f, int size, int alloc_size, bool keepdata)
-{
-   void *p;
-
-   p = malloc(MAX(size, alloc_size));
-
-   if (!p)
-      return NULL;
-
-   if (!pfread(p, size, f, keepdata))
-   {
-      free(p);
-      return NULL;
-   }
-
-   if (pack_ferror(f))
-   {
-      free(p);
-      return NULL;
-   }
-
-   return p;
-}
-
-/* read_midi:
-  *  Reads MIDI data from a datafile (this is not the same thing as the
-  *  standard midi file format).
-  */
-
-static MIDI *read_midi(PACKFILE *f, bool)
-{
-   MIDI *m;
-   int c;
-   short divisions = 0;
-   int len = 0;
-
-   m = (MIDI *)malloc(sizeof(MIDI));
-
-   if (!m)
-      return NULL;
-
-   for (c = 0; c < MIDI_TRACKS; c++)
-   {
-      m->track[c].len = 0;
-      m->track[c].data = NULL;
-   }
-
-   p_mgetw(&divisions, f, true);
-   m->divisions = divisions;
-
-   for (c = 0; c < MIDI_TRACKS; c++)
-   {
-      p_mgetl(&len, f, true);
-      m->track[c].len = len;
-
-      if (m->track[c].len > 0)
-      {
-         m->track[c].data = (byte *)read_block(f, m->track[c].len, 0, true);
-
-         if (!m->track[c].data)
-         {
-            destroy_midi(m);
-            return NULL;
-         }
-      }
-   }
-
-   LOCK_DATA(m, sizeof(MIDI));
-
-   for (c = 0; c < MIDI_TRACKS; c++)
-   {
-      if (m->track[c].data)
-         LOCK_DATA(m->track[c].data, m->track[c].len);
-   }
-
-   return m;
 }
 
 void clear_combo(int i)
@@ -702,7 +624,7 @@ int readheader(PACKFILE *f, zquestheader *Header, bool keepdata)
 
    if (!pfread(tempheader.id_str, sizeof(tempheader.id_str), f, true))  // first read old header
    {
-      Z_message("Unable to read header string\n");
+      zc_message("Unable to read header string\n");
       return qe_invalid;
    }
 
@@ -711,7 +633,7 @@ int readheader(PACKFILE *f, zquestheader *Header, bool keepdata)
    {
       if (strcmp(tempheader.id_str, QH_IDSTR))
       {
-         Z_message("Invalid header string:  '%s' (was expecting '%s' or '%s')\n", tempheader.id_str, QH_IDSTR, QH_NEWIDSTR);
+         zc_message("Invalid header string:  '%s' (was expecting '%s' or '%s')\n", tempheader.id_str, QH_IDSTR, QH_NEWIDSTR);
          return qe_invalid;
       }
    }
@@ -1222,7 +1144,7 @@ int readstrings(PACKFILE *f, zquestheader *Header, bool keepdata)
       }
 
       /* Allocate the exact memory needed for the strings */
-      Z_message("Reallocating string buffer...\n");
+      zc_message("Reallocating string buffer...\n");
 
       msg_strings_size = strings_to_read;
       if ((MsgStrings = (MsgStr *)malloc(sizeof(MsgStr) * msg_strings_size)) == NULL)
@@ -1307,7 +1229,7 @@ int readstrings(PACKFILE *f, zquestheader *Header, bool keepdata)
          return qe_invalid;
 
       /* Allocate the exact memory needed for the strings */
-      Z_message("Reallocating string buffer...\n");
+      zc_message("Reallocating string buffer...\n");
 
       msg_strings_size = temp_msg_count;
       if ((MsgStrings = (MsgStr *)malloc(sizeof(MsgStr) * msg_strings_size)) == NULL)
@@ -5469,6 +5391,8 @@ int read_one_ffscript(PACKFILE *f, zquestheader *, bool keepdata, int, word s_ve
       {
          if (is_string_command(temp_script.command))
          {
+            /* set default value to avoid compiler warnings */
+            temp_script.arg1 = temp_script.arg2 = 0;
          }
          else
          {
@@ -5484,12 +5408,6 @@ int read_one_ffscript(PACKFILE *f, zquestheader *, bool keepdata, int, word s_ve
             (*script)[j].command = temp_script.command;
             (*script)[j].arg1 = temp_script.arg1;
             (*script)[j].arg2 = temp_script.arg2;
-            // I'll comment this out until the whole routine is finished using ptr
-            //if(is_string_command(temp_script.command))
-            //{
-            //( *script)[j].ptr=(char *)malloc(256);
-            //memcpy((*script)[j].ptr, temp_script.ptr, 256);
-            //}
          }
       }
    }
@@ -5497,7 +5415,7 @@ int read_one_ffscript(PACKFILE *f, zquestheader *, bool keepdata, int, word s_ve
    return 0;
 }
 
-extern SAMPLE customsfxdata[WAV_COUNT];
+extern SAMPLE customsfxdata[SFX_COUNT];
 extern int sfxdat;
 extern DATAFILE *sfxdata;
 
@@ -5513,7 +5431,6 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
    SAMPLE temp_sample;
    temp_sample.loop_start = 0;
    temp_sample.loop_end = 0;
-   temp_sample.param = 0;
 
    //section version info
    if (!p_igetw(&s_version, f, true))
@@ -5536,19 +5453,19 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
 
    /* End highly unorthodox updating thing */
 
-   int wavcount = WAV_COUNT;
+   int wavcount = SFX_COUNT;
 
    if (s_version < 6)
       wavcount = 128;
 
-   unsigned char tempflag[WAV_COUNT >> 3];
+   unsigned char tempflag[SFX_COUNT >> 3];
 
    if (s_version < 4)
-      memset(tempflag, 0xFF, WAV_COUNT >> 3);
+      memset(tempflag, 0xFF, SFX_COUNT >> 3);
    else
    {
       if (s_version < 6)
-         memset(tempflag, 0, WAV_COUNT >> 3);
+         memset(tempflag, 0, SFX_COUNT >> 3);
 
       for (int i = 0; i < (wavcount >> 3); i++)
          p_getc(&tempflag[i], f, true);
@@ -5560,7 +5477,7 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
 
    if (s_version > 4)
    {
-      for (int i = 1; i < WAV_COUNT; i++)
+      for (int i = 1; i < SFX_COUNT; i++)
       {
          /*  data is not being kept in this port since
              sfx names are not used */
@@ -5604,10 +5521,9 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
 
       (temp_sample.freq) = dummy;
 
+      /* get allegro's sample priority value, not used here */
       if (!p_igetl(&dummy, f, keepdata))
          return qe_invalid;
-
-      (temp_sample.priority) = dummy;
 
       if (!p_igetl(&dummyd, f, true))
          return qe_invalid;
@@ -5624,10 +5540,9 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
 
       (temp_sample.loop_end) = dummyd;
 
+      /* get allegro's sample param value, not used here */
       if (!p_igetl(&dummyd, f, keepdata))
          return qe_invalid;
-
-      (temp_sample.param) = dummyd;
 
       int len = (temp_sample.bits == 8 ? 1 : 2) * (temp_sample.stereo == 0 ? 1 : 2) * temp_sample.len;
       temp_sample.data = calloc(len, 1);
@@ -5668,17 +5583,15 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
          customsfxdata[i].bits = temp_sample.bits;
          customsfxdata[i].stereo = temp_sample.stereo;
          customsfxdata[i].freq = temp_sample.freq;
-         customsfxdata[i].priority = temp_sample.priority;
          customsfxdata[i].len = temp_sample.len;
          customsfxdata[i].loop_start = temp_sample.loop_start;
          customsfxdata[i].loop_end = temp_sample.loop_end;
-         customsfxdata[i].param = temp_sample.param;
          int cpylen = len2;
 
          if (s_version < 3)
          {
             cpylen = (temp_sample.bits == 8 ? 1 : 2) * temp_sample.len;
-            Z_message("WARNING: Quest SFX %d is in stereo, and may be corrupt.\n", i);
+            zc_message("WARNING: Quest SFX %d is in stereo, and may be corrupt.\n", i);
          }
 
          memcpy(customsfxdata[i].data, temp_sample.data, cpylen);
@@ -5695,7 +5608,7 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
 
 void setupsfx()
 {
-   for (int i = 1; i < WAV_COUNT; i++)
+   for (int i = 1; i < SFX_COUNT; i++)
    {
       int j = i;
 
@@ -5712,11 +5625,9 @@ void setupsfx()
       customsfxdata[j].bits = temp_sample->bits;
       customsfxdata[j].stereo = temp_sample->stereo;
       customsfxdata[j].freq = temp_sample->freq;
-      customsfxdata[j].priority = temp_sample->priority;
       customsfxdata[j].len = temp_sample->len;
       customsfxdata[j].loop_start = temp_sample->loop_start;
       customsfxdata[j].loop_end = temp_sample->loop_end;
-      customsfxdata[j].param = temp_sample->param;
       memcpy(customsfxdata[j].data, (temp_sample->data),
              (temp_sample->bits == 8 ? 1 : 2) * (temp_sample->stereo == 0 ? 1 : 2)*temp_sample->len);
       i = j;
@@ -6278,7 +6189,7 @@ int readguys(PACKFILE *f, zquestheader *Header, bool keepdata)
 
          if (guyversion < 16) // November 2009 - Super Enemy Editor part 1
          {
-            if (i == 0) Z_message("Updating guys to version 16...\n");
+            if (i == 0) zc_message("Updating guys to version 16...\n");
 
             update_guy_1(&tempguy);
 
@@ -8352,7 +8263,7 @@ int readtiles(PACKFILE *f, tiledata *buf, zquestheader *Header, word version, wo
 
    if (Header != NULL && !Header->data_flags[ZQ_TILES])    //keep for old quests
    {
-      Z_message("Quest does not use tiles.\n");
+      zc_message("Quest does not use tiles.\n");
       delete[] temp_tile;
       temp_tile = NULL;
       return 0;
@@ -8598,7 +8509,7 @@ int readtunes(PACKFILE *f, zquestheader *Header, zctune *tunes /*zcmidi_ *midis*
                2) //= 1 || (Header->zelda_version < 0x211) || (Header->zelda_version == 0x211 && Header->build < 18))
          {
             // old format - a midi is a midi
-            if (((keepdata == true ? tunes[i].data : temp.data) = read_midi(f, true)) == NULL)
+            if (((keepdata == true ? tunes[i].data : temp.data) = read_midi(f)) == NULL)
                return qe_invalid;
 
             //yes you can do this. Isn't the ? operator awesome? :)
@@ -8615,7 +8526,7 @@ int readtunes(PACKFILE *f, zquestheader *Header, zctune *tunes /*zcmidi_ *midis*
             switch (temp.format)
             {
                case MFORMAT_MIDI:
-                  if ((ptr->data = read_midi(f, true)) == NULL)
+                  if ((ptr->data = read_midi(f)) == NULL)
                      return qe_invalid;
 
                   break;
@@ -9805,7 +9716,7 @@ int loadquest(const char *filename, zquestheader *Header, miscQdata *Misc, zctun
    /*Reading Header...*/
    ret = readheader(f, &tempheader, true);
    checkstatus(ret);
-   Z_message("Made in ZQuest %x Beta %d\n", tempheader.zelda_version, tempheader.build);
+   zc_message("Made in ZQuest %x Beta %d\n", tempheader.zelda_version, tempheader.build);
 
    if (tempheader.zelda_version >= 0x193)
    {
@@ -10104,7 +10015,7 @@ int loadquest(const char *filename, zquestheader *Header, miscQdata *Misc, zctun
 
             default:
                if (!catchup)
-                  Z_message("Bad token!  Searching...");
+                  zc_message("Bad token!  Searching...");
 
                catchup = true;
                break;
@@ -10246,7 +10157,7 @@ int loadquest(const char *filename, zquestheader *Header, miscQdata *Misc, zctun
 
    memcpy(Header, &tempheader, sizeof(tempheader));
 
-   if (deletefilename[0] && exists(deletefilename))
+   if (deletefilename[0] && file_exists(deletefilename))
       delete_file(deletefilename);
 
    return qe_OK;
@@ -10256,7 +10167,7 @@ invalid:
    if (f)
       pack_fclose(f);
 
-   if (deletefilename[0] && exists(deletefilename))
+   if (deletefilename[0] && file_exists(deletefilename))
       delete_file(deletefilename);
 
    return qe_invalid;

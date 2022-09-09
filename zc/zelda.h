@@ -45,8 +45,6 @@
 /******** Enums & Structs ********/
 /*********************************/
 
-enum { qQUIT = 1, qRESET, qEXIT, qGAMEOVER, qCONT, qWON, qERROR };
-
 // "special" walk flags
 enum
 {
@@ -82,7 +80,6 @@ void init_dmap();
 int  init_game();
 int  cont_game();
 void restart_level();
-void quit_game();
 
 int get_currdmap();
 int get_dlevel();
@@ -118,11 +115,11 @@ extern int strike_hint;
 
 extern RGB_MAP rgb_table;
 extern COLOR_MAP trans_table, trans_table2;
-extern BITMAP     *framebuf, *scrollbuf, *tmp_scr, *msgbmpbuf, *msgdisplaybuf, *pricesdisplaybuf, *real_screen,
+extern BITMAP     *framebuf, *scrollbuf, *tempbuf, *msgbmpbuf, *msgdisplaybuf, *pricesdisplaybuf,
        *prim_bmp, *lens_scr;
 extern DATAFILE *data, *sfxdata, *fontsdata, *mididata;
 extern FONT  *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *pfont, *mfont, *ztfont, *sfont,
-       *sfont2, *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont,
+       *sfont2, *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont, *font,
        *goronfont, *zoranfont, *hylian1font, *hylian2font, *hylian3font, *hylian4font, *gboraclefont, *gboraclepfont,
        *dsphantomfont, *dsphantompfont;
 extern PALETTE  RAMpal;
@@ -150,10 +147,7 @@ extern int     lensid;
 extern int    Bpos;
 extern byte screengrid[22];
 extern byte ffcgrid[4];
-extern volatile int logic_counter;
 extern bool screenscrolling;
-extern bool close_button_quit;
-extern int fullscreen;
 
 extern PALETTE tempbombpal;
 extern bool usebombpal;
@@ -161,17 +155,15 @@ extern bool usebombpal;
 extern int homescr, currscr, frame, currmap, dlevel, warpscr, worldscr;
 extern int newscr_clk, opendoors, currdmap, fadeclk, currgame, listpos;
 extern int lastentrance, lastentrance_dmap, prices[3], loadside, Bwpn, Awpn;
-extern int digi_volume, midi_volume, sfx_volume, emusic_volume, currmidi, hasitem, whistleclk, pan_style;
-extern int Akey, Bkey, Skey, Lkey, Rkey, Pkey, Exkey1, Exkey2, Exkey3, Exkey4, Quit;
-extern int DUkey, DDkey, DLkey, DRkey;
+extern int sel_music, hasitem, whistleclk, pan_style;
 extern int hs_startx, hs_starty, hs_xdist, hs_ydist, clockclk, clock_zoras[eMAXGUYS];
 extern int swordhearts[4], currcset, gfc, gfc2, pitx, pity, refill_what, refill_why;
 extern int heart_beep_timer, new_enemy_tile_start, nets, magicitem, nayruitem;
 extern int magiccastclk, castx, casty, quakeclk, wavy, df_x, df_y, nl1_x, nl1_y, nl2_x, nl2_y, magicdrainclk, conveyclk;
 
 extern bool blockmoving;
-extern bool Throttlefps, ShowFPS, playing, TransLayers;
-extern bool refreshpal, blockpath, loaded_guys, freeze_guys;
+extern bool playing, trans_layers;
+extern bool blockpath, loaded_guys, freeze_guys;
 extern bool loaded_enemies, drawguys, watch;
 extern bool Udown, Ddown, Ldown, Rdown, Adown, Bdown, Sdown, Mdown, LBdown, RBdown, Pdown, Ex1down, Ex2down, Ex3down,
        Ex4down, AUdown, ADdown, ALdown, ARdown;
@@ -179,7 +171,7 @@ extern bool NESquit, boughtsomething;
 extern bool fixed_door, darkroom, naturaldark, BSZ;
 extern bool hookshot_used, hookshot_frozen, pull_link, add_chainlink;
 extern bool del_chainlink, hs_fix, cheat_superman, checklink;
-extern bool ewind_restart, didpit, heart_beep, castnext;
+extern bool ewind_restart, didpit, castnext;
 extern bool add_df1asparkle, add_df1bsparkle, add_nl1asparkle, add_nl1bsparkle, add_nl2asparkle, add_nl2bsparkle;
 extern bool is_on_conveyor, activated_timed_warp;
 
@@ -201,7 +193,7 @@ extern ffscript *guyscripts[256];
 extern ffscript *wpnscripts[256];
 extern ffscript *linkscripts[3];
 extern ffscript *screenscripts[256];
-extern SAMPLE customsfxdata[WAV_COUNT];
+extern SAMPLE customsfxdata[SFX_COUNT];
 extern int sfxdat;
 
 #define MAX_ZCARRAY_SIZE   4096
@@ -212,16 +204,9 @@ extern ZScriptDrawingRenderTarget *zscriptDrawingRenderTarget;
 
 dword getNumGlobalArrays();
 
-extern int  resx, resy, scrx, scry;
-extern bool sbig;                                           // big screen
-extern int screen_scale; //user adjustable screen size.
 extern char quest_path[1024];
 extern gamedata *saves;
 extern gamedata *game;
-
-extern volatile int lastfps;
-extern volatile int framecnt;
-extern void throttleFPS();
 
 // quest file data
 extern zquestheader QHeader;

@@ -18,194 +18,23 @@
 #include "title.h"
 #include "particles.h"
 
-static int sfx_voice[WAV_COUNT];
+static int sfx_voice[SFX_COUNT];
 
 extern FONT *lfont;
 extern LinkClass Link;
 extern sprite_list  guys, items, Ewpns, Lwpns, Sitems, chainlinks, decorations, particles;
-byte use_save_indicator;
 
 /**********************************/
 /******** System functions ********/
 /**********************************/
 
-static char cfg_sect[] = "zeldadx";
-
+/*
 void load_game_configs()
 {
-   Akey = get_config_int(cfg_sect, "key_a", KEY_ALT);
-   Bkey = get_config_int(cfg_sect, "key_b", KEY_LCONTROL);
-   Skey = get_config_int(cfg_sect, "key_s", KEY_ENTER);
-   Lkey = get_config_int(cfg_sect, "key_l", KEY_Z);
-   Rkey = get_config_int(cfg_sect, "key_r", KEY_X);
-   Pkey = get_config_int(cfg_sect, "key_p", KEY_SPACE);
-   Exkey1 = get_config_int(cfg_sect, "key_ex1", KEY_Q);
-   Exkey2 = get_config_int(cfg_sect, "key_ex2", KEY_W);
-   Exkey3 = get_config_int(cfg_sect, "key_ex3", KEY_A);
-   Exkey4 = get_config_int(cfg_sect, "key_ex4", KEY_S);
-
-   DUkey = get_config_int(cfg_sect, "key_up",   KEY_UP);
-   DDkey = get_config_int(cfg_sect, "key_down", KEY_DOWN);
-   DLkey = get_config_int(cfg_sect, "key_left", KEY_LEFT);
-   DRkey = get_config_int(cfg_sect, "key_right", KEY_RIGHT);
-
-   digi_volume = get_config_int(cfg_sect, "digi", 248);
-   midi_volume = get_config_int(cfg_sect, "midi", 255);
-   sfx_volume = get_config_int(cfg_sect, "sfx", 248);
-   emusic_volume = get_config_int(cfg_sect, "emusic", 248);
-   pan_style = get_config_int(cfg_sect, "pan", 1);
-   Throttlefps = get_config_int(cfg_sect, "throttlefps", 1) != 0;
-   TransLayers = get_config_int(cfg_sect, "translayers", 1) != 0;
-   ShowFPS = get_config_int(cfg_sect, "showfps", 0) != 0;
    NESquit = get_config_int(cfg_sect, "fastquit", 0) != 0;
-
-   //default - scale x2, 640 x 480
-   resx = get_config_int(cfg_sect, "resx", 640);
-   resy = get_config_int(cfg_sect, "resy", 480);
-   //screen_scale = get_config_int(cfg_sect,"screen_scale",2);
-
-   fullscreen = get_config_int(cfg_sect, "fullscreen", 1);
-
-   heart_beep = get_config_int(cfg_sect, "heart_beep", 1) != 0;
    sfxdat = get_config_int(cfg_sect, "use_sfx_dat", 1);
-   use_save_indicator = get_config_int(cfg_sect, "save_indicator", 0);
 }
-
-void save_game_configs()
-{
-   set_config_int(cfg_sect, "key_a", Akey);
-   set_config_int(cfg_sect, "key_b", Bkey);
-   set_config_int(cfg_sect, "key_s", Skey);
-   set_config_int(cfg_sect, "key_l", Lkey);
-   set_config_int(cfg_sect, "key_r", Rkey);
-   set_config_int(cfg_sect, "key_p", Pkey);
-   set_config_int(cfg_sect, "key_ex1", Exkey1);
-   set_config_int(cfg_sect, "key_ex2", Exkey2);
-   set_config_int(cfg_sect, "key_ex3", Exkey3);
-   set_config_int(cfg_sect, "key_ex4", Exkey4);
-
-   set_config_int(cfg_sect, "key_up",   DUkey);
-   set_config_int(cfg_sect, "key_down", DDkey);
-   set_config_int(cfg_sect, "key_left", DLkey);
-   set_config_int(cfg_sect, "key_right", DRkey);
-
-   set_config_int(cfg_sect, "digi", digi_volume);
-   set_config_int(cfg_sect, "midi", midi_volume);
-   set_config_int(cfg_sect, "sfx", sfx_volume);
-   set_config_int(cfg_sect, "emusic", emusic_volume);
-   set_config_int(cfg_sect, "pan", pan_style);
-   set_config_int(cfg_sect, "throttlefps", (int)Throttlefps);
-   set_config_int(cfg_sect, "translayers", (int)TransLayers);
-   set_config_int(cfg_sect, "showfps", (int)ShowFPS);
-   set_config_int(cfg_sect, "fastquit", (int)NESquit);
-
-   set_config_int(cfg_sect, "resx", resx);
-   set_config_int(cfg_sect, "resy", resy);
-
-   set_config_int(cfg_sect, "heart_beep", heart_beep);
-   set_config_int(cfg_sect, "use_sfx_dat", sfxdat);
-   set_config_int(cfg_sect, "fullscreen", fullscreen);
-
-   set_config_int(cfg_sect, "save_indicator", use_save_indicator);
-
-   flush_config_file();
-}
-
-//----------------------------------------------------------------
-
-// Timers
-
-void fps_callback()
-{
-   lastfps = framecnt;
-   framecnt = 0;
-}
-
-END_OF_FUNCTION(fps_callback)
-
-int Z_init_timers()
-{
-   static bool didit = false;
-
-   if (didit)
-      return 1;
-
-   didit = true;
-
-   LOCK_VARIABLE(lastfps);
-   LOCK_VARIABLE(framecnt);
-   LOCK_FUNCTION(fps_callback);
-
-   if (install_int_ex(fps_callback, SECS_TO_TIMER(1)))
-      return 0;
-
-   return 1;
-}
-
-void Z_remove_timers()
-{
-   remove_int(fps_callback);
-}
-
-//----------------------------------------------------------------
-
-void show_fps(BITMAP *target)
-{
-   char buf[50];
-
-   sprintf(buf, "%2d/60", lastfps);
-
-   for (int i = 0; buf[i] != 0; i++)
-      if (buf[i] != ' ')
-         buf[i] += 0x60;
-
-   if (sbig)
-   {
-      int x = scrx + 40 - ((screen_scale - 1) * 120);
-      int y = scry + 216 + ((screen_scale - 1) * 104);
-      textout_ex(target, zfont, buf, x, y, -1, -1);
-   }
-   else
-      textout_ex(target, zfont, buf, scrx + 40, scry + 216, -1, -1);
-}
-
-void show_saving(BITMAP *target)
-{
-   if (!use_save_indicator)
-      return;
-
-   char buf[10] = "SAVING...";
-
-   for (int i = 0; buf[i] != 0; i++)
-      buf[i] += 0x60;
-
-   if (sbig)
-   {
-      int x = scrx + 200 + ((screen_scale - 1) * 120);
-      int y = scry + 224 + ((screen_scale - 1) * 104);
-      textout_ex(target, zfont, buf, x, y, -1, -1);
-   }
-   else
-      textout_ex(target, zfont, buf, scrx + 200, scry + 224, -1, -1);
-}
-
-//----------------------------------------------------------------
-
-// sets the video mode and initializes the palette
-bool game_vid_mode(int mode, int wait)
-{
-   if (set_gfx_mode(mode, resx, resy, 0, 0) != 0)
-      return false;
-
-   scrx = (resx - 320) >> 1;
-   scry = (resy - 240) >> 1;
-
-   set_palette(RAMpal);
-   clear_to_color(screen, BLACK);
-
-   rest(wait);
-   return true;
-}
+*/
 
 //----------------------------------------------------------------
 
@@ -954,7 +783,7 @@ void close_black_opening(int x, int y, bool wait)
          syskeys();
          advanceframe(true);
 
-         if (Quit)
+         if (zc_state)
             break;
       }
    }
@@ -990,7 +819,7 @@ void open_black_opening(int x, int y, bool wait)
          syskeys();
          advanceframe(true);
 
-         if (Quit)
+         if (zc_state)
             break;
       }
    }
@@ -998,7 +827,7 @@ void open_black_opening(int x, int y, bool wait)
 
 void black_opening(BITMAP *dest, int x, int y, int a, int max_a)
 {
-   clear_to_color(tmp_scr, BLACK);
+   clear_to_color(tempbuf, BLACK);
    int w = 256, h = 224;
 
    switch (black_opening_shape)
@@ -1008,7 +837,7 @@ void black_opening(BITMAP *dest, int x, int y, int a, int max_a)
          double new_w = (w / 2) + abs(w / 2 - x);
          double new_h = (h / 2) + abs(h / 2 - y);
          double b = sqrt(((new_w * new_w) / 4) + (new_h * new_h));
-         ellipsefill(tmp_scr, x, y, int(2 * a * b / max_a) / 8 * 8, int(a * b / max_a) / 8 * 8, 0);
+         ellipsefill(tempbuf, x, y, int(2 * a * b / max_a) / 8 * 8, int(a * b / max_a) / 8 * 8, 0);
          break;
       }
 
@@ -1025,7 +854,7 @@ void black_opening(BITMAP *dest, int x, int y, int a, int max_a)
          double a0 = angle;
          double a2 = angle + P23;
          double a4 = angle + P43;
-         triangle(tmp_scr, x + int(cos(a0)*r), y - int(sin(a0)*r),
+         triangle(tempbuf, x + int(cos(a0)*r), y - int(sin(a0)*r),
                   x + int(cos(a2)*r), y - int(sin(a2)*r),
                   x + int(cos(a4)*r), y - int(sin(a4)*r),
                   0);
@@ -1040,7 +869,7 @@ void black_opening(BITMAP *dest, int x, int y, int a, int max_a)
          {
             for (int linerow = 0; linerow < 8; ++linerow)
             {
-               qword *triangleline = (qword *)(tmp_scr->line[(blockrow * 8 + linerow)]);
+               qword *triangleline = (qword *)(tempbuf->line[(blockrow * 8 + linerow)]);
 
                for (int blockcolumn = 0; blockcolumn < 32; ++blockcolumn) //40
                {
@@ -1066,12 +895,12 @@ void black_opening(BITMAP *dest, int x, int y, int a, int max_a)
          double new_w = (w / 2) + abs(w / 2 - x);
          double new_h = (h / 2) + abs(h / 2 - y);
          int r = int(sqrt((new_w * new_w) + (new_h * new_h)) * a / max_a);
-         circlefill(tmp_scr, x, y, r, 0);
+         circlefill(tempbuf, x, y, r, 0);
          break;
       }
    }
 
-   masked_blit(tmp_scr, dest, 0, 0, 0, 0, w, h);
+   masked_blit(tempbuf, dest, 0, 0, 0, 0, w, h);
 }
 
 //----------------------------------------------------------------
@@ -1663,12 +1492,10 @@ void draw_lens_under(BITMAP *dest, bool layer)
                case mfPUSHDINS:
                case mfPUSHLINS:
                case mfPUSHRINS:
-                  if (!hints && ((!key[KEY_N] && (lensclk & 16))
-                                 || (key[KEY_N] && (frame & 16))))
+                  if (!hints && (lensclk & 16))
                      putcombo(dest, x, y, tmpscr->undercombo, tmpscr->undercset);
 
-                  if ((!key[KEY_N] && (lensclk & blink_rate))
-                        || (key[KEY_N] && (frame & blink_rate)))
+                  if (lensclk & blink_rate)
                   {
                      if (hints)
                      {
@@ -1706,8 +1533,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1728,8 +1554,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1749,8 +1574,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1770,8 +1594,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1793,8 +1616,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      tempweapon = wFire;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1821,8 +1643,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1842,8 +1663,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1863,8 +1683,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1884,8 +1703,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1905,8 +1723,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
                      tempweapon = wLitBomb;
 
                      //if (tempitem<0) break;
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempweaponx = x;
                         tempweapony = y;
@@ -1927,8 +1744,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
                      //if (tempitem<0) break;
                      tempweapon = wLitSBomb;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempweaponx = x;
                         tempweapony = y;
@@ -1955,8 +1771,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1976,8 +1791,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -1997,8 +1811,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2020,8 +1833,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      tempweapon = itemsbuf[tempitem].wpn3;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2054,8 +1866,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      tempweapon = ewMagic;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2095,8 +1906,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      tempweapon = ewFireball;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2132,8 +1942,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2153,8 +1962,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2174,8 +1982,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2195,8 +2002,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2216,8 +2022,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2237,8 +2042,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2258,8 +2062,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2279,8 +2082,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2300,8 +2102,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2321,8 +2122,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2342,8 +2142,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
 
                      if (tempitem < 0) break;
 
-                     if ((!key[KEY_N] && (lensclk & blink_rate))
-                           || (key[KEY_N] && (frame & blink_rate)))
+                     if (lensclk & blink_rate)
                      {
                         tempitemx = x;
                         tempitemy = y;
@@ -2388,7 +2187,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
                   if (layer && ((checkflag != mfRAFT && checkflag != mfRAFT_BRANCH && checkflag != mfRAFT_BOUNCE)
                                 || get_bit(quest_rules, qr_RAFTLENS)))
                   {
-                     if ((!key[KEY_N] && (lensclk & 1)) || (key[KEY_N] && (frame & 1)))
+                     if (lensclk & 1)
                         rectfill(dest, x, y, x + 15, y + 15, WHITE);
                   }
 
@@ -2437,8 +2236,7 @@ void draw_lens_under(BITMAP *dest, bool layer)
                int tempitemx = -16;
                int tempitemy = -16;
 
-               if ((!key[KEY_N] && (lensclk & (blink_rate / 4)))
-                     || (key[KEY_N] && (frame & (blink_rate / 4))))
+               if (lensclk & (blink_rate / 4))
                {
                   tempitemx = tmpscr->stairx;
                   tempitemy = tmpscr->stairy + PLAYFIELD_OFFSET;
@@ -2460,7 +2258,7 @@ void draw_lens_over()
    if (width != last_width)
    {
       if (lens_scr == NULL)
-         lens_scr = create_bitmap_ex(8, 2 * 288, 2 * (240 - PLAYFIELD_OFFSET));
+         lens_scr = create_bitmap(2 * 288, 2 * (240 - PLAYFIELD_OFFSET));
 
       clear_to_color(lens_scr, BLACK);
       circlefill(lens_scr, 288, 240 - PLAYFIELD_OFFSET, width, 0);
@@ -2477,8 +2275,8 @@ void draw_lens_over()
 
 void draw_wavy(BITMAP *buffer, int amplitude)
 {
-   clear_to_color(tmp_scr, 0);
-   blit(buffer, tmp_scr, 0, PLAYFIELD_OFFSET, 16, 0, 256, 224 - PLAYFIELD_OFFSET);
+   clear_to_color(tempbuf, 0);
+   blit(buffer, tempbuf, 0, PLAYFIELD_OFFSET, 16, 0, 256, 224 - PLAYFIELD_OFFSET);
 
    amplitude = zc_min(2048, amplitude); // some arbitrary limit to prevent crashing
    int amp2 = 168;
@@ -2491,7 +2289,7 @@ void draw_wavy(BITMAP *buffer, int amplitude)
       if (ofs)
       {
          for (int k = 0; k < 256; k++)
-            buffer->line[j + PLAYFIELD_OFFSET][k] = tmp_scr->line[j][k + ofs + 16];
+            buffer->line[j + PLAYFIELD_OFFSET][k] = tempbuf->line[j][k + ofs + 16];
       }
    }
 }
@@ -2501,9 +2299,9 @@ void draw_quake(BITMAP *buffer, int qclock)
    /* Calculate the quake offset to use. */
    int quakeofs = (int)(sin((double)(qclock * 2 - frame)) * 4);
 
-   clear_to_color(tmp_scr, 0);
-   blit(buffer, tmp_scr, 0, PLAYFIELD_OFFSET, 0, 3 + quakeofs, 256, 224 - PLAYFIELD_OFFSET);
-   blit(tmp_scr, buffer, 0, 0, 0, PLAYFIELD_OFFSET, 256, 224 - PLAYFIELD_OFFSET);
+   clear_to_color(tempbuf, 0);
+   blit(buffer, tempbuf, 0, PLAYFIELD_OFFSET, 0, 3 + quakeofs, 256, 224 - PLAYFIELD_OFFSET);
+   blit(tempbuf, buffer, 0, 0, 0, PLAYFIELD_OFFSET, 256, 224 - PLAYFIELD_OFFSET);
 }
 
 void draw_fuzzy(int fuzz)
@@ -2584,13 +2382,10 @@ void updatescr(bool allow_gfx)
       --black_opening_count;
    }
 
-   if (refreshpal)
+   if (zc_sync_pal)
    {
-      refreshpal = false;
-      set_palette_range(RAMpal, 0, 255, false);
-
-      create_rgb_table(&rgb_table, RAMpal, NULL);
-      create_zc_trans_table(&trans_table, RAMpal, 128, 128, 128);
+      create_rgb_table(&rgb_table, zc_palette);
+      create_zc_trans_table(&trans_table, zc_palette, 128, 128, 128);
       memcpy(&trans_table2, &trans_table, sizeof(COLOR_MAP));
 
       for (int q = 0; q < PAL_SIZE; q++)
@@ -2628,45 +2423,15 @@ void updatescr(bool allow_gfx)
 
    bool nosubscr = (tmpscr->flags3 & fNOSUBSCR && !(tmpscr->flags3 & fNOSUBSCROFFSET));
 
-   /* Use tmp_scr as buffer when we want to display panorama screen */
+   /* Use tempbuf as buffer when we want to display panorama screen */
    if (nosubscr)
    {
-      rectfill(tmp_scr, 0, 0, 255, SUBSCREEN_HEIGHT / 2, 0);
-      rectfill(tmp_scr, 0, 168 + SUBSCREEN_HEIGHT / 2, 255, 168 + SUBSCREEN_HEIGHT - 1, 0);
-      blit(framebuf, tmp_scr, 0, PLAYFIELD_OFFSET, 0, SUBSCREEN_HEIGHT / 2, 256, 224 - SUBSCREEN_HEIGHT);
+      rectfill(tempbuf, 0, 0, 255, SUBSCREEN_HEIGHT / 2, 0);
+      rectfill(tempbuf, 0, 168 + SUBSCREEN_HEIGHT / 2, 255, 168 + SUBSCREEN_HEIGHT - 1, 0);
+      blit(framebuf, tempbuf, 0, PLAYFIELD_OFFSET, 0, SUBSCREEN_HEIGHT / 2, 256, 224 - SUBSCREEN_HEIGHT);
    }
 
-   //TODO: Optimize blit 'overcalls' -Gleeok
-   BITMAP *source = nosubscr ? tmp_scr : framebuf;
-   BITMAP *target = screen;
-
-   if (resx != SCREEN_W || resy != SCREEN_H)
-   {
-      Z_message("Conflicting variables warning: screen_scale %i, resx %i, resy %i, w %i, h %i\n", screen_scale, resx, resy,
-                SCREEN_W, SCREEN_H);
-      resx = SCREEN_W;
-      resy = SCREEN_H;
-      screen_scale = zc_max(zc_min(resx / 320, resy / 240), 1);
-   }
-
-   if (!sbig && screen_scale > 1)
-      sbig = true;
-
-   const int sx = 256 * screen_scale;
-   const int sy = 224 * screen_scale;
-   const int scale_mul = screen_scale - 1;
-   const int mx = scale_mul * 128;
-   const int my = scale_mul * 112;
-
-   if (sbig)
-      stretch_blit(source, target, 0, 0, 256, 224, scrx + 32 - mx, scry + 8 - my, sx, sy);
-   else
-      blit(source, target, 0, 0, scrx + 32, scry + 8, 256, 224);
-
-   if (ShowFPS)
-      show_fps(target);
-
-   ++framecnt;
+   zc_canvas = nosubscr ? tempbuf : framebuf;
 }
 
 //----------------------------------------------------------------
@@ -2675,28 +2440,25 @@ void f_Quit(int type)
 {
    music_pause();
    pause_all_sfx();
-   clear_keybuf();
 
    switch (type)
    {
-      case qRESET:
-         Quit = qRESET;
+      case ZC_RESET:
+         zc_state = ZC_RESET;
          break;
 
-      case qEXIT:
-         Quit = qEXIT;
+      case ZC_EXIT:
+         zc_state = ZC_EXIT;
          break;
    }
 
-   if (Quit)
+   if (zc_state)
    {
       kill_sfx();
       music_stop();
-      clear_to_color(screen, BLACK);
    }
    else
    {
-      //game_pal();
       music_resume();
       resume_all_sfx();
    }
@@ -2706,28 +2468,21 @@ void f_Quit(int type)
 
 //----------------------------------------------------------------
 
+void zc_action(int state)
+{
+   music_pause();
+   pause_all_sfx();
+   zc_state = state;
+   eat_buttons();
+}
+
 void syskeys()
 {
-   if (close_button_quit)
-   {
-      close_button_quit = false;
-      f_Quit(qEXIT);
-   }
+   /*if (ReadKey(KEY_F8))    quakeclk = 100;
 
-   if (ReadKey(KEY_F1))
-   {
-      Throttlefps = !Throttlefps;
-      logic_counter = 0;
-   }
+   if (ReadKey(KEY_F9))    f_Quit(ZC_RESET);
 
-   if (ReadKey(KEY_F2))    ShowFPS = !ShowFPS;
-
-
-   if (ReadKey(KEY_F8))    quakeclk = 100;
-
-   if (ReadKey(KEY_F9))    f_Quit(qRESET);
-
-   if (ReadKey(KEY_F10))   f_Quit(qEXIT);
+   if (ReadKey(KEY_F10))   f_Quit(ZC_EXIT);
 
    if (ReadKey(KEY_H))  game->set_life(game->get_maxlife());
    if (ReadKey(KEY_M))  game->set_magic(game->get_maxmagic());
@@ -2738,11 +2493,8 @@ void syskeys()
       Link.setClock(!Link.getClock());
       cheat_superman = Link.getClock();
    }
-
+   */
    verifyBothWeapons();
-
-   // What's the playing check for?
-   clear_keybuf();
 }
 
 // 99*360 + 59*60
@@ -2753,7 +2505,7 @@ void advanceframe(bool allow_gfx)
    if (zcmusic != NULL)
       zcmusic_poll();
 
-   if (Quit)
+   if (zc_state)
       return;
 
    if (playing && game->get_time() < MAXTIME)
@@ -2763,7 +2515,6 @@ void advanceframe(bool allow_gfx)
 
    syskeys();
    updatescr(allow_gfx);
-   throttleFPS();
    sfx_cleanup();
 }
 
@@ -2781,7 +2532,7 @@ void zapout()
       syskeys();
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 }
@@ -2800,7 +2551,7 @@ void zapin()
       syskeys();
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 }
@@ -2810,11 +2561,15 @@ void wavyout(bool showlink)
    draw_screen(tmpscr, showlink);
    put_passive_subscr(framebuf, &QMisc, 0, 0, false, sspUP);
 
-   BITMAP *wavebuf = create_bitmap_ex(8, 288, 224);
+   BITMAP *wavebuf = create_bitmap(288, 224);
    clear_to_color(wavebuf, 0);
    blit(framebuf, wavebuf, 0, 0, 16, 0, 256, 224);
 
    PALETTE wavepal;
+
+   /* use this as main palette
+    * temporary for this process */
+   zc_palette = wavepal;
 
    int ofs;
    int amplitude = 8;
@@ -2833,11 +2588,6 @@ void wavyout(bool showlink)
 
       palpos += palstep;
 
-      if (palpos >= 0)
-         set_palette(wavepal);
-      else
-         set_palette(RAMpal);
-
       for (int j = 0; j + PLAYFIELD_OFFSET < 224; j++)
       {
          for (int k = 0; k < 256; k++)
@@ -2852,13 +2602,20 @@ void wavyout(bool showlink)
       }
 
       syskeys();
+      
+      /* ensure changes get applied */
+      zc_sync_pal = true;
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 
    destroy_bitmap(wavebuf);
+
+   /* restore system palette */
+   zc_palette = RAMpal;
+   zc_sync_pal = true;
 }
 
 void wavyin()
@@ -2866,13 +2623,16 @@ void wavyin()
    draw_screen(tmpscr);
    put_passive_subscr(framebuf, &QMisc, 0, 0, false, sspUP);
 
-   BITMAP *wavebuf = create_bitmap_ex(8, 288, 224);
+   BITMAP *wavebuf = create_bitmap(288, 224);
    clear_to_color(wavebuf, 0);
    blit(framebuf, wavebuf, 0, 0, 16, 0, 256, 224);
 
    PALETTE wavepal;
 
-   refreshpal = false;
+   /* use this as main palette
+    * temporary for this process */
+   zc_palette = wavepal;
+
    int ofs;
    int amplitude = 8;
    int wavelength = 4;
@@ -2889,11 +2649,6 @@ void wavyin()
 
       palpos -= palstep;
 
-      if (palpos >= 0)
-         set_palette(wavepal);
-      else
-         set_palette(RAMpal);
-
       for (int j = 0; j + PLAYFIELD_OFFSET < 224; j++)
       {
          for (int k = 0; k < 256; k++)
@@ -2908,13 +2663,20 @@ void wavyin()
       }
 
       syskeys();
+
+      /* ensure the palette change gets applied */
+      zc_sync_pal = true;
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 
    destroy_bitmap(wavebuf);
+
+   /* restore system palette */
+   zc_palette = RAMpal;
+   zc_sync_pal = true;
 }
 
 void blackscr(int fcnt, bool showsubscr)
@@ -2932,7 +2694,7 @@ void blackscr(int fcnt, bool showsubscr)
       syskeys();
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
 
       --fcnt;
@@ -2971,7 +2733,7 @@ void openscreen()
       syskeys();
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
    }
 
@@ -2993,23 +2755,23 @@ int TriforceCount()
 
 void music_pause()
 {
-   zcmusic_pause(zcmusic, ZCM_PAUSE);
+   zcmusic_pause(TRUE);
    midi_pause();
 }
 
 void music_resume()
 {
-   zcmusic_pause(zcmusic, ZCM_RESUME);
+   zcmusic_pause(FALSE);
    midi_resume();
 }
 
 void music_stop()
 {
-   zcmusic_stop(zcmusic);
+   zcmusic_stop();
    zcmusic_unload_file(zcmusic);
    zcmusic = NULL;
-   stop_midi();
-   currmidi = 0;
+   midi_stop();
+   sel_music = 0;
 }
 
 /*****************************/
@@ -3028,21 +2790,21 @@ bool try_zcmusic(char *filename, int track, int midi)
 
    // try the quest directory
    char musicpath[2048];
-   replace_filename(musicpath, quest_path, filename, 2048);
+   replace_filename(musicpath, quest_path, filename);
    newzcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
 
    // Found it
    if (newzcmusic != NULL)
    {
-      zcmusic_stop(zcmusic);
+      zcmusic_stop();
       zcmusic_unload_file(zcmusic);
-      stop_midi();
+      midi_stop();
 
       zcmusic = newzcmusic;
-      zcmusic_play(zcmusic, emusic_volume);
+      zcmusic_play(zcmusic);
 
       if (track > 0)
-         zcmusic_change_track(zcmusic, track);
+         zcmusic_change_track(track);
 
       return true;
    }
@@ -3061,27 +2823,20 @@ void jukebox(int index)
    if (index >= MAXMIDIS) index = 0;
 
    // do nothing if it's already playing
-   if (index == currmidi && midi_pos >= 0)
+   if (index == sel_music && midi_isplaying())
       return;
 
+   sel_music = index;
+
    music_stop();
-
-   // Allegro's DIGMID driver (the one normally used on on Linux) gets
-   // stuck notes when a song stops. This fixes it.
-   if (strcmp(midi_driver->name, "DIGMID") == 0)
-      set_volume(0, 0);
-
-   set_volume(-1, mixvol(tunes[index].volume, midi_volume >> 1));
-   play_midi((MIDI *)tunes[index].data, tunes[index].loop);
+   update_music_volume();
+   midi_play(tunes[index].data, tunes[index].loop);
 
    if (tunes[index].start > 0)
-      midi_seek(tunes[index].start);
+      midi_fastforward(tunes[index].start);
 
-   midi_loop_end = tunes[index].loop_end;
-   midi_loop_start = tunes[index].loop_start;
-
-   currmidi = index;
-   master_volume(digi_volume, midi_volume);
+   midi_loopend(tunes[index].loop_end);
+   midi_loopstart(tunes[index].loop_start);
 }
 
 void play_DmapMusic()
@@ -3089,17 +2844,15 @@ void play_DmapMusic()
    static int ttrack = 0;
    bool domidi = false;
 
-   // Seems like this ought to call try_zcmusic()...
-
    if (DMaps[currdmap].tmusic[0] != 0)
    {
       if (zcmusic == NULL ||
             strcmp(zcmusic->filename, DMaps[currdmap].tmusic) != 0 ||
-            (zcmusic->type == ZCMF_GME && zcmusic->track != DMaps[currdmap].tmusictrack))
+            (zcmusic->type == STREAM_GME && zcmusic->track != DMaps[currdmap].tmusictrack))
       {
          if (zcmusic != NULL)
          {
-            zcmusic_stop(zcmusic);
+            zcmusic_stop();
             zcmusic_unload_file(zcmusic);
             zcmusic = NULL;
          }
@@ -3108,19 +2861,19 @@ void play_DmapMusic()
          if (zcmusic == NULL)
          {
             char musicpath[2048];
-            replace_filename(musicpath, quest_path, DMaps[currdmap].tmusic, 2048);
+            replace_filename(musicpath, quest_path, DMaps[currdmap].tmusic);
             zcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
          }
 
          if (zcmusic != NULL)
          {
-            stop_midi();
-            zcmusic_play(zcmusic, emusic_volume);
+            midi_stop();
+            zcmusic_play(zcmusic);
             int temptracks = 0;
             temptracks = zcmusic_get_tracks(zcmusic);
             temptracks = (temptracks < 2) ? 1 : temptracks;
             ttrack = vbound(DMaps[currdmap].tmusictrack, 0, temptracks - 1);
-            zcmusic_change_track(zcmusic, ttrack);
+            zcmusic_change_track(ttrack);
          }
          else
             domidi = true;
@@ -3190,14 +2943,11 @@ void playLevelMusic()
    }
 }
 
-void master_volume(int dv, int mv)
+void update_music_volume(void)
 {
-   if (dv >= 0) digi_volume = zc_max(zc_min(dv, 255), 0);
-
-   if (mv >= 0) midi_volume = zc_max(zc_min(mv, 255), 0);
-
-   int i = zc_min(zc_max(currmidi, 0), MAXMIDIS - 1);
-   set_volume(digi_volume, mixvol(tunes[i].volume, midi_volume));
+   int i = MIN(MAX(sel_music, 0), MAXMUSIC - 1);
+   int vol = mixvol(tunes[i].volume, music_vol);
+   midi_set_volume(vol);
 }
 
 /*****************/
@@ -3209,16 +2959,14 @@ void master_volume(int dv, int mv)
 // -1 = voice not allocated
 void Z_init_sound()
 {
-   for (int i = 0; i < WAV_COUNT; i++)
+   for (int i = 0; i < SFX_COUNT; i++)
       sfx_voice[i] = -1;
 
    for (int i = 0; i < ZC_MIDI_COUNT; i++)
-      tunes[i].data = (MIDI *)mididata[i].dat;
+      tunes[i].data = mididata[i].dat;
 
    for (int j = 0; j < MAXCUSTOMMIDIS; j++)
       tunes[ZC_MIDI_COUNT + j].data = NULL;
-
-   master_volume(digi_volume, midi_volume);
 }
 
 // returns number of voices currently allocated
@@ -3226,7 +2974,7 @@ int sfx_count()
 {
    int c = 0;
 
-   for (int i = 0; i < WAV_COUNT; i++)
+   for (int i = 0; i < SFX_COUNT; i++)
       if (sfx_voice[i] != -1)
          ++c;
 
@@ -3236,12 +2984,19 @@ int sfx_count()
 // clean up finished samples
 void sfx_cleanup()
 {
-   for (int i = 0; i < WAV_COUNT; i++)
+   for (int i = 0; i < SFX_COUNT; i++)
       if (sfx_voice[i] != -1 && voice_get_position(sfx_voice[i]) < 0)
       {
          deallocate_voice(sfx_voice[i]);
          sfx_voice[i] = -1;
       }
+}
+
+void update_sfx_volume(void)
+{
+   for (int i = 0; i < SFX_COUNT; i++)
+      if (sfx_voice[i] != -1 && voice_get_position(sfx_voice[i]) >= 0)
+         voice_set_volume(sfx_voice[i], sfx_vol);
 }
 
 // allocates a voice for the sample "wav_index" (index into zelda.dat)
@@ -3251,7 +3006,7 @@ void sfx_cleanup()
 bool sfx_init(int index)
 {
    // check index
-   if (index <= 0 || index >= WAV_COUNT)
+   if (index <= 0 || index >= SFX_COUNT)
       return false;
 
    if (sfx_voice[index] == -1)
@@ -3266,7 +3021,7 @@ bool sfx_init(int index)
       else
          sfx_voice[index] = allocate_voice(&customsfxdata[index]);
 
-      voice_set_volume(sfx_voice[index], sfx_volume);
+      voice_set_volume(sfx_voice[index], sfx_vol);
    }
 
    return sfx_voice[index] != -1;
@@ -3292,7 +3047,7 @@ void sfx(int index, int pan, bool loop, bool restart)
 // true if sfx is allocated
 bool sfx_allocated(int index)
 {
-   return (index > 0 && index < WAV_COUNT && sfx_voice[index] != -1);
+   return (index > 0 && index < SFX_COUNT && sfx_voice[index] != -1);
 }
 
 // start it (in loop mode) if it's not already playing,
@@ -3315,7 +3070,7 @@ void cont_sfx(int index)
 // adjust parameters while playing
 void adjust_sfx(int index, int pan, bool loop)
 {
-   if (index <= 0 || index >= WAV_COUNT || sfx_voice[index] == -1)
+   if (index <= 0 || index >= SFX_COUNT || sfx_voice[index] == -1)
       return;
 
    voice_set_playmode(sfx_voice[index], loop ? PLAYMODE_LOOP : PLAYMODE_PLAY);
@@ -3325,21 +3080,21 @@ void adjust_sfx(int index, int pan, bool loop)
 // pauses a voice
 void pause_sfx(int index)
 {
-   if (index > 0 && index < WAV_COUNT && sfx_voice[index] != -1)
+   if (index > 0 && index < SFX_COUNT && sfx_voice[index] != -1)
       voice_stop(sfx_voice[index]);
 }
 
 // resumes a voice
 void resume_sfx(int index)
 {
-   if (index > 0 && index < WAV_COUNT && sfx_voice[index] != -1)
+   if (index > 0 && index < SFX_COUNT && sfx_voice[index] != -1)
       voice_start(sfx_voice[index]);
 }
 
 // pauses all active voices
 void pause_all_sfx()
 {
-   for (int i = 0; i < WAV_COUNT; i++)
+   for (int i = 0; i < SFX_COUNT; i++)
       if (sfx_voice[i] != -1)
          voice_stop(sfx_voice[i]);
 }
@@ -3347,7 +3102,7 @@ void pause_all_sfx()
 // resumes all paused voices
 void resume_all_sfx()
 {
-   for (int i = 0; i < WAV_COUNT; i++)
+   for (int i = 0; i < SFX_COUNT; i++)
       if (sfx_voice[i] != -1)
          voice_start(sfx_voice[i]);
 }
@@ -3355,7 +3110,7 @@ void resume_all_sfx()
 // stops an sfx and deallocates the voice
 void stop_sfx(int index)
 {
-   if (index <= 0 || index >= WAV_COUNT)
+   if (index <= 0 || index >= SFX_COUNT)
       return;
 
    if (sfx_voice[index] != -1)
@@ -3378,7 +3133,7 @@ void stop_item_sfx(int family)
 
 void kill_sfx()
 {
-   for (int i = 0; i < WAV_COUNT; i++)
+   for (int i = 0; i < SFX_COUNT; i++)
       if (sfx_voice[i] != -1)
       {
          deallocate_voice(sfx_voice[i]);
@@ -3430,24 +3185,24 @@ bool button_hold[18] = {false, false, false, false, false, false, false, false, 
 
 void load_control_state()
 {
-   control_state[0] = key[DUkey];
-   control_state[1] = key[DDkey];
-   control_state[2] = key[DLkey];
-   control_state[3] = key[DRkey];
-   control_state[4] = key[Akey];
-   control_state[5] = key[Bkey];
-   control_state[6] = key[Skey];
-   control_state[7] = key[Lkey];
-   control_state[8] = key[Rkey];
-   control_state[9] = key[Pkey];
-   control_state[10] = key[Exkey1];
-   control_state[11] = key[Exkey2];
-   control_state[12] = key[Exkey3];
-   control_state[13] = key[Exkey4];
-   control_state[14] = key[DUkey];
-   control_state[15] = key[DDkey];
-   control_state[16] = key[DLkey];
-   control_state[17] = key[DRkey];
+   control_state[0] = DUkey;
+   control_state[1] = DDkey;
+   control_state[2] = DLkey;
+   control_state[3] = DRkey;
+   control_state[4] = Akey;
+   control_state[5] = Bkey;
+   control_state[6] = Skey;
+   control_state[7] = Lkey;
+   control_state[8] = Rkey;
+   control_state[9] = Mkey;
+   control_state[10] = Exkey1;
+   control_state[11] = Exkey2;
+   control_state[12] = Exkey3;
+   control_state[13] = Exkey4;
+   control_state[14] = DUkey;
+   control_state[15] = DDkey;
+   control_state[16] = DLkey;
+   control_state[17] = DRkey;
 
    button_press[0] = rButton(Up, button_hold[0]);
    button_press[1] = rButton(Down, button_hold[1]);
@@ -3717,17 +3472,6 @@ void eat_buttons()
    rEx4btn();
 }
 
-bool ReadKey(int k)
-{
-   if (key[k])
-   {
-      key[k] = 0;
-      return true;
-   }
-
-   return false;
-}
-
 char *time_str_med(dword time)
 {
    static char s[16];
@@ -3784,31 +3528,6 @@ int get_bit(byte *bitstr, int bit)
 {
    bitstr += bit >> 3;
    return ((*bitstr) >> (bit & 7)) & 1;
-}
-
-void Z_error(const char *format, ...)
-{
-   char buf[256];
-
-   va_list ap;
-   va_start(ap, format);
-   vsprintf(buf, format, ap);
-   va_end(ap);
-
-   al_trace("%s\n", buf);
-   exit(1);
-}
-
-void Z_message(const char *format, ...)
-{
-   char buf[2048];
-
-   va_list ap;
-   va_start(ap, format);
-   vsprintf(buf, format, ap);
-   va_end(ap);
-
-   al_trace("%s", buf);
 }
 
 int anim_3_4(int clk, int speed)
@@ -3882,7 +3601,7 @@ int decode_file_007(const char *srcfile, const char *destfile, const char *heade
    short c1 = 0, c2 = 0, check1, check2;
 
    // open files
-   size = file_size_ex(srcfile);
+   size = file_size(srcfile);
 
    if (size < 1)
       return 1;
@@ -4014,39 +3733,4 @@ error:
    fclose(dest);
    delete_file(destfile);
    return err;
-}
-
-//Fun fact: Allegro used to be in control of allegro.log. This caused
-//problems, because it would hold on to a file handle. Even if we blank
-//the contents of the log, it will still write to the end, causing
-//lots of nulls.
-
-//No more!
-
-FILE *trace_file;
-
-int zc_trace_handler(const char *msg)
-{
-   if (trace_file == 0)
-   {
-      trace_file = fopen("allegro.log", "a+");
-
-      if (0 == trace_file)
-      {
-         return 0; // blargh.
-      }
-   }
-
-   fprintf(trace_file, "%s", msg);
-   fflush(trace_file);
-   return 1;
-}
-
-void zc_trace_clear()
-{
-   if (trace_file)
-      fclose(trace_file);
-
-   trace_file = fopen("allegro.log", "w");
-   ASSERT(trace_file);
 }

@@ -38,6 +38,8 @@ extern char sf2_file[16];
 
 /* input keys */
 extern int Akey, Bkey, Ekey, Skey, Lkey, Rkey, Mkey, Ckey;
+extern int Exkey1, Exkey2, Exkey3, Exkey4;
+extern int Mx, My, Mz, Mb; /* Mouse buttons */
 extern int DUkey, DDkey, DLkey, DRkey;
 
 /* thread stuff */

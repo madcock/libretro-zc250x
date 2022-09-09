@@ -115,7 +115,7 @@ void loadfullpal()
    RAMpal[BLACK] = _RGB(0, 0, 0);
    RAMpal[WHITE] = _RGB(63, 63, 63);
 
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 void loadlvlpal(int level)
@@ -137,7 +137,7 @@ void loadlvlpal(int level)
    if (!get_bit(quest_rules, qr_NOLEVEL3FIX) && level == 3)
       RAMpal[CSET(6) + 2] = NESpal(0x37);
 
-   create_rgb_table(&rgb_table, RAMpal, NULL);
+   create_rgb_table(&rgb_table, RAMpal);
    create_zc_trans_table(&trans_table, RAMpal, 128, 128, 128);
    memcpy(&trans_table2, &trans_table, sizeof(COLOR_MAP));
 
@@ -147,7 +147,7 @@ void loadlvlpal(int level)
       trans_table2.data[q][q] = q;
    }
 
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 void loadpalset(int cset, int dataset)
@@ -160,7 +160,7 @@ void loadpalset(int cset, int dataset)
    if (cset == 6 && !get_bit(quest_rules, qr_NOLEVEL3FIX) && DMaps[currdmap].color == 3)
       RAMpal[CSET(6) + 2] = NESpal(0x37);
 
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 void ringcolor(bool forceDefault)
@@ -172,7 +172,7 @@ void ringcolor(bool forceDefault)
    else
       loadpalset(6, 6);
 
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 void loadfadepal(int dataset)
@@ -185,7 +185,7 @@ void loadfadepal(int dataset)
       si += 3;
    }
 
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 void interpolatedfade()
@@ -211,7 +211,7 @@ void interpolatedfade()
    }
 
    fade_interpolate(RAMpal, black_palette, RAMpal, dpos, CSET(3), last);
-   refreshpal = true;
+   zc_sync_pal = true;
 }
 
 void fade(int level, bool blackall, bool fromblack)
@@ -243,7 +243,7 @@ void fade(int level, bool blackall, bool fromblack)
          }
 
          fade_interpolate(RAMpal, black_palette, RAMpal, dpos, CSET(3), last);
-         refreshpal = true;
+         zc_sync_pal = true;
       }
       else
       {
@@ -267,7 +267,7 @@ void fade(int level, bool blackall, bool fromblack)
                   for (int j = 0; j < pdFADE * 16; j++)
                      RAMpal[CSET(2) + j] = black_palette[0];
 
-                  refreshpal = true;
+                  zc_sync_pal = true;
                }
                else
                   loadfadepal(level * pdLEVEL + poFADE3);
@@ -281,7 +281,7 @@ void fade(int level, bool blackall, bool fromblack)
 
       advanceframe(true);
 
-      if (Quit)
+      if (zc_state)
          break;
 
       fromblack ? --cx : ++cx;
@@ -361,7 +361,7 @@ void lightingInstant()
       if (!get_bit(quest_rules, qr_NOLEVEL3FIX) && level == 3)
          RAMpal[CSET(6) + 2] = NESpal(0x37);
 
-      create_rgb_table(&rgb_table, RAMpal, NULL);
+      create_rgb_table(&rgb_table, RAMpal);
       create_zc_trans_table(&trans_table, RAMpal, 128, 128, 128);
       memcpy(&trans_table2, &trans_table, sizeof(COLOR_MAP));
 
@@ -398,7 +398,7 @@ void dryuplake()
          }
 
          RAMpal[CSET(3) + 3] = NESpal(drycolors[whistleclk >> 3]);
-         refreshpal = true;
+         zc_sync_pal = true;
 
       }
    }
@@ -421,7 +421,7 @@ void rehydratelake(bool instant)
    {
       usingdrypal = false;
       RAMpal[CSET(3) + 3] = olddrypal;
-      refreshpal = true;
+      zc_sync_pal = true;
       return;
    }
 
@@ -434,16 +434,16 @@ void rehydratelake(bool instant)
       if (usingdrypal)
       {
          RAMpal[CSET(3) + 3] = NESpal(drycolors[whistleclk >> 3]);
-         refreshpal = true;
+         zc_sync_pal = true;
       }
 
       advanceframe(true);
 
       if (((whistleclk >> 3) & 3) == 1)
-         for (int i = 0; i < 4 && !Quit; i++)
+         for (int i = 0; i < 4 && !zc_state; i++)
             advanceframe(true);
    }
-   while (whistleclk != 0 && !Quit);
+   while (whistleclk != 0 && !zc_state);
 
    whistleclk = -1;
 
@@ -451,7 +451,7 @@ void rehydratelake(bool instant)
    {
       usingdrypal = false;
       RAMpal[CSET(3) + 3] = olddrypal;
-      refreshpal = true;
+      zc_sync_pal = true;
    }
 }
 
@@ -493,12 +493,12 @@ void cycle_palette()
                si += 3;
             }
 
-            refreshpal = true;
+            zc_sync_pal = true;
          }
       }
    }
 
-   // No need to do handle refreshpal here; it's done in updatescr().
+   // No need to do handle zc_sync_pal here; it's done in updatescr().
 }
 
 int reverse_NESpal(RGB c)
@@ -530,7 +530,7 @@ int reverse_NESpal(RGB c)
   *  callback function is not NULL, it will be called 256 times during the
   *  calculation, allowing you to display a progress indicator.
   */
-void create_zc_trans_table(COLOR_MAP *table, AL_CONST PALETTE pal, int r, int g, int b)
+void create_zc_trans_table(COLOR_MAP *table, const PALETTE pal, int r, int g, int b)
 {
    int tmp[768], *q;
    int x, y, i, j, k;
@@ -611,7 +611,7 @@ void bestfit_init(void)
   *  times better than normal 256*32000 tests so the calculation time
   *  is now less than one second at all computers I tested.
   */
-void create_rgb_table_range(RGB_MAP *table, AL_CONST PALETTE pal, unsigned char start, unsigned char end)
+void create_rgb_table_range(RGB_MAP *table, const PALETTE pal, unsigned char start, unsigned char end)
 {
 #define UNUSED 65535
 #define LAST 65532

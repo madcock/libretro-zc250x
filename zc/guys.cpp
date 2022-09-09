@@ -8259,7 +8259,7 @@ void getBigTri(int id2)
 
    draw_screen(tmpscr);
 
-   for (int f = 0; f < 24 * 8 && !Quit; f++)
+   for (int f = 0; f < 24 * 8 && !zc_state; f++)
    {
       if (f == 4)
       {
@@ -8275,7 +8275,7 @@ void getBigTri(int id2)
                RAMpal[CSET(cs) + i] = _RGB(63, 63, 63);
          }
 
-         refreshpal = true;
+         zc_sync_pal = true;
       }
 
       if ((f & 7) == 4)
@@ -10808,7 +10808,7 @@ int addenemy(int x, int y, int z, int id, int clk)
 
             if (!guys.add(new esMoldorm((fix)x, (fix)y, id + 0x1000, segclk)))
             {
-               Z_message("Moldorm segment %d could not be created!\n", i + 1);
+               zc_message("Moldorm segment %d could not be created!\n", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10832,7 +10832,7 @@ int addenemy(int x, int y, int z, int id, int clk)
 
          if (!guys.add(new esLanmola((fix)x, (fix)y, id + 0x1000, 0)))
          {
-            Z_message("Lanmola segment 1 could not be created!\n");
+            zc_message("Lanmola segment 1 could not be created!\n");
             guys.del(guys.Count() - 1);
             return 0;
          }
@@ -10843,7 +10843,7 @@ int addenemy(int x, int y, int z, int id, int clk)
          {
             if (!guys.add(new esLanmola((fix)x, (fix)y, id + 0x2000, -(i << shft))))
             {
-               Z_message("Lanmola segment %d could not be created!\n", i + 1);
+               zc_message("Lanmola segment %d could not be created!\n", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10863,7 +10863,7 @@ int addenemy(int x, int y, int z, int id, int clk)
          {
             if (!guys.add(new esManhandla((fix)x, (fix)y, id + 0x1000, i)))
             {
-               Z_message("Manhandla head %d could not be created!\n", i + 1);
+               zc_message("Manhandla head %d could not be created!\n", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10884,7 +10884,7 @@ int addenemy(int x, int y, int z, int id, int clk)
          {
             if (!guys.add(new esGleeok((fix)x, (fix)y, id + 0x1000, c, e)))
             {
-               Z_message("Gleeok head %d could not be created!\n", i + 1);
+               zc_message("Gleeok head %d could not be created!\n", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10908,7 +10908,7 @@ int addenemy(int x, int y, int z, int id, int clk)
             if (!(guysbuf[id].misc10 ? guys.add(new esPatraBS((fix)x, (fix)y, id + 0x1000, i)) : guys.add(new esPatra((fix)x,
                   (fix)y, id + 0x1000, i))))
             {
-               Z_message("Patra outer eye %d could not be created!\n", i + 1);
+               zc_message("Patra outer eye %d could not be created!\n", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10924,7 +10924,7 @@ int addenemy(int x, int y, int z, int id, int clk)
          {
             if (!guys.add(new esPatra((fix)x, (fix)y, id + 0x1000, i)))
             {
-               Z_message("Patra inner eye %d could not be created!\n", i + 1);
+               zc_message("Patra inner eye %d could not be created!\n", i + 1);
                for (int j = 0; j < i + 1 + zc_min(254, outeyes); j++)
                   guys.del(guys.Count() - 1);
 
@@ -12531,7 +12531,7 @@ void putmsg()
 
             if (MsgStrings[msgstr].s[msgptr] == ' ')
             {
-               tlength = msgfont->vtable->char_length(msgfont, MsgStrings[msgstr].s[msgptr]) + MsgStrings[msgstr].hspace;
+               tlength = char_length(msgfont, MsgStrings[msgstr].s[msgptr]) + MsgStrings[msgstr].hspace;
 
                if (cursor_x + tlength > msg_w && ((cursor_x > msg_w
                                                    || !(MsgStrings[msgstr].stringflags & STRINGFLAG_WRAP)) ? true : strcmp(s3, " ") != 0))
@@ -12558,7 +12558,7 @@ void putmsg()
                sfx(MsgStrings[msgstr].sfx);
                textprintf_ex(msgbmpbuf, msgfont, cursor_x + 8, cursor_y + 8, msgcolour, -1,
                              "%c", MsgStrings[msgstr].s[msgptr]);
-               cursor_x += msgfont->vtable->char_length(msgfont, MsgStrings[msgstr].s[msgptr]);
+               cursor_x += char_length(msgfont, MsgStrings[msgstr].s[msgptr]);
                cursor_x += MsgStrings[msgstr].hspace;
             }
 
@@ -12597,7 +12597,7 @@ breakout:
    {
       while (MsgStrings[msgstr].s[msgptr] == ' ')
       {
-         tlength = msgfont->vtable->char_length(msgfont, MsgStrings[msgstr].s[msgptr]) + MsgStrings[msgstr].hspace;
+         tlength = char_length(msgfont, MsgStrings[msgstr].s[msgptr]) + MsgStrings[msgstr].hspace;
 
          if (cursor_x + tlength > msg_w && ((cursor_x > msg_w
                                              || !(MsgStrings[msgstr].stringflags & STRINGFLAG_WRAP)) ? 1 : strcmp(s3, " ") != 0))
@@ -12646,7 +12646,7 @@ breakout:
          sfx(MsgStrings[msgstr].sfx);
          textprintf_ex(msgbmpbuf, msgfont, cursor_x + 8, cursor_y + 8, msgcolour, -1,
                        "%c", MsgStrings[msgstr].s[msgptr]);
-         cursor_x += msgfont->vtable->char_length(msgfont, MsgStrings[msgstr].s[msgptr]);
+         cursor_x += char_length(msgfont, MsgStrings[msgstr].s[msgptr]);
          cursor_x += MsgStrings[msgstr].hspace;
          msgpos++;
       }
@@ -12669,7 +12669,7 @@ breakout:
       if ((MsgStrings[msgstr].s[msgptr] == ' ') && (MsgStrings[msgstr].s[msgptr + 1] == ' '))
          while (MsgStrings[msgstr].s[msgptr] == ' ')
          {
-            tlength = msgfont->vtable->char_length(msgfont, MsgStrings[msgstr].s[msgptr]) + MsgStrings[msgstr].hspace;
+            tlength = char_length(msgfont, MsgStrings[msgstr].s[msgptr]) + MsgStrings[msgstr].hspace;
 
             if (cursor_x + tlength > msg_w && ((cursor_x > msg_w
                                                 || !(MsgStrings[msgstr].stringflags & STRINGFLAG_WRAP)) ? true : strcmp(s3, " ") != 0))
@@ -12773,37 +12773,6 @@ void check_collisions()
             {
                int h = e->takehit(w);
 
-               // NOT FOR PUBLIC RELEASE
-               /*if(h==3) //Mirror shield
-               {
-               if (w->id==ewFireball || w->id==wRefFireball)
-               {
-                 w->id=wRefFireball;
-                 switch(e->dir)
-                 {
-                case up:    e->angle += (PI - e->angle) * 2.0;      break;
-                case down:  e->angle = -e->angle;                   break;
-                case left:  e->angle += ((-PI/2) - e->angle) * 2.0; break;
-                case right: e->angle += (( PI/2) - e->angle) * 2.0; break;
-                // TODO: the following. -L.
-                case l_up:  break;
-                case r_up:  break;
-                case l_down: break;
-                case r_down: break;
-                 }
-               }
-               else
-               {
-                 w->id = ((w->id==ewMagic || w->id==wRefMagic || w->id==wMagic) ? wRefMagic : wRefBeam);
-                 w->dir ^= 1;
-                 if(w->dir&2)
-                w->flip ^= 1;
-                 else
-                w->flip ^= 2;
-               }
-               w->ignoreLink=false;
-               }
-               else*/
                if (h)
                   w->onhit(false);
 

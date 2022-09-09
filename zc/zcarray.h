@@ -37,8 +37,6 @@ ArrayIterator<*>{
 #ifndef __ZCARRAY_H_
 #define __ZCARRAY_H_
 
-extern void Z_message(const char *format, ...);
-
 template <typename T> class ZCArrayIterator;
 template <typename T> class ZCArray;
 
@@ -453,7 +451,7 @@ protected:
 
       if (size == 0)
       {
-         Z_message("Tried to allocate zero sized array\n");
+         zc_message("Tried to allocate zero sized array\n");
          size = 1;
       }
 
@@ -517,7 +515,7 @@ protected:
    {
       if (_X >= _size)
       {
-         Z_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.\n");
          throw ("Array indices out of range.");
       }
    }
@@ -526,7 +524,7 @@ protected:
    {
       if (Offset(_Y, _X) >= _size)
       {
-         Z_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.\n");
          throw ("Array indices out of range.");
       }
    }
@@ -535,7 +533,7 @@ protected:
    {
       if (Offset(_Z, _Y, _X) >= _size)
       {
-         Z_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.\n");
          throw ("Array indices out of range.");
       }
    }
@@ -544,7 +542,7 @@ protected:
    {
       if (_X >= _size)
       {
-         Z_message("Array index (%i) out of range (%i).\n", _X, _size);
+         zc_message("Array index (%i) out of range (%i).\n", _X, _size);
          return false;
       }
 
@@ -555,7 +553,7 @@ protected:
    {
       if (Offset(_Y, _X) >= _size)
       {
-         Z_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.\n");
          return false;
       }
 
@@ -566,7 +564,7 @@ protected:
    {
       if (Offset(_Z, _Y, _X) >= _size)
       {
-         Z_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.\n");
          return false;
       }
 

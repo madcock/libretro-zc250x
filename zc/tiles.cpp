@@ -252,7 +252,7 @@ void reset_tile(tiledata *buf, int t, int format = 1)
    buf[t].data = (byte *)malloc(tilesize(buf[t].format));
 
    if (buf[t].data == NULL)
-      Z_error("Unable to initialize tile #%d.\n", t);
+      zc_error("Unable to initialize tile #%d.\n", t);
 
    for (int i = 0; i < tilesize(buf[t].format); i++)
       buf[t].data[i] = 0;
@@ -2153,7 +2153,7 @@ int tilesize(byte format)
          return (64 << format);
    }
 
-   Z_message("Invalid tile format encountered.\n");
+   zc_message("Invalid tile format encountered.\n");
 
    // BUG: This is triggered by the 'grab' option, and certainly others as well.
    // if at any point a selected tile is 'blank' (newtilebuf[0] for example), then we have might a problem.

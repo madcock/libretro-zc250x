@@ -125,7 +125,7 @@ static FONT_GLYPH *_find_glyph(const FONT *f, int ch)
 /* char_length:
  *  Returns the length, in pixels, of a character as rendered.
  */
-static int char_length(const FONT *f, int ch)
+int char_length(const FONT *f, int ch)
 {
    FONT_GLYPH *g = _find_glyph(f, ch);
    return g ? g->width : 0;
