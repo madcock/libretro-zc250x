@@ -35,7 +35,7 @@ void minimaptitle(BITMAP *dest, int x, int y, FONT *tempfont, int color, int sha
 void animate_selectors();
 void delete_selectors();
 
-INLINE void putdot(BITMAP *dest, int x, int y, int c)
+inline void putdot(BITMAP *dest, int x, int y, int c)
 {
    rectfill(dest, x, y, x + 2, y + 2, c);
 }

@@ -110,7 +110,7 @@ combo_alias
 combo_aliases[MAXCOMBOALIASES];  //Temporarily here so ZC can compile. All memory from this is freed after loading the quest file.
 
 SAMPLE customsfxdata[SFX_COUNT];
-int sfxdat = 1;
+bool use_sfxdat = true;
 
 int homescr, currscr, frame = 0, currmap = 0, dlevel, warpscr, worldscr;
 int newscr_clk = 0, opendoors = 0, currdmap = 0, fadeclk = -1, currgame = 0, listpos = 0;
@@ -133,7 +133,7 @@ bool zc_sync_pal, blockpath, loaded_guys, freeze_guys,
 bool darkroom = false, naturaldark = false, BSZ;
 bool Udown, Ddown, Ldown, Rdown, Adown, Bdown, Sdown, Mdown, LBdown, RBdown, Pdown, Ex1down, Ex2down, Ex3down, Ex4down,
      AUdown, ADdown, ALdown, ARdown,
-     NESquit, boughtsomething = false,
+     nes_quit, boughtsomething = false,
               fixed_door = false, hookshot_used = false, hookshot_frozen = false,
               pull_link = false, add_chainlink = false, del_chainlink = false, hs_fix = false,
               cheat_superman = false, checklink = true, didpit = false,

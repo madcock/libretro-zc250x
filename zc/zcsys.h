@@ -7,12 +7,8 @@ void Z_init_sound();
 
 void draw_lens_under(BITMAP *dest, bool layer);
 void draw_lens_over();
-void f_Quit(int type);
 void advanceframe(bool allow_gfx);
 void updatescr(bool allow_gfx);
-void syskeys();
-
-bool ReadKey(int k);
 void eat_buttons();
 
 extern bool control_state[18];

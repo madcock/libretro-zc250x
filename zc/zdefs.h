@@ -2326,20 +2326,20 @@ struct zcmap
 #define DCLICK_NOT        3
 
 template <class T>
-INLINE T sign(T a)
+inline T sign(T a)
 {
    return T(a < 0 ? -1 : 1);
 }
 
 template <class T>
-static INLINE void zc_swap(T &a, T &b)
+static inline void zc_swap(T &a, T &b)
 {
    T c = a;
    a = b;
    b = c;
 }
 
-INLINE fix abs(fix f)
+inline fix abs(fix f)
 {
    fix t;
 
@@ -2351,7 +2351,7 @@ INLINE fix abs(fix f)
    return t;
 }
 
-INLINE bool pfwrite(void *p, long n, PACKFILE *f)
+inline bool pfwrite(void *p, long n, PACKFILE *f)
 {
    bool success = true;
 
@@ -2361,7 +2361,7 @@ INLINE bool pfwrite(void *p, long n, PACKFILE *f)
    return success;
 }
 
-INLINE bool pfread(void *p, long n, PACKFILE *f, bool keepdata)
+inline bool pfread(void *p, long n, PACKFILE *f, bool keepdata)
 {
    bool success;
 
@@ -2379,7 +2379,7 @@ INLINE bool pfread(void *p, long n, PACKFILE *f, bool keepdata)
    }
 }
 
-INLINE bool p_getc(void *p, PACKFILE *f, bool keepdata)
+inline bool p_getc(void *p, PACKFILE *f, bool keepdata)
 {
    unsigned char *cp = (unsigned char *)p;
    int c;
@@ -2401,7 +2401,7 @@ INLINE bool p_getc(void *p, PACKFILE *f, bool keepdata)
    return true;
 }
 
-INLINE bool p_putc(int c, PACKFILE *f)
+inline bool p_putc(int c, PACKFILE *f)
 {
    bool success = true;
 
@@ -2416,7 +2416,7 @@ INLINE bool p_putc(int c, PACKFILE *f)
    return success;
 }
 
-INLINE bool p_igetw(void *p, PACKFILE *f, bool keepdata)
+inline bool p_igetw(void *p, PACKFILE *f, bool keepdata)
 {
    short *cp = (short *)p;
    int c;
@@ -2438,7 +2438,7 @@ INLINE bool p_igetw(void *p, PACKFILE *f, bool keepdata)
    return true;
 }
 
-INLINE bool p_iputw(int c, PACKFILE *f)
+inline bool p_iputw(int c, PACKFILE *f)
 {
    bool success = true;
 
@@ -2454,7 +2454,7 @@ INLINE bool p_iputw(int c, PACKFILE *f)
    return success;
 }
 
-INLINE bool p_igetl(void *p, PACKFILE *f, bool keepdata)
+inline bool p_igetl(void *p, PACKFILE *f, bool keepdata)
 {
    dword *cp = (dword *)p;
    long32 c;
@@ -2476,7 +2476,7 @@ INLINE bool p_igetl(void *p, PACKFILE *f, bool keepdata)
    return true;
 }
 
-INLINE bool p_igetd(void *p, PACKFILE *f, bool keepdata)
+inline bool p_igetd(void *p, PACKFILE *f, bool keepdata)
 {
    long32 temp;
    bool result = p_igetl(&temp, f, keepdata);
@@ -2484,7 +2484,7 @@ INLINE bool p_igetd(void *p, PACKFILE *f, bool keepdata)
    return result;
 }
 
-INLINE bool p_igetf(void *p, PACKFILE *f, bool keepdata)
+inline bool p_igetf(void *p, PACKFILE *f, bool keepdata)
 {
    if (!f) return false;
    if (f->normal.flags & PACKFILE_FLAG_WRITE) return false;  //must not be writing to file
@@ -2507,7 +2507,7 @@ INLINE bool p_igetf(void *p, PACKFILE *f, bool keepdata)
    return true;
 }
 
-INLINE bool p_iputl(long c, PACKFILE *f)
+inline bool p_iputl(long c, PACKFILE *f)
 {
    bool success = true;
 
@@ -2522,7 +2522,7 @@ INLINE bool p_iputl(long c, PACKFILE *f)
    return success;
 }
 
-INLINE bool p_mgetw(void *p, PACKFILE *f, bool keepdata)
+inline bool p_mgetw(void *p, PACKFILE *f, bool keepdata)
 {
    short *cp = (short *)p;
    int c;
@@ -2544,7 +2544,7 @@ INLINE bool p_mgetw(void *p, PACKFILE *f, bool keepdata)
    return true;
 }
 
-INLINE bool p_mputw(int c, PACKFILE *f)
+inline bool p_mputw(int c, PACKFILE *f)
 {
    bool success = true;
 
@@ -2559,7 +2559,7 @@ INLINE bool p_mputw(int c, PACKFILE *f)
    return success;
 }
 
-INLINE bool p_mgetl(void *p, PACKFILE *f, bool keepdata)
+inline bool p_mgetl(void *p, PACKFILE *f, bool keepdata)
 {
    dword *cp = (dword *)p;
    long32 c;
@@ -2581,7 +2581,7 @@ INLINE bool p_mgetl(void *p, PACKFILE *f, bool keepdata)
    return true;
 }
 
-INLINE bool p_mputl(long c, PACKFILE *f)
+inline bool p_mputl(long c, PACKFILE *f)
 {
    bool success = true;
 
@@ -2597,7 +2597,7 @@ INLINE bool p_mputl(long c, PACKFILE *f)
    return success;
 }
 
-INLINE bool isinRect(int x, int y, int rx1, int ry1, int rx2, int ry2)
+inline bool isinRect(int x, int y, int rx1, int ry1, int rx2, int ry2)
 {
    return x >= rx1 && x <= rx2 && y >= ry1 && y <= ry2;
 }

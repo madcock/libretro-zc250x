@@ -33,6 +33,8 @@ extern int pan_style;
 extern bool trans_layers;
 extern bool allow_cheats;
 extern bool heart_beep;
+extern bool nes_quit;
+extern bool use_sfxdat;
 extern char sfx_file[16];
 extern char sf2_file[16];
 

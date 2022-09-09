@@ -103,7 +103,7 @@ public:
       return (*stack)[stackoffset];
    }
 
-   static INLINE long32 get_arg(long32 arg, bool v)
+   static inline long32 get_arg(long32 arg, bool v)
    {
       return v ? arg : get_register(arg);
    }
@@ -221,7 +221,7 @@ class BC : public SH
 {
 public:
 
-   static INLINE int checkMapID(const long32 ID, const char *const str)
+   static inline int checkMapID(const long32 ID, const char *const str)
    {
       //return checkBounds(ID, 0, map_count-1, str);
       if (ID < 0 || ID > map_count - 1)
@@ -233,92 +233,92 @@ public:
       return _NoError;
    }
 
-   static INLINE int checkDMapID(const long32 ID, const char *const str)
+   static inline int checkDMapID(const long32 ID, const char *const str)
    {
       return checkBounds(ID, 0, MAXDMAPS - 1, str);
    }
 
-   static INLINE int checkComboPos(const long32 pos, const char *const str)
+   static inline int checkComboPos(const long32 pos, const char *const str)
    {
       return checkBounds(pos, 0, 175, str);
    }
 
-   static INLINE int checkTile(const long32 pos, const char *const str)
+   static inline int checkTile(const long32 pos, const char *const str)
    {
       return checkBounds(pos, 0, NEWMAXTILES - 1, str);
    }
 
-   static INLINE int checkCombo(const long32 pos, const char *const str)
+   static inline int checkCombo(const long32 pos, const char *const str)
    {
       return checkBounds(pos, 0, MAXCOMBOS - 1, str);
    }
 
-   static INLINE int checkMisc(const long32 a, const char *const str)
+   static inline int checkMisc(const long32 a, const char *const str)
    {
       return checkBounds(a, 0, 15, str);
    }
 
-   static INLINE int checkMessage(const long32 ID, const char *const str)
+   static inline int checkMessage(const long32 ID, const char *const str)
    {
       return checkBounds(ID, 0, msg_strings_size - 1, str);
    }
 
-   static INLINE int checkLayer(const long32 layer, const char *const str)
+   static inline int checkLayer(const long32 layer, const char *const str)
    {
       return checkBounds(layer, 0, 6, str);
    }
 
-   static INLINE int checkFFC(const long32 ffc, const char *const str)
+   static inline int checkFFC(const long32 ffc, const char *const str)
    {
       return checkBounds(ffc, 0, MAXFFCS - 1, str);
    }
 
-   static INLINE int checkGuyIndex(const long32 index, const char *const str)
+   static inline int checkGuyIndex(const long32 index, const char *const str)
    {
       return checkBounds(index, 0, guys.Count() - 1, str);
    }
 
-   static INLINE int checkItemIndex(const long32 index, const char *const str)
+   static inline int checkItemIndex(const long32 index, const char *const str)
    {
       return checkBounds(index, 0, items.Count() - 1, str);
    }
 
-   static INLINE int checkEWeaponIndex(const long32 index, const char *const str)
+   static inline int checkEWeaponIndex(const long32 index, const char *const str)
    {
       return checkBounds(index, 0, Ewpns.Count() - 1, str);
    }
 
-   static INLINE int checkLWeaponIndex(const long32 index, const char *const str)
+   static inline int checkLWeaponIndex(const long32 index, const char *const str)
    {
       return checkBounds(index, 0, Lwpns.Count() - 1, str);
    }
 
-   static INLINE int checkGuyID(const long32 ID, const char *const str)
+   static inline int checkGuyID(const long32 ID, const char *const str)
    {
       return checkBounds(ID, 0, MAXGUYS - 1, str);
    }
 
-   static INLINE int checkItemID(const long32 ID, const char *const str)
+   static inline int checkItemID(const long32 ID, const char *const str)
    {
       return checkBounds(ID, 0, ITEMCNT - 1, str);
    }
 
-   static INLINE int checkWeaponID(const long32 ID, const char *const str)
+   static inline int checkWeaponID(const long32 ID, const char *const str)
    {
       return checkBounds(ID, 0, WPNCNT - 1, str);
    }
 
-   static INLINE int checkWeaponMiscSprite(const long32 ID, const char *const str)
+   static inline int checkWeaponMiscSprite(const long32 ID, const char *const str)
    {
       return checkBounds(ID, 0, MAXWPNS - 1, str);
    }
 
-   static INLINE int checkSFXID(const long32 ID, const char *const str)
+   static inline int checkSFXID(const long32 ID, const char *const str)
    {
       return checkBounds(ID, 0, SFX_COUNT - 1, str);
    }
 
-   static INLINE int checkBounds(const long32 n, const long32 boundlow, const long32 boundup, const char *const funcvar)
+   static inline int checkBounds(const long32 n, const long32 boundlow, const long32 boundup, const char *const funcvar)
    {
       if (n < boundlow || n > boundup)
       {
@@ -329,7 +329,7 @@ public:
       return _NoError;
    }
 
-   static INLINE int checkUserArrayIndex(const long32 index, const dword size)
+   static inline int checkUserArrayIndex(const long32 index, const dword size)
    {
       if (index < 0 || index >= long32(size))
       {
@@ -369,7 +369,7 @@ public:
       return _NoError;
    }
 
-   static INLINE enemy *getNPC()
+   static inline enemy *getNPC()
    {
       return tempenemy;
    }
@@ -458,7 +458,7 @@ public:
              | ornextflag(tempenemy->flags & (guy_bkshield));
    }
 
-   static INLINE void clearTemp()
+   static inline void clearTemp()
    {
       tempenemy = NULL;
    }
@@ -493,12 +493,12 @@ public:
       return _NoError;
    }
 
-   static INLINE item *getItem()
+   static inline item *getItem()
    {
       return tempitem;
    }
 
-   static INLINE void clearTemp()
+   static inline void clearTemp()
    {
       tempitem = NULL;
    }
@@ -533,12 +533,12 @@ public:
       return _NoError;
    }
 
-   static INLINE weapon *getWeapon()
+   static inline weapon *getWeapon()
    {
       return tempweapon;
    }
 
-   static INLINE void clearTemp()
+   static inline void clearTemp()
    {
       tempweapon = NULL;
    }
@@ -573,12 +573,12 @@ public:
       return _NoError;
    }
 
-   static INLINE weapon *getWeapon()
+   static inline weapon *getWeapon()
    {
       return tempweapon;
    }
 
-   static INLINE void clearTemp()
+   static inline void clearTemp()
    {
       tempweapon = NULL;
    }
@@ -692,7 +692,7 @@ public:
    }
 
    //Get element from array
-   static INLINE long32 getElement(const long32 ptr, const long32 offset)
+   static inline long32 getElement(const long32 ptr, const long32 offset)
    {
       ZScriptArray &a = getArray(ptr);
 
@@ -706,7 +706,7 @@ public:
    }
 
    //Set element in array
-   static INLINE void setElement(const long32 ptr, const long32 offset, const long32 value)
+   static inline void setElement(const long32 ptr, const long32 offset, const long32 value)
    {
       ZScriptArray &a = getArray(ptr);
 
@@ -5707,7 +5707,7 @@ void do_message(const bool v)
       donewmsg(ID);
 }
 
-INLINE void set_drawing_command_args(const int j, const word numargs)
+inline void set_drawing_command_args(const int j, const word numargs)
 {
    for (int k = 1; k <= numargs; k++)
       script_drawing_commands[j][k] = SH::read_stack(ri->sp + (numargs - k));

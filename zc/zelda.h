@@ -89,12 +89,12 @@ int get_bmaps(int si);
 bool no_subscreen();
 void setZScriptVersion(int s_version);
 
-INLINE void sfx(int index)
+inline void sfx(int index)
 {
    sfx(index, 128, false);
 }
 
-INLINE void sfx(int index, int pan)
+inline void sfx(int index, int pan)
 {
    sfx(index, vbound(pan, 0, 255), false);
 }
@@ -167,7 +167,7 @@ extern bool blockpath, loaded_guys, freeze_guys;
 extern bool loaded_enemies, drawguys, watch;
 extern bool Udown, Ddown, Ldown, Rdown, Adown, Bdown, Sdown, Mdown, LBdown, RBdown, Pdown, Ex1down, Ex2down, Ex3down,
        Ex4down, AUdown, ADdown, ALdown, ARdown;
-extern bool NESquit, boughtsomething;
+extern bool boughtsomething;
 extern bool fixed_door, darkroom, naturaldark, BSZ;
 extern bool hookshot_used, hookshot_frozen, pull_link, add_chainlink;
 extern bool del_chainlink, hs_fix, cheat_superman, checklink;
@@ -194,7 +194,6 @@ extern ffscript *wpnscripts[256];
 extern ffscript *linkscripts[3];
 extern ffscript *screenscripts[256];
 extern SAMPLE customsfxdata[SFX_COUNT];
-extern int sfxdat;
 
 #define MAX_ZCARRAY_SIZE   4096
 typedef ZCArray<long32> ZScriptArray;

@@ -4569,7 +4569,7 @@ void dosubscr(miscQdata *misc)
 
       advanceframe(false);
 
-      if (NESquit && Up() && cAbtn() && cBbtn())
+      if (nes_quit && Up() && cAbtn() && cBbtn())
       {
          Udown = true;
          zc_state = ZC_QUIT;

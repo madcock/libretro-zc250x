@@ -20,21 +20,8 @@
 
 static int sfx_voice[SFX_COUNT];
 
-extern FONT *lfont;
 extern LinkClass Link;
 extern sprite_list  guys, items, Ewpns, Lwpns, Sitems, chainlinks, decorations, particles;
-
-/**********************************/
-/******** System functions ********/
-/**********************************/
-
-/*
-void load_game_configs()
-{
-   NESquit = get_config_int(cfg_sect, "fastquit", 0) != 0;
-   sfxdat = get_config_int(cfg_sect, "use_sfx_dat", 1);
-}
-*/
 
 //----------------------------------------------------------------
 
@@ -780,7 +767,6 @@ void close_black_opening(int x, int y, bool wait)
       {
          draw_screen(tmpscr);
          put_passive_subscr(framebuf, &QMisc, 0, 0, false, sspUP);
-         syskeys();
          advanceframe(true);
 
          if (zc_state)
@@ -816,7 +802,6 @@ void open_black_opening(int x, int y, bool wait)
       {
          draw_screen(tmpscr);
          put_passive_subscr(framebuf, &QMisc, 0, 0, false, sspUP);
-         syskeys();
          advanceframe(true);
 
          if (zc_state)
@@ -2436,65 +2421,12 @@ void updatescr(bool allow_gfx)
 
 //----------------------------------------------------------------
 
-void f_Quit(int type)
-{
-   music_pause();
-   pause_all_sfx();
-
-   switch (type)
-   {
-      case ZC_RESET:
-         zc_state = ZC_RESET;
-         break;
-
-      case ZC_EXIT:
-         zc_state = ZC_EXIT;
-         break;
-   }
-
-   if (zc_state)
-   {
-      kill_sfx();
-      music_stop();
-   }
-   else
-   {
-      music_resume();
-      resume_all_sfx();
-   }
-
-   eat_buttons();
-}
-
-//----------------------------------------------------------------
-
 void zc_action(int state)
 {
    music_pause();
    pause_all_sfx();
    zc_state = state;
    eat_buttons();
-}
-
-void syskeys()
-{
-   /*if (ReadKey(KEY_F8))    quakeclk = 100;
-
-   if (ReadKey(KEY_F9))    f_Quit(ZC_RESET);
-
-   if (ReadKey(KEY_F10))   f_Quit(ZC_EXIT);
-
-   if (ReadKey(KEY_H))  game->set_life(game->get_maxlife());
-   if (ReadKey(KEY_M))  game->set_magic(game->get_maxmagic());
-   if (ReadKey(KEY_R))  game->set_drupy(999);
-   if (ReadKey(KEY_B))  game->set_bombs(game->get_maxbombs());
-   if (ReadKey(KEY_C))
-   {
-      Link.setClock(!Link.getClock());
-      cheat_superman = Link.getClock();
-   }
-   */
-   verifyBothWeapons();
 }
 
 // 99*360 + 59*60
@@ -2513,7 +2445,6 @@ void advanceframe(bool allow_gfx)
 
    ++frame;
 
-   syskeys();
    updatescr(allow_gfx);
    sfx_cleanup();
 }
@@ -2529,7 +2460,6 @@ void zapout()
    for (int i = 1; i <= 24; i++)
    {
       draw_fuzzy(i);
-      syskeys();
       advanceframe(true);
 
       if (zc_state)
@@ -2548,7 +2478,6 @@ void zapin()
    for (int i = 24; i >= 1; i--)
    {
       draw_fuzzy(i);
-      syskeys();
       advanceframe(true);
 
       if (zc_state)
@@ -2601,8 +2530,6 @@ void wavyout(bool showlink)
          }
       }
 
-      syskeys();
-      
       /* ensure changes get applied */
       zc_sync_pal = true;
       advanceframe(true);
@@ -2662,8 +2589,6 @@ void wavyin()
          }
       }
 
-      syskeys();
-
       /* ensure the palette change gets applied */
       zc_sync_pal = true;
       advanceframe(true);
@@ -2691,7 +2616,6 @@ void blackscr(int fcnt, bool showsubscr)
       if (showsubscr)
          put_passive_subscr(framebuf, &QMisc, 0, 0, false, sspUP);
 
-      syskeys();
       advanceframe(true);
 
       if (zc_state)
@@ -2730,7 +2654,6 @@ void openscreen()
          rectfill(framebuf, 256 - x, PLAYFIELD_OFFSET, 255, 167 + PLAYFIELD_OFFSET, 0);
       }
 
-      syskeys();
       advanceframe(true);
 
       if (zc_state)
@@ -2778,7 +2701,7 @@ void music_stop()
 /**** Custom Sound System ****/
 /*****************************/
 
-INLINE int mixvol(int v1, int v2)
+inline int mixvol(int v1, int v2)
 {
    return (zc_min(v1, 255) * zc_min(v2, 255)) >> 8;
 }
@@ -3011,7 +2934,7 @@ bool sfx_init(int index)
 
    if (sfx_voice[index] == -1)
    {
-      if (sfxdat)
+      if (use_sfxdat)
       {
          if (index < Z35)
             sfx_voice[index] = allocate_voice((SAMPLE *)sfxdata[index].dat);

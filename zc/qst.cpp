@@ -591,18 +591,18 @@ int MakeDoors(int map, int scr)
      */
 }
 
-INLINE int tcmbdat2(int map, int scr, int pos)
+inline int tcmbdat2(int map, int scr, int pos)
 {
    return (TheMaps[map * MAPSCRS + TEMPLATE2].data[pos] & 0xFF) + ((TheMaps[map * MAPSCRS + scr].old_cpage) << 8);
 }
 
-INLINE int tcmbcset2(int map, int pos)
+inline int tcmbcset2(int map, int pos)
 {
 
    return TheMaps[map * MAPSCRS + TEMPLATE2].cset[pos];
 }
 
-INLINE int tcmbflag2(int map, int pos)
+inline int tcmbflag2(int map, int pos)
 {
    return TheMaps[map * MAPSCRS + TEMPLATE2].sflag[pos];
 }
@@ -5416,7 +5416,6 @@ int read_one_ffscript(PACKFILE *f, zquestheader *, bool keepdata, int, word s_ve
 }
 
 extern SAMPLE customsfxdata[SFX_COUNT];
-extern int sfxdat;
 extern DATAFILE *sfxdata;
 
 int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
@@ -5602,7 +5601,7 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
       free(temp_sample.data);
    }
 
-   sfxdat = 0;
+   use_sfxdat = false;
    return 0;
 }
 
