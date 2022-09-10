@@ -5,7 +5,7 @@
 
 extern int CSET_SIZE;                                       // this is only changed to 4 in the NES title screen
 extern int CSET_SHFT;                                       // log2 of CSET_SIZE
-extern byte nes_pal[];
+extern uint8_t nes_pal[];
 
 #define CSET(x)         ((x)<<CSET_SHFT)
 #define csBOSS          14
@@ -31,7 +31,7 @@ extern byte nes_pal[];
 // palette data sizes in bytes
 #define newerpsTOTAL ((newerpdTOTAL<<4)*3)
 
-extern RGB _RGB(byte *si);
+extern RGB _RGB(uint8_t *si);
 extern RGB _RGB(int r, int g, int b);
 
 extern void loadfullpal();

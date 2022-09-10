@@ -30,10 +30,10 @@ short ffposx[32] = {-1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -100
 short ffposy[32] = {-1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000,
                     -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000, -1000
                     };
-long32 ffprvx[32] = {-10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000,
+int32_t ffprvx[32] = {-10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000,
                      -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000
                      };
-long32 ffprvy[32] = {-10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000,
+int32_t ffprvy[32] = {-10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000,
                      -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000, -10000000
                      };
 
@@ -230,7 +230,7 @@ const char *screenstate_string[15] =
    "Boss Locked Chests", "Secrets", "Visited"
 };
 
-void eventlog_mapflag_line(word *g, word flag, int ss_s_index)
+void eventlog_mapflag_line(uint16_t *g, uint16_t flag, int ss_s_index)
 {
    if ((*g)&flag)
    {
@@ -241,8 +241,8 @@ void eventlog_mapflag_line(word *g, word flag, int ss_s_index)
 
 void eventlog_mapflags()
 {
-   word g = game->maps[(currmap * MAPSCRSNORMAL) + homescr] & 0x3FFF;
-   word g2 = g;
+   uint16_t g = game->maps[(currmap * MAPSCRSNORMAL) + homescr] & 0x3FFF;
+   uint16_t g2 = g;
    Z_eventlog("Screen (%d, %02x) %s", currmap + 1, homescr, (g2) != 0 ? "[" : "");
    // Print them in order of importance.
    eventlog_mapflag_line(&g, mSECRET, 13);
@@ -265,8 +265,8 @@ void eventlog_mapflags()
 // set specific flag
 void setmapflag(int mi2, int flag)
 {
-   byte cscr = mi2 & ((1 << 7) - 1);
-   byte cmap = (mi2 >> 7);
+   uint8_t cscr = mi2 & ((1 << 7) - 1);
+   uint8_t cmap = (mi2 >> 7);
    char buf[20];
    sprintf(buf, "Screen (%d, %02X)", cmap + 1, cscr);
 
@@ -278,8 +278,8 @@ void setmapflag(int mi2, int flag)
    if (flag == mSECRET || flag == mITEM || flag == mBELOW || flag == mLOCKBLOCK ||
          flag == mBOSSLOCKBLOCK || flag == mCHEST || flag == mBOSSCHEST || flag == mLOCKEDCHEST)
    {
-      byte nmap = TheMaps[((cmap) * MAPSCRS) + cscr].nextmap;
-      byte nscr = TheMaps[((cmap) * MAPSCRS) + cscr].nextscr;
+      uint8_t nmap = TheMaps[((cmap) * MAPSCRS) + cscr].nextmap;
+      uint8_t nscr = TheMaps[((cmap) * MAPSCRS) + cscr].nextscr;
 
       std::vector<int> done;
       bool looped = (nmap == cmap + 1 && nscr == cscr);
@@ -324,8 +324,8 @@ void unsetmapflag(int mi2, int flag, bool anyflag)
    }
    else game->maps[(currmap * MAPSCRSNORMAL) + homescr] &= ~flag;
 
-   byte cscr = mi2 & ((1 << 7) - 1);
-   byte cmap = (mi2 >> 7);
+   uint8_t cscr = mi2 & ((1 << 7) - 1);
+   uint8_t cmap = (mi2 >> 7);
    char buf[20];
    sprintf(buf, "Screen (%d, %02X)", cmap + 1, cscr);
 
@@ -336,8 +336,8 @@ void unsetmapflag(int mi2, int flag, bool anyflag)
    if (flag == mSECRET || flag == mITEM || flag == mBELOW || flag == mLOCKBLOCK ||
          flag == mBOSSLOCKBLOCK || flag == mCHEST || flag == mBOSSCHEST || flag == mLOCKEDCHEST)
    {
-      byte nmap = TheMaps[((cmap) * MAPSCRS) + cscr].nextmap;
-      byte nscr = TheMaps[((cmap) * MAPSCRS) + cscr].nextscr;
+      uint8_t nmap = TheMaps[((cmap) * MAPSCRS) + cscr].nextmap;
+      uint8_t nscr = TheMaps[((cmap) * MAPSCRS) + cscr].nextscr;
 
       std::vector<int> done;
       bool looped = (nmap == cmap + 1 && nscr == cscr);
@@ -3277,13 +3277,13 @@ void openshutters()
 
 void loadscr(int tmp, int destdmap, int scr, int ldir, bool overlay = false)
 {
-   for (word x = 0; x < animated_combos; x++)
+   for (uint16_t x = 0; x < animated_combos; x++)
    {
       if (combobuf[animated_combo_table4[x][0]].nextcombo != 0)
          animated_combo_table4[x][1] = 0;
    }
 
-   for (word x = 0; x < animated_combos2; x++)
+   for (uint16_t x = 0; x < animated_combos2; x++)
    {
       if (combobuf[animated_combo_table24[x][0]].nextcombo != 0)
          animated_combo_table24[x][1] = 0;
@@ -3401,7 +3401,7 @@ void loadscr(int tmp, int destdmap, int scr, int ldir, bool overlay = false)
          }
          else
          {
-            memset(tmpscr[tmp].ffmisc[i], 0, 16 * sizeof(long32));
+            memset(tmpscr[tmp].ffmisc[i], 0, 16 * sizeof(int32_t));
             clear_ffc_stack(i);
          }
       }
@@ -3563,7 +3563,7 @@ void loadscr(int tmp, int destdmap, int scr, int ldir, bool overlay = false)
 // Screen is being viewed by the Overworld Map viewer.
 void loadscr2(int tmp, int scr, int)
 {
-   for (word x = 0; x < animated_combos; x++)
+   for (uint16_t x = 0; x < animated_combos; x++)
    {
       if (combobuf[animated_combo_table4[x][0]].nextcombo != 0)
          animated_combo_table4[x][1] = 0;

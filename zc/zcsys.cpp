@@ -25,7 +25,7 @@ extern sprite_list  guys, items, Ewpns, Lwpns, Sitems, chainlinks, decorations, 
 
 //----------------------------------------------------------------
 
-qword trianglelines[16] =
+uint64_t trianglelines[16] =
 {
    0x0000000000000000ULL,
    0xFD00000000000000ULL,
@@ -45,9 +45,9 @@ qword trianglelines[16] =
    0x00000000000000FDULL,
 };
 
-word screen_triangles[28][32];
+uint16_t screen_triangles[28][32];
 
-qword triangles[4][16][8] = //[direction][value][line]
+uint64_t triangles[4][16][8] = //[direction][value][line]
 {
    {
       {
@@ -854,7 +854,7 @@ void black_opening(BITMAP *dest, int x, int y, int a, int max_a)
          {
             for (int linerow = 0; linerow < 8; ++linerow)
             {
-               qword *triangleline = (qword *)(tempbuf->line[(blockrow * 8 + linerow)]);
+               uint64_t *triangleline = (uint64_t *)(tempbuf->line[(blockrow * 8 + linerow)]);
 
                for (int blockcolumn = 0; blockcolumn < 32; ++blockcolumn) //40
                {
@@ -2293,7 +2293,7 @@ void draw_fuzzy(int fuzz)
 // draws from right half of scrollbuf to framebuf
 {
    int firstx, firsty, xstep, ystep, i, y, dx, dy;
-   byte *start, *si, *di;
+   uint8_t *start, *si, *di;
 
    if (fuzz < 1)
       fuzz = 1;
@@ -3395,24 +3395,24 @@ void eat_buttons()
    rEx4btn();
 }
 
-char *time_str_med(dword time)
+char *time_str_med(uint32_t time)
 {
    static char s[16];
 
-   dword secs = (time / 60) % 60;
-   dword mins = (time / 3600) % 60;
-   dword hours = time / 216000;
+   uint32_t secs = (time / 60) % 60;
+   uint32_t mins = (time / 3600) % 60;
+   uint32_t hours = time / 216000;
 
    sprintf(s, "%d:%02d:%02d", hours, mins, secs);
    return s;
 }
 
-char *time_str_short(dword time)
+char *time_str_short(uint32_t time)
 {
    static char s[16];
 
-   dword mins = (time / 3600) % 60;
-   dword hours = time / 216000;
+   uint32_t mins = (time / 3600) % 60;
+   uint32_t hours = time / 216000;
 
    sprintf(s, "%02d%s%02d", hours, (time % 60) < 30 ? ":" : ";", mins);
    return s;
@@ -3436,10 +3436,10 @@ float vbound(float x, float low, float high)
    return x;
 }
 
-void set_bit(byte *bitstr, int bit, byte val)
+void set_bit(uint8_t *bitstr, int bit, uint8_t val)
 {
    bitstr += bit >> 3;
-   byte mask = 1 << (bit & 7);
+   uint8_t mask = 1 << (bit & 7);
 
    if (val)
       *bitstr |= mask;
@@ -3447,7 +3447,7 @@ void set_bit(byte *bitstr, int bit, byte val)
       *bitstr &= ~mask;
 }
 
-int get_bit(byte *bitstr, int bit)
+int get_bit(uint8_t *bitstr, int bit)
 {
    bitstr += bit >> 3;
    return ((*bitstr) >> (bit & 7)) & 1;

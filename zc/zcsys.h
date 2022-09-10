@@ -127,8 +127,8 @@ void stop_item_sfx(int family);
 void kill_sfx();
 int  pan(int x);
 
-char *time_str_short(dword time);
-char *time_str_med(dword time);
+char *time_str_short(uint32_t time);
+char *time_str_med(uint32_t time);
 
 int  vbound(int x, int low, int high);
 float vbound(float x, float low, float high);
@@ -136,8 +136,8 @@ bool isinRect(int x, int y, int rx1, int ry1, int rx2, int ry2);
 
 int decode_file_007(const char *srcfile, const char *destfile, const char *header, int method);
 
-int  get_bit(byte *bitstr, int bit);
-void set_bit(byte *bitstr, int bit, byte val);
+int  get_bit(uint8_t *bitstr, int bit);
+void set_bit(uint8_t *bitstr, int bit, uint8_t val);
 
 int anim_3_4(int clk, int speed);
 

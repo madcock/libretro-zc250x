@@ -5,20 +5,20 @@
 
 #include "zdefs.h"
 
-//extern byte *tilebuf;
+//extern uint8_t *tilebuf;
 extern tiledata *newtilebuf;
 extern newcombo *combobuf;
-extern word animated_combo_table[MAXCOMBOS][2];             //[0]=position in act2, [1]=original tile
-extern word animated_combo_table4[MAXCOMBOS][2];            //[0]=combo, [1]=clock
-extern word animated_combos;
-extern word animated_combo_table2[MAXCOMBOS][2];             //[0]=position in act2, [1]=original tile
-extern word animated_combo_table24[MAXCOMBOS][2];            //[0]=combo, [1]=clock
-extern word animated_combos2;
+extern uint16_t animated_combo_table[MAXCOMBOS][2];             //[0]=position in act2, [1]=original tile
+extern uint16_t animated_combo_table4[MAXCOMBOS][2];            //[0]=combo, [1]=clock
+extern uint16_t animated_combos;
+extern uint16_t animated_combo_table2[MAXCOMBOS][2];             //[0]=position in act2, [1]=original tile
+extern uint16_t animated_combo_table24[MAXCOMBOS][2];            //[0]=combo, [1]=clock
+extern uint16_t animated_combos2;
 extern bool blank_tile_table[NEWMAXTILES];                  //keeps track of blank tiles
 extern bool blank_tile_quarters_table[NEWMAXTILES * 4];     //keeps track of blank tile quarters
 
 // in tiles.cc
-extern byte unpackbuf[UNPACKSIZE];
+extern uint8_t unpackbuf[UNPACKSIZE];
 extern comboclass   *combo_class_buf;
 
 void register_blank_tiles();
@@ -34,8 +34,8 @@ void overlay_tile(tiledata *buf, int dest, int src, int cs, bool backwards);
 bool copy_tile(tiledata *buf, int src, int dest, bool swap);
 void unpack_tile(tiledata *buf, int tile, int flip, bool force);
 
-void pack_tile(tiledata *buf, byte *src, int tile);
-void pack_tiledata(byte *dest, byte *src, byte format);
+void pack_tile(tiledata *buf, uint8_t *src, int tile);
+void pack_tiledata(uint8_t *dest, uint8_t *src, uint8_t format);
 int rotate_value(int flip);
 
 void puttile8(BITMAP *dest, int tile, int x, int y, int cset, int flip);
@@ -68,6 +68,6 @@ void overblocktranslucent8(BITMAP *dest, int tile, int x, int y, int csets[], in
 void overcombotranslucent(BITMAP *dest, int x, int y, int cmbdat, int cset, int opacity);
 void overcomboblocktranslucent(BITMAP *dest, int x, int y, int cmbdat, int cset, int w, int h, int opacity);
 
-int tilesize(byte format);
-int comboa_lmasktotal(byte layermask);
+int tilesize(uint8_t format);
+int comboa_lmasktotal(uint8_t layermask);
 #endif                                                      // _ZC_TILES_H_

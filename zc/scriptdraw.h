@@ -255,9 +255,9 @@ public:
       return str;
    }
 
-   std::vector<long32> *GetVector()
+   std::vector<int32_t> *GetVector()
    {
-      std::vector<long32> *v;
+      std::vector<int32_t> *v;
 
       if (drawdata.size() > current_drawdata_count)
       {
@@ -266,7 +266,7 @@ public:
       }
       else
       {
-         v = new std::vector<long32>();
+         v = new std::vector<int32_t>();
          drawdata.push_back(v);
       }
 
@@ -281,7 +281,7 @@ protected:
    size_t current_string_count;
 
    //for other dynamic drawing (quad3d etc..)
-   std::vector<std::vector<long32>*> drawdata;
+   std::vector<std::vector<int32_t>*> drawdata;
    size_t current_drawdata_count;
 
 };
@@ -307,7 +307,7 @@ public:
       ptr = (void *)str;
    }
 
-   void SetVector(std::vector<long32> *v)
+   void SetVector(std::vector<int32_t> *v)
    {
       ptr = (void *)v;
    }
@@ -384,7 +384,7 @@ public:
    {
       return draw_container.GetString();
    }
-   std::vector<long32> *GetVector()
+   std::vector<int32_t> *GetVector()
    {
       return draw_container.GetVector();
    }

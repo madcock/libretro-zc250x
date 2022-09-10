@@ -118,12 +118,12 @@ class TileHelper
 {
 public:
 
-   static void OldPutTile(BITMAP *_Dest, int tile, int x, int y, int w, int h, int color, int flip, byte skiprows = 0)
+   static void OldPutTile(BITMAP *_Dest, int tile, int x, int y, int w, int h, int color, int flip, uint8_t skiprows = 0)
    {
       // Past the end of the tile page?
       if (skiprows > 0 && tile % TILES_PER_ROW + w >= TILES_PER_ROW)
       {
-         byte w2 = (tile + w) % TILES_PER_ROW;
+         uint8_t w2 = (tile + w) % TILES_PER_ROW;
          OldPutTile(_Dest, tile, x, y, w - w2, h, color, flip);
          OldPutTile(_Dest, tile + (w - w2) + (skiprows * TILES_PER_ROW), x + 16 * (w - w2), y, w2, h, color, flip);
          return;
@@ -162,11 +162,11 @@ public:
       }
    }
 
-   static void OverTile(BITMAP *_Dest, int tile, int x, int y, int w, int h, int color, int flip, byte skiprows = 0)
+   static void OverTile(BITMAP *_Dest, int tile, int x, int y, int w, int h, int color, int flip, uint8_t skiprows = 0)
    {
       if (skiprows > 0 && tile % TILES_PER_ROW + w >= TILES_PER_ROW)
       {
-         byte w2 = (tile + w) % TILES_PER_ROW;
+         uint8_t w2 = (tile + w) % TILES_PER_ROW;
          OverTile(_Dest, tile, x, y, w - w2, h, color, flip);
          OverTile(_Dest, tile + (w - w2) + (skiprows * TILES_PER_ROW), x + 16 * (w - w2), y, w2, h, color, flip);
          return;
@@ -205,11 +205,11 @@ public:
    }
 
    static void OverTileTranslucent(BITMAP *_Dest, int tile, int x, int y, int w, int h, int color, int flip, int opacity,
-                                   byte skiprows = 0)
+                                   uint8_t skiprows = 0)
    {
       if (skiprows > 0 && tile % TILES_PER_ROW + w >= TILES_PER_ROW)
       {
-         byte w2 = (tile + w) % TILES_PER_ROW;
+         uint8_t w2 = (tile + w) % TILES_PER_ROW;
          OverTileTranslucent(_Dest, tile, x, y, w - w2, h, color, flip, opacity);
          OverTileTranslucent(_Dest, tile + (w - w2) + (skiprows * TILES_PER_ROW), x + 16 * (w - w2), y, w2, h, color, flip,
                              opacity);
@@ -250,11 +250,11 @@ public:
    }
 
    static void PutTileTranslucent(BITMAP *_Dest, int tile, int x, int y, int w, int h, int color, int flip, int opacity,
-                                  byte skiprows = 0)
+                                  uint8_t skiprows = 0)
    {
       if (skiprows > 0 && tile % TILES_PER_ROW + w >= TILES_PER_ROW)
       {
-         byte w2 = (tile + w) % TILES_PER_ROW;
+         uint8_t w2 = (tile + w) % TILES_PER_ROW;
          PutTileTranslucent(_Dest, tile, x, y, w - w2, h, color, flip, opacity);
          PutTileTranslucent(_Dest, tile + (w - w2) + (skiprows * TILES_PER_ROW), x + 16 * (w - w2), y, w2, h, color, flip,
                             opacity);
@@ -414,7 +414,7 @@ void do_circler(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
 
    int x1 = sdci[2] / 10000;
    int y1 = sdci[3] / 10000;
-   qword r = sdci[4];
+   uint64_t r = sdci[4];
 
    if (sdci[6] != 10000)
    {
@@ -475,7 +475,7 @@ void do_arcr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
 
    int cx = sdci[2] / 10000;
    int cy = sdci[3] / 10000;
-   qword r = sdci[4];
+   uint64_t r = sdci[4];
 
    if (sdci[8] != 10000)
    {

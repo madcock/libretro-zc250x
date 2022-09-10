@@ -51,37 +51,37 @@ void gamedata::Clear()
 
 void gamedata::Copy(const gamedata &g)
 {
-   for (byte i = 0; i < 9; i++)
+   for (uint8_t i = 0; i < 9; i++)
       _name[i] = g._name[i];
 
    _quest = g._quest;
    _deaths = g._deaths;
    _cheat = g._cheat;
 
-   for (word i = 0; i < MAXITEMS; i++)
+   for (uint16_t i = 0; i < MAXITEMS; i++)
    {
       item[i] = g.item[i];
       items_off[i] = g.items_off[i];
    }
 
-   for (byte i = 0; i < 32; i++)
+   for (uint8_t i = 0; i < 32; i++)
    {
       _maxcounter[i] = g._maxcounter[i];
       _counter[i] = g._counter[i];
       _dcounter[i] = g._dcounter[i];
    }
 
-   for (byte i = 0; i < 9; i++)
+   for (uint8_t i = 0; i < 9; i++)
       version[i] = g.version[i];
 
-   for (byte i = 0; i < 65; i++)
+   for (uint8_t i = 0; i < 65; i++)
       title[i] = g.title[i];
 
    _hasplayed = g._hasplayed;
    _time = g._time;
    _timevalid = g._timevalid;
 
-   for (word i = 0; i < MAXLEVELS; i++)
+   for (uint16_t i = 0; i < MAXLEVELS; i++)
    {
       lvlitems[i] = g.lvlitems[i];
       lvlkeys[i] = g.lvlkeys[i];
@@ -90,35 +90,35 @@ void gamedata::Copy(const gamedata &g)
    _continue_scrn = g._continue_scrn;
    _continue_dmap = g._continue_dmap;
 
-   for (word i = 0; i < 256; i++)
+   for (uint16_t i = 0; i < 256; i++)
       _generic[i] = g._generic[i];
 
-   for (word i = 0; i < MAXDMAPS; i++)
+   for (uint16_t i = 0; i < MAXDMAPS; i++)
       visited[i] = g.visited[i];
 
-   for (word i = 0; i < MAXDMAPS * 64; i++)
+   for (uint16_t i = 0; i < MAXDMAPS * 64; i++)
       bmaps[i] = g.bmaps[i];
 
-   for (dword i = 0; i < MAXMAPS2 * MAPSCRSNORMAL; i++)
+   for (uint32_t i = 0; i < MAXMAPS2 * MAPSCRSNORMAL; i++)
    {
       maps[i] = g.maps[i];
       guys[i] = g.guys[i];
    }
 
-   for (word i = 0; i < 2048; i++)
+   for (uint16_t i = 0; i < 2048; i++)
       qstpath[i] = g.qstpath[i];
 
-   for (byte i = 0; i < 128; i++)
+   for (uint8_t i = 0; i < 128; i++)
       icon[i] = g.icon[i];
 
-   for (byte i = 0; i < 48; i++)
+   for (uint8_t i = 0; i < 48; i++)
       pal[i] = g.pal[i];
 
-   for (dword i = 0; i < MAXDMAPS * MAPSCRSNORMAL; i++)
-      for (byte j = 0; j < 8; j++)
+   for (uint32_t i = 0; i < MAXDMAPS * MAPSCRSNORMAL; i++)
+      for (uint8_t j = 0; j < 8; j++)
          screen_d[i][j] = g.screen_d[i][j];
 
-   for (word i = 0; i < 256; i++)
+   for (uint16_t i = 0; i < 256; i++)
       global_d[i] = g.global_d[i];
 
    awpn = g.awpn;
@@ -136,17 +136,17 @@ void gamedata::set_name(char *n)
    return;
 }
 
-byte gamedata::get_quest()
+uint8_t gamedata::get_quest()
 {
    return _quest;
 }
-void gamedata::set_quest(byte q)
+void gamedata::set_quest(uint8_t q)
 {
    _quest = q;
    return;
 }
 
-word gamedata::get_counter(byte c)
+uint16_t gamedata::get_counter(uint8_t c)
 {
    if (c >= 32) // Sanity check
       return 0;
@@ -154,7 +154,7 @@ word gamedata::get_counter(byte c)
    return _counter[c];
 }
 
-void gamedata::set_counter(word change, byte c)
+void gamedata::set_counter(uint16_t change, uint8_t c)
 {
    if (c >= 32) // Sanity check
       return;
@@ -174,7 +174,7 @@ void gamedata::set_counter(word change, byte c)
    return;
 }
 
-void gamedata::change_counter(short change, byte c)
+void gamedata::change_counter(short change, uint8_t c)
 {
    if (c >= 32) // Sanity check
       return;
@@ -193,7 +193,7 @@ void gamedata::change_counter(short change, byte c)
    return;
 }
 
-word gamedata::get_maxcounter(byte c)
+uint16_t gamedata::get_maxcounter(uint8_t c)
 {
    if (c >= 32) // Sanity check
       return 0;
@@ -201,7 +201,7 @@ word gamedata::get_maxcounter(byte c)
    return _maxcounter[c];
 }
 
-void gamedata::set_maxcounter(word change, byte c)
+void gamedata::set_maxcounter(uint16_t change, uint8_t c)
 {
    if (c == 2)
    {
@@ -216,7 +216,7 @@ void gamedata::set_maxcounter(word change, byte c)
    return;
 }
 
-void gamedata::change_maxcounter(short change, byte c)
+void gamedata::change_maxcounter(short change, uint8_t c)
 {
    if (c == 2)
    {
@@ -231,7 +231,7 @@ void gamedata::change_maxcounter(short change, byte c)
    return;
 }
 
-short gamedata::get_dcounter(byte c)
+short gamedata::get_dcounter(uint8_t c)
 {
    if (c >= 32) // Sanity check
       return 0;
@@ -239,7 +239,7 @@ short gamedata::get_dcounter(byte c)
    return _dcounter[c];
 }
 
-void gamedata::set_dcounter(short change, byte c)
+void gamedata::set_dcounter(short change, uint8_t c)
 {
    if (c >= 32) // Sanity check
       return;
@@ -258,7 +258,7 @@ void gamedata::set_dcounter(short change, byte c)
    return;
 }
 
-void gamedata::change_dcounter(short change, byte c)
+void gamedata::change_dcounter(short change, uint8_t c)
 {
    if (c >= 32) // Sanity check
       return;
@@ -277,28 +277,28 @@ void gamedata::change_dcounter(short change, byte c)
    return;
 }
 
-short gamedata::get_generic(byte c)
+short gamedata::get_generic(uint8_t c)
 {
    return _generic[c];
 }
 
-void gamedata::set_generic(byte change, byte c)
+void gamedata::set_generic(uint8_t change, uint8_t c)
 {
    _generic[c] = change;
    return;
 }
 
-void gamedata::change_generic(short change, byte c)
+void gamedata::change_generic(short change, uint8_t c)
 {
    _generic[c] += change;
    return;
 }
 
-word gamedata::get_life()
+uint16_t gamedata::get_life()
 {
    return get_counter(0);
 }
-void gamedata::set_life(word l)
+void gamedata::set_life(uint16_t l)
 {
    if (l <= 0) l = 0;
 
@@ -314,11 +314,11 @@ void gamedata::change_life(short l)
    return;
 }
 
-word gamedata::get_maxlife()
+uint16_t gamedata::get_maxlife()
 {
    return get_maxcounter(0);
 }
-void gamedata::set_maxlife(word m)
+void gamedata::set_maxlife(uint16_t m)
 {
    set_maxcounter(m, 0);
    return;
@@ -344,18 +344,18 @@ void gamedata::change_drupy(short d)
    return;
 }
 
-word gamedata::get_rupies()
+uint16_t gamedata::get_rupies()
 {
    return get_counter(1);
 }
-word gamedata::get_spendable_rupies()
+uint16_t gamedata::get_spendable_rupies()
 {
    if (get_bit(quest_rules, qr_SHOPCHEAT) || get_dcounter(1) >= 0)
       return get_counter(1);
    else
       return get_counter(1) + get_dcounter(1);
 }
-void gamedata::set_rupies(word r)
+void gamedata::set_rupies(uint16_t r)
 {
    set_counter(r, 1);
    return;
@@ -366,11 +366,11 @@ void gamedata::change_rupies(short r)
    return;
 }
 
-word gamedata::get_maxarrows()
+uint16_t gamedata::get_maxarrows()
 {
    return get_maxcounter(3);
 }
-void gamedata::set_maxarrows(word a)
+void gamedata::set_maxarrows(uint16_t a)
 {
    set_maxcounter(a, 3);
 }
@@ -380,11 +380,11 @@ void gamedata::change_maxarrows(short a)
    return;
 }
 
-word gamedata::get_arrows()
+uint16_t gamedata::get_arrows()
 {
    return get_counter(3);
 }
-void gamedata::set_arrows(word a)
+void gamedata::set_arrows(uint16_t a)
 {
    set_counter(a, 3);
 }
@@ -394,11 +394,11 @@ void gamedata::change_arrows(short a)
    return;
 }
 
-word gamedata::get_deaths()
+uint16_t gamedata::get_deaths()
 {
    return _deaths;
 }
-void gamedata::set_deaths(word d)
+void gamedata::set_deaths(uint16_t d)
 {
    _deaths = d;
    return;
@@ -409,11 +409,11 @@ void gamedata::change_deaths(short d)
    return;
 }
 
-word gamedata::get_keys()
+uint16_t gamedata::get_keys()
 {
    return get_counter(5);
 }
-void gamedata::set_keys(word k)
+void gamedata::set_keys(uint16_t k)
 {
    set_counter(k, 5);
    return;
@@ -424,11 +424,11 @@ void gamedata::change_keys(short k)
    return;
 }
 
-word gamedata::get_bombs()
+uint16_t gamedata::get_bombs()
 {
    return get_counter(2);
 }
-void gamedata::set_bombs(word k)
+void gamedata::set_bombs(uint16_t k)
 {
    set_counter(k, 2);
    return;
@@ -439,11 +439,11 @@ void gamedata::change_bombs(short k)
    return;
 }
 
-word gamedata::get_maxbombs()
+uint16_t gamedata::get_maxbombs()
 {
    return get_maxcounter(2);
 }
-void gamedata::set_maxbombs(word b, bool setSuperBombs)
+void gamedata::set_maxbombs(uint16_t b, bool setSuperBombs)
 {
    _maxcounter[2] = b;
    int div = zinit.bomb_ratio;
@@ -464,11 +464,11 @@ void gamedata::change_maxbombs(short b)
    return;
 }
 
-word gamedata::get_sbombs()
+uint16_t gamedata::get_sbombs()
 {
    return get_counter(6);
 }
-void gamedata::set_sbombs(word k)
+void gamedata::set_sbombs(uint16_t k)
 {
    set_counter(k, 6);
    return;
@@ -479,11 +479,11 @@ void gamedata::change_sbombs(short k)
    return;
 }
 
-word gamedata::get_wlevel()
+uint16_t gamedata::get_wlevel()
 {
    return get_generic(3);
 }
-void gamedata::set_wlevel(word l)
+void gamedata::set_wlevel(uint16_t l)
 {
    set_generic(l, 3);
    return;
@@ -494,11 +494,11 @@ void gamedata::change_wlevel(short l)
    return;
 }
 
-byte gamedata::get_cheat()
+uint8_t gamedata::get_cheat()
 {
    return _cheat;
 }
-void gamedata::set_cheat(byte c)
+void gamedata::set_cheat(uint8_t c)
 {
    _cheat = c;
    return;
@@ -509,11 +509,11 @@ void gamedata::change_cheat(short c)
    return;
 }
 
-byte gamedata::get_hasplayed()
+uint8_t gamedata::get_hasplayed()
 {
    return _hasplayed;
 }
-void gamedata::set_hasplayed(byte p)
+void gamedata::set_hasplayed(uint8_t p)
 {
    _hasplayed = p;
    return;
@@ -524,26 +524,26 @@ void gamedata::change_hasplayed(short p)
    return;
 }
 
-dword gamedata::get_time()
+uint32_t gamedata::get_time()
 {
    return _time;
 }
-void gamedata::set_time(dword t)
+void gamedata::set_time(uint32_t t)
 {
    _time = t;
    return;
 }
-void gamedata::change_time(long32 t)
+void gamedata::change_time(int32_t t)
 {
    _time += t;
    return;
 }
 
-byte gamedata::get_timevalid()
+uint8_t gamedata::get_timevalid()
 {
    return _timevalid;
 }
-void gamedata::set_timevalid(byte t)
+void gamedata::set_timevalid(uint8_t t)
 {
    _timevalid = t;
    return;
@@ -554,11 +554,11 @@ void gamedata::change_timevalid(short t)
    return;
 }
 
-byte gamedata::get_HCpieces()
+uint8_t gamedata::get_HCpieces()
 {
    return get_generic(0);
 }
-void gamedata::set_HCpieces(byte p)
+void gamedata::set_HCpieces(uint8_t p)
 {
    set_generic(p, 0);
    return;
@@ -569,11 +569,11 @@ void gamedata::change_HCpieces(short p)
    return;
 }
 
-byte gamedata::get_continue_scrn()
+uint8_t gamedata::get_continue_scrn()
 {
    return _continue_scrn;
 }
-void gamedata::set_continue_scrn(byte s)
+void gamedata::set_continue_scrn(uint8_t s)
 {
    if (!isclearing && _continue_scrn != s) Z_eventlog("Continue screen set to %x\n", s);
 
@@ -588,11 +588,11 @@ void gamedata::change_continue_scrn(short s)
    return;
 }
 
-word gamedata::get_continue_dmap()
+uint16_t gamedata::get_continue_dmap()
 {
    return _continue_dmap;
 }
-void gamedata::set_continue_dmap(word d)
+void gamedata::set_continue_dmap(uint16_t d)
 {
    if (!isclearing && _continue_dmap != d) Z_eventlog("Continue DMap set to %d\n", d);
 
@@ -608,11 +608,11 @@ void gamedata::change_continue_dmap(short d)
 }
 
 
-word gamedata::get_maxmagic()
+uint16_t gamedata::get_maxmagic()
 {
    return get_maxcounter(4);
 }
-void gamedata::set_maxmagic(word m)
+void gamedata::set_maxmagic(uint16_t m)
 {
    set_maxcounter(m, 4);
    return;
@@ -623,11 +623,11 @@ void gamedata::change_maxmagic(short m)
    return;
 }
 
-word gamedata::get_magic()
+uint16_t gamedata::get_magic()
 {
    return get_counter(4);
 }
-void gamedata::set_magic(word m)
+void gamedata::set_magic(uint16_t m)
 {
    set_counter(m, 4);
    return;
@@ -653,11 +653,11 @@ void gamedata::change_dmagic(short d)
    return;
 }
 
-byte gamedata::get_magicdrainrate()
+uint8_t gamedata::get_magicdrainrate()
 {
    return get_generic(1);
 }
-void gamedata::set_magicdrainrate(byte r)
+void gamedata::set_magicdrainrate(uint8_t r)
 {
    set_generic(r, 1);
    return;
@@ -668,11 +668,11 @@ void gamedata::change_magicdrainrate(short r)
    return;
 }
 
-byte gamedata::get_canslash()
+uint8_t gamedata::get_canslash()
 {
    return get_generic(2);
 }
-void gamedata::set_canslash(byte s)
+void gamedata::set_canslash(uint8_t s)
 {
    set_generic(s, 2);
    return;
@@ -683,7 +683,7 @@ void gamedata::change_canslash(short s)
    return;
 }
 
-byte gamedata::get_lkeys()
+uint8_t gamedata::get_lkeys()
 {
    return lvlkeys[dlevel];
 }
@@ -693,22 +693,22 @@ byte gamedata::get_lkeys()
 return item[id];
 }*/
 
-byte gamedata::get_hcp_per_hc()
+uint8_t gamedata::get_hcp_per_hc()
 {
    return get_generic(4);
 }
 
-void gamedata::set_hcp_per_hc(byte val)
+void gamedata::set_hcp_per_hc(uint8_t val)
 {
    set_generic(val, 4);
 }
 
-byte gamedata::get_cont_hearts()
+uint8_t gamedata::get_cont_hearts()
 {
    return get_generic(5);
 }
 
-void gamedata::set_cont_hearts(byte val)
+void gamedata::set_cont_hearts(uint8_t val)
 {
    set_generic(val, 5);
 }

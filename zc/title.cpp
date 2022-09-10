@@ -22,16 +22,16 @@ static char SAVE_FILE[1048] = {'\0'};
 
 int readsaves(gamedata *savedata, PACKFILE *f)
 {
-   word qstpath_len;
-   word save_count;
+   uint16_t qstpath_len;
+   uint16_t save_count;
    char name[9];
-   byte tempbyte;
+   uint8_t tempbyte;
    short tempshort;
-   word tempword;
-   dword tempdword;
+   uint16_t tempword;
+   uint32_t tempdword;
    int section_id = 0;
-   word section_version = 0;
-   word section_cversion = 0;
+   uint16_t section_version = 0;
+   uint16_t section_cversion = 0;
    int section_size;
 
    //section id
@@ -434,7 +434,7 @@ int readsaves(gamedata *savedata, PACKFILE *f)
          //Then we allocate the vector
          savedata[i].globalRAM.resize(tempdword);
 
-         for (dword j = 0; j < savedata[i].globalRAM.size(); j++)
+         for (uint32_t j = 0; j < savedata[i].globalRAM.size(); j++)
          {
             ZScriptArray &a = savedata[i].globalRAM[j];
 
@@ -446,7 +446,7 @@ int readsaves(gamedata *savedata, PACKFILE *f)
             a.Resize(tempdword);
 
             //And then fill in the contents
-            for (dword k = 0; k < a.Size(); k++)
+            for (uint32_t k = 0; k < a.Size(); k++)
                if (!p_igetl(&(a[k]), f, true))
                   return 55;
          }
@@ -528,7 +528,7 @@ int writesaves(gamedata *savedata, PACKFILE *f)
    int section_version = V_SAVEGAME;
    int section_cversion = CV_SAVEGAME;
    int section_size = 0;
-   word save_count = 0;
+   uint16_t save_count = 0;
 
    /* Calculate the # of saves */
    while (save_count < MAXSAVES && saves[save_count].get_quest() > 0)
@@ -558,7 +558,7 @@ int writesaves(gamedata *savedata, PACKFILE *f)
 
    for (int i = 0; i < save_count; i++)
    {
-      word qstpath_len = (word)strlen(savedata[i].qstpath);
+      uint16_t qstpath_len = (uint16_t)strlen(savedata[i].qstpath);
 
       if (!pfwrite(savedata[i].get_name(), 9, f))
          return 6;
@@ -675,7 +675,7 @@ int writesaves(gamedata *savedata, PACKFILE *f)
       if (!p_iputl(savedata[i].globalRAM.size(), f))
          return 51;
 
-      for (dword j = 0; j < savedata[i].globalRAM.size(); j++)
+      for (uint32_t j = 0; j < savedata[i].globalRAM.size(); j++)
       {
          ZScriptArray &a = savedata[i].globalRAM[j];
 
@@ -684,7 +684,7 @@ int writesaves(gamedata *savedata, PACKFILE *f)
             return 52;
 
          //Followed by its contents
-         for (dword k = 0; k < a.Size(); k++)
+         for (uint32_t k = 0; k < a.Size(); k++)
             if (!p_iputl(a[k], f))
                return 53;
       }
@@ -728,7 +728,7 @@ void load_game_icon(gamedata *g)
 
    int tileind = t ? t : 28;
 
-   byte *si = newtilebuf[tileind].data;
+   uint8_t *si = newtilebuf[tileind].data;
 
    if (newtilebuf[tileind].format == tf8Bit)
    {
@@ -800,8 +800,8 @@ static void selectscreen()
    RAMpal[2] = _RGB(57, 0, 22); /* Selected text */
 }
 
-static byte left_arrow_str[] = {132, 0};
-static byte right_arrow_str[] = {133, 0};
+static uint8_t left_arrow_str[] = {132, 0};
+static uint8_t right_arrow_str[] = {133, 0};
 
 static int savecnt;
 
@@ -824,8 +824,8 @@ static void list_save(int save_num, int ypos)
       textprintf_ex(framebuf, zfont, 72, ypos + 16, 1, -1, "%s", saves[save_num].get_name());
    }
 
-   byte *hold = newtilebuf[0].data;
-   byte holdformat = newtilebuf[0].format;
+   uint8_t *hold = newtilebuf[0].data;
+   uint8_t holdformat = newtilebuf[0].format;
    newtilebuf[0].format = tf4Bit;
    newtilebuf[0].data = saves[save_num].icon;
    overtile16(framebuf, 0, 48, ypos + 17, (save_num % 3) + csICON, 0);    //link

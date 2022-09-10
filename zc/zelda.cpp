@@ -69,7 +69,7 @@ FONT       *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *p
            *goronfont, *zoranfont, *hylian1font, *hylian2font, *hylian3font, *hylian4font, *gboraclefont, *gboraclepfont,
            *dsphantomfont, *dsphantompfont;
 PALETTE    RAMpal;
-byte       *colordata;
+uint8_t       *colordata;
 itemdata   *itemsbuf;
 wpndata    *wpnsbuf;
 comboclass *combo_class_buf;
@@ -78,7 +78,7 @@ item_drop_object    item_drop_sets[MAXITEMDROPSETS];
 
 bool ewind_restart = false;
 
-word     msgclk, msgstr,
+uint16_t     msgclk, msgstr,
          msgpos,  // screen position of the next character.
          msgptr,  // position within the string of the next character. <MSGSIZE.
          msgcolour,  // colour to use for the displayed text.
@@ -94,13 +94,13 @@ word     msgclk, msgstr,
 bool msg_onscreen = false, msg_active = false, msgspace = false;
 BITMAP   *msgbmpbuf = NULL;
 FONT   *msgfont;
-word     door_combo_set_count;
-word     introclk, intropos, dmapmsgclk, linkedmsgclk;
+uint16_t     door_combo_set_count;
+uint16_t     introclk, intropos, dmapmsgclk, linkedmsgclk;
 short    lensclk;
 int     lensid; // Lens's item id. -1 if lens is off.
 int    Bpos;
-byte screengrid[22];
-byte ffcgrid[4];
+uint8_t screengrid[22];
+uint8_t ffcgrid[4];
 bool screenscrolling = false;
 PALETTE tempbombpal;
 bool usebombpal;
@@ -140,7 +140,7 @@ bool Udown, Ddown, Ldown, Rdown, Adown, Bdown, Sdown, Mdown, LBdown, RBdown, Pdo
               castnext = false, add_df1asparkle, add_df1bsparkle, add_nl1asparkle, add_nl1bsparkle, add_nl2asparkle, add_nl2bsparkle,
               is_on_conveyor, activated_timed_warp = false;
 
-byte COOLSCROLL;
+uint8_t COOLSCROLL;
 
 int  add_asparkle = 0, add_bsparkle = 0;
 
@@ -148,7 +148,7 @@ char   zeldadat_sig[52];
 char   sfxdat_sig[52];
 char   fontsdat_sig[52];
 short  visited[6];
-byte   guygrid[176];
+uint8_t   guygrid[176];
 mapscr tmpscr[2];
 mapscr tmpscr2[6];
 mapscr tmpscr3[6];
@@ -164,22 +164,22 @@ ffscript *linkscripts[NUMSCRIPTLINK];
 ffscript *screenscripts[NUMSCRIPTSCREEN];
 
 extern refInfo globalScriptData;
-extern word g_doscript;
+extern uint16_t g_doscript;
 extern bool global_wait;
 
 //ZScript array storage
 std::vector<ZScriptArray> globalRAM;
 ZScriptArray localRAM[MAX_ZCARRAY_SIZE];
-byte arrayOwner[MAX_ZCARRAY_SIZE];
+uint8_t arrayOwner[MAX_ZCARRAY_SIZE];
 
 //script bitmap drawing
 ZScriptDrawingRenderTarget *zscriptDrawingRenderTarget;
 
 // quest file data
 zquestheader QHeader;
-byte                quest_rules[QUESTRULES_SIZE];
-byte                midi_flags[MIDIFLAGS_SIZE];
-word                map_count;
+uint8_t                quest_rules[QUESTRULES_SIZE];
+uint8_t                midi_flags[MIDIFLAGS_SIZE];
+uint16_t                map_count;
 MsgStr              *MsgStrings;
 int                 msg_strings_size;
 DoorComboSet        *DoorComboSets;
@@ -187,7 +187,7 @@ dmap                *DMaps;
 miscQdata           QMisc;
 std::vector<mapscr> TheMaps;
 zcmap               *ZCMaps;
-dword               quest_map_pos[MAPSCRS * MAXMAPS2];
+uint32_t               quest_map_pos[MAPSCRS * MAXMAPS2];
 
 char     quest_path[1024] = {'\0'};
 gamedata *saves = NULL;
@@ -211,14 +211,14 @@ const char gambledat[12 * 6] =
    -10, -10, 20, -10, -10, 20, -10, -40, 20, -40, -10, 20,
    -10, -10, 50, -10, -10, 50, -10, -40, 50, -40, -10, 50
 };
-const byte stx[4][9] =
+const uint8_t stx[4][9] =
 {
    { 48, 80, 80, 96, 112, 144, 160, 160, 192},
    { 48, 80, 80, 96, 128, 144, 160, 160, 192},
    { 80, 80, 128, 128, 160, 160, 192, 192, 208},
    { 32, 48, 48, 80, 80, 112, 112, 160, 160}
 };
-const byte sty[4][9] =
+const uint8_t sty[4][9] =
 {
    {112, 64, 128, 96, 80, 96, 64, 128, 112},
    { 48, 32, 96, 64, 80, 64, 32, 96, 48},
@@ -226,8 +226,8 @@ const byte sty[4][9] =
    { 80, 48, 112, 64, 96, 64, 96, 32, 128}
 };
 
-const byte ten_rupies_x[10] = {120, 112, 128, 96, 112, 128, 144, 112, 128, 120};
-const byte ten_rupies_y[10] = {49, 65, 65, 81, 81, 81, 81, 97, 97, 113};
+const uint8_t ten_rupies_x[10] = {120, 112, 128, 96, 112, 128, 144, 112, 128, 120};
+const uint8_t ten_rupies_y[10] = {49, 65, 65, 81, 81, 81, 81, 97, 97, 113};
 
 zctune tunes[MAXMIDIS] =
 {
@@ -248,7 +248,7 @@ void setZScriptVersion(int s_version)
 
 void initZScriptArrayRAM(bool firstplay)
 {
-   for (word i = 0; i < MAX_ZCARRAY_SIZE; i++)
+   for (uint16_t i = 0; i < MAX_ZCARRAY_SIZE; i++)
    {
       localRAM[i].Clear();
       arrayOwner[i] = 255;
@@ -267,13 +267,13 @@ void initZScriptArrayRAM(bool firstplay)
       //allocate from save file
       game->globalRAM.resize(saves[currgame].globalRAM.size());
 
-      for (dword i = 0; i < game->globalRAM.size(); i++)
+      for (uint32_t i = 0; i < game->globalRAM.size(); i++)
       {
          ZScriptArray &from = saves[currgame].globalRAM[i];
          ZScriptArray &to = game->globalRAM[i];
          to.Resize(from.Size());
 
-         for (dword j = 0; j < from.Size(); j++)
+         for (uint32_t j = 0; j < from.Size(); j++)
             to[j] = from[j];
       }
    }
@@ -286,9 +286,9 @@ void initZScriptGlobalRAM()
    clear_global_stack();
 }
 
-dword getNumGlobalArrays()
+uint32_t getNumGlobalArrays()
 {
-   word scommand, pc = 0, ret = 0;
+   uint16_t scommand, pc = 0, ret = 0;
 
    do
    {
@@ -915,7 +915,7 @@ int init_game()
 
    if (firstplay)
    {
-      memset(game->screen_d, 0, MAXDMAPS * 64 * 8 * sizeof(long32));
+      memset(game->screen_d, 0, MAXDMAPS * 64 * 8 * sizeof(int32_t));
       ZScriptVersion::RunScript(SCRIPT_GLOBAL, GLOBAL_SCRIPT_INIT);
    }
    else
@@ -1144,7 +1144,7 @@ void putintro()
 void do_magic_casting()
 {
    static int tempx, tempy;
-   static byte linktilebuf[256];
+   static uint8_t linktilebuf[256];
    int ltile = 0;
    int lflip = 0;
    bool shieldModify = true;

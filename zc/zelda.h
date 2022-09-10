@@ -123,7 +123,7 @@ extern FONT  *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, 
        *goronfont, *zoranfont, *hylian1font, *hylian2font, *hylian3font, *hylian4font, *gboraclefont, *gboraclepfont,
        *dsphantomfont, *dsphantompfont;
 extern PALETTE  RAMpal;
-extern byte     *colordata;
+extern uint8_t     *colordata;
 extern itemdata *itemsbuf;
 extern wpndata  *wpnsbuf;
 extern comboclass *combo_class_buf;
@@ -131,7 +131,7 @@ extern guydata  *guysbuf;
 extern item_drop_object    item_drop_sets[MAXITEMDROPSETS];
 
 extern bool ewind_restart;
-extern word     msgclk, msgstr, msgpos, msgptr, msgcolour, msgspeed, msg_w,
+extern uint16_t     msgclk, msgstr, msgpos, msgptr, msgcolour, msgspeed, msg_w,
        msg_h,
        msgorig,
        msg_xpos,
@@ -140,13 +140,13 @@ extern word     msgclk, msgstr, msgpos, msgptr, msgcolour, msgspeed, msg_w,
        cursor_y;
 extern bool msg_onscreen, msg_active, msgspace;
 extern FONT     *msgfont;
-extern word     door_combo_set_count;
-extern word     introclk, intropos, dmapmsgclk, linkedmsgclk;
+extern uint16_t     door_combo_set_count;
+extern uint16_t     introclk, intropos, dmapmsgclk, linkedmsgclk;
 extern short    lensclk;
 extern int     lensid;
 extern int    Bpos;
-extern byte screengrid[22];
-extern byte ffcgrid[4];
+extern uint8_t screengrid[22];
+extern uint8_t ffcgrid[4];
 extern bool screenscrolling;
 
 extern PALETTE tempbombpal;
@@ -175,13 +175,13 @@ extern bool ewind_restart, didpit, castnext;
 extern bool add_df1asparkle, add_df1bsparkle, add_nl1asparkle, add_nl1bsparkle, add_nl2asparkle, add_nl2bsparkle;
 extern bool is_on_conveyor, activated_timed_warp;
 
-extern byte COOLSCROLL;
+extern uint8_t COOLSCROLL;
 
 extern int add_asparkle, add_bsparkle;
 
 extern int    cheat_goto_dmap, cheat_goto_screen;
 extern short  visited[6];
-extern byte   guygrid[176];
+extern uint8_t   guygrid[176];
 extern mapscr tmpscr[2];
 extern mapscr tmpscr2[6];
 extern mapscr tmpscr3[6];
@@ -196,12 +196,12 @@ extern ffscript *screenscripts[256];
 extern SAMPLE customsfxdata[SFX_COUNT];
 
 #define MAX_ZCARRAY_SIZE   4096
-typedef ZCArray<long32> ZScriptArray;
+typedef ZCArray<int32_t> ZScriptArray;
 extern ZScriptArray localRAM[MAX_ZCARRAY_SIZE];
-extern byte arrayOwner[MAX_ZCARRAY_SIZE];
+extern uint8_t arrayOwner[MAX_ZCARRAY_SIZE];
 extern ZScriptDrawingRenderTarget *zscriptDrawingRenderTarget;
 
-dword getNumGlobalArrays();
+uint32_t getNumGlobalArrays();
 
 extern char quest_path[1024];
 extern gamedata *saves;
@@ -209,9 +209,9 @@ extern gamedata *game;
 
 // quest file data
 extern zquestheader QHeader;
-extern byte                quest_rules[QUESTRULES_SIZE];
-extern byte                midi_flags[MIDIFLAGS_SIZE];
-extern word                map_count;
+extern uint8_t                quest_rules[QUESTRULES_SIZE];
+extern uint8_t                midi_flags[MIDIFLAGS_SIZE];
+extern uint16_t                map_count;
 extern MsgStr              *MsgStrings;
 extern int                 msg_strings_size;
 extern DoorComboSet        *DoorComboSets;
@@ -226,10 +226,10 @@ extern zcmap               *ZCMaps;
 
 extern const char startguy[8];
 extern const char gambledat[12 * 6];
-extern const byte stx[4][9];
-extern const byte sty[4][9];
-extern const byte ten_rupies_x[10];
-extern const byte ten_rupies_y[10];
+extern const uint8_t stx[4][9];
+extern const uint8_t sty[4][9];
+extern const uint8_t ten_rupies_x[10];
+extern const uint8_t ten_rupies_y[10];
 extern zctune tunes[MAXMIDIS];
 
 #endif

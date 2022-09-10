@@ -15,8 +15,8 @@ extern int directWpn;
 /***********  Weapon Class  ***********/
 /**************************************/
 
-byte boomframe[16] = {0, 0, 1, 0, 2, 0, 1, 1, 0, 1, 1, 3, 2, 2, 1, 2};
-byte bszboomflip[4] = {0, 2, 3, 1};
+uint8_t boomframe[16] = {0, 0, 1, 0, 2, 0, 1, 1, 0, 1, 1, 3, 2, 2, 1, 2};
+uint8_t bszboomflip[4] = {0, 2, 3, 1};
 
 //light up the screen if there is at least one "lit" weapon
 //otherwise darken the screen
@@ -3246,7 +3246,7 @@ void weapon::update_weapon_frame(int change, int orig)
 {
    if (extend > 2)
    {
-      byte extra_rows = (tysz - 1) * (((orig % TILES_PER_ROW) + (txsz * change)) / TILES_PER_ROW);
+      uint8_t extra_rows = (tysz - 1) * (((orig % TILES_PER_ROW) + (txsz * change)) / TILES_PER_ROW);
       tile = orig + (txsz * change) + (extra_rows * TILES_PER_ROW);
    }
    else

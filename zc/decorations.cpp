@@ -591,9 +591,9 @@ void dNayrusLoveShield::realdraw(BITMAP *dest, int draw_what)
 
    int fb = (misc == 0 ?
              (itemsbuf[current_item_id(itype_nayruslove)].wpn5 ?
-              itemsbuf[current_item_id(itype_nayruslove)].wpn5 : (byte) iwNayrusLoveShieldFront) :
+              itemsbuf[current_item_id(itype_nayruslove)].wpn5 : (uint8_t) iwNayrusLoveShieldFront) :
              (itemsbuf[current_item_id(itype_nayruslove)].wpn10 ?
-              itemsbuf[current_item_id(itype_nayruslove)].wpn10 : (byte) iwNayrusLoveShieldBack));
+              itemsbuf[current_item_id(itype_nayruslove)].wpn10 : (uint8_t) iwNayrusLoveShieldBack));
    int t = wpnsbuf[fb].tile;
    int fr = wpnsbuf[fb].frames;
    int spd = wpnsbuf[fb].speed;

@@ -13,7 +13,7 @@ int CSET_SHFT = 4;                                          // log2 of CSET_SIZE
 bool usingdrypal = false; //using dried up lake colors
 RGB olddrypal; //palette to restore when lake rehydrates
 
-byte nes_pal[] =
+uint8_t nes_pal[] =
 {
    31, 31, 31,                                               //  0
    0, 0, 63,                                                 //  1
@@ -81,7 +81,7 @@ byte nes_pal[] =
    31, 63, 63                                                // 63
 };
 
-RGB _RGB(byte *si)
+RGB _RGB(uint8_t *si)
 {
    RGB x;
    x.r = si[0];
@@ -120,7 +120,7 @@ void loadfullpal()
 
 void loadlvlpal(int level)
 {
-   byte *si = colordata + CSET(level * pdLEVEL + poLEVEL) * 3;
+   uint8_t *si = colordata + CSET(level * pdLEVEL + poLEVEL) * 3;
 
    for (int i = 0; i < 16 * 3; i++)
    {
@@ -177,7 +177,7 @@ void ringcolor(bool forceDefault)
 
 void loadfadepal(int dataset)
 {
-   byte *si = colordata + CSET(dataset) * 3;
+   uint8_t *si = colordata + CSET(dataset) * 3;
 
    for (int i = 0; i < pdFADE * 16; i++)
    {
@@ -201,7 +201,7 @@ void interpolatedfade()
    }
 
    loadlvlpal(DMaps[currdmap].color);
-   byte *si = colordata + CSET(DMaps[currdmap].color * pdLEVEL + poFADE1) * 3;
+   uint8_t *si = colordata + CSET(DMaps[currdmap].color * pdLEVEL + poFADE1) * 3;
 
    for (int i = 0; i < 16; i++)
    {
@@ -233,7 +233,7 @@ void fade(int level, bool blackall, bool fromblack)
          }
 
          loadlvlpal(level);
-         byte *si = colordata + CSET(level * pdLEVEL + poFADE1) * 3;
+         uint8_t *si = colordata + CSET(level * pdLEVEL + poFADE1) * 3;
 
          for (int j = 0; j < 16; ++j)
          {
@@ -343,7 +343,7 @@ void lightingInstant()
                loadpalset(5, 5);
             }
 
-            byte *si = colordata + CSET(level * pdLEVEL + poFADE1) * 3;
+            uint8_t *si = colordata + CSET(level * pdLEVEL + poFADE1) * 3;
 
             for (int j = 0; j < 16; ++j)
             {
@@ -377,7 +377,7 @@ void lightingInstant()
    naturaldark = newstate;
 }
 
-byte drycolors[11] = {0x12, 0x11, 0x22, 0x21, 0x31, 0x32, 0x33, 0x35, 0x34, 0x36, 0x37};
+uint8_t drycolors[11] = {0x12, 0x11, 0x22, 0x21, 0x31, 0x32, 0x33, 0x35, 0x34, 0x36, 0x37};
 
 void dryuplake()
 {
@@ -484,7 +484,7 @@ void cycle_palette()
             if (++palpos[i] >= (c.count >> 4))
                palpos[i] = 0;
 
-            byte *si = colordata + CSET(level * pdLEVEL + poFADE1 + 1 + palpos[i]) * 3;
+            uint8_t *si = colordata + CSET(level * pdLEVEL + poFADE1 + 1 + palpos[i]) * 3;
             si += (c.first & 15) * 3;
 
             for (int col = c.first & 15; col <= (c.count & 15); col++)

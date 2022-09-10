@@ -9,27 +9,27 @@ extern RGB_MAP rgb_table;
 extern COLOR_MAP trans_table;
 extern itemdata   *itemsbuf;
 extern wpndata    *wpnsbuf;
-extern byte        quest_rules[QUESTRULES_SIZE];
+extern uint8_t        quest_rules[QUESTRULES_SIZE];
 extern LinkClass   Link;
 
 tiledata *newtilebuf;
 newcombo *combobuf;
-word animated_combo_table[MAXCOMBOS][2];                    //[0]=position in act2, [1]=original tile
-word animated_combo_table4[MAXCOMBOS][2];                   //[0]=combo, [1]=clock
-word animated_combos;
-word animated_combo_table2[MAXCOMBOS][2];                    //[0]=position in act2, [1]=original tile
-word animated_combo_table24[MAXCOMBOS][2];                   //[0]=combo, [1]=clock
-word animated_combos2;
+uint16_t animated_combo_table[MAXCOMBOS][2];                    //[0]=position in act2, [1]=original tile
+uint16_t animated_combo_table4[MAXCOMBOS][2];                   //[0]=combo, [1]=clock
+uint16_t animated_combos;
+uint16_t animated_combo_table2[MAXCOMBOS][2];                    //[0]=position in act2, [1]=original tile
+uint16_t animated_combo_table24[MAXCOMBOS][2];                   //[0]=combo, [1]=clock
+uint16_t animated_combos2;
 bool blank_tile_table[NEWMAXTILES];                         //keeps track of blank tiles
 bool blank_tile_quarters_table[NEWMAXTILES * 4];            //keeps track of blank tile quarters
 
-byte unpackbuf[UNPACKSIZE];
+uint8_t unpackbuf[UNPACKSIZE];
 
 bool isblanktile(tiledata *buf, int i)
 {
-   //  byte *tilestart=tilebuf+(i*128);
-   byte *tilestart = buf[i].data;
-   qword *di = (qword *)tilestart;
+   //  uint8_t *tilestart=tilebuf+(i*128);
+   uint8_t *tilestart = buf[i].data;
+   uint64_t *di = (uint64_t *)tilestart;
    int parts = tilesize(buf[i].format) >> 3;
 
    for (int j = 0; j < parts; ++j, ++di)
@@ -43,8 +43,8 @@ bool isblanktile(tiledata *buf, int i)
 
 void register_blank_tile_quarters(int tile)
 {
-   //  byte *tilestart=tilebuf+(tile*128);
-   dword *di = (dword *)newtilebuf[tile].data;
+   //  uint8_t *tilestart=tilebuf+(tile*128);
+   uint32_t *di = (uint32_t *)newtilebuf[tile].data;
    blank_tile_quarters_table[(tile << 2)] = true;
    blank_tile_quarters_table[(tile << 2) + 1] = true;
    blank_tile_quarters_table[(tile << 2) + 2] = true;
@@ -82,7 +82,7 @@ void setup_combo_animations()
    memset(animated_combo_table4, 0, MAXCOMBOS * 2 * 2);
    int y = 0;
 
-   for (word x = 0; x < MAXCOMBOS; ++x)
+   for (uint16_t x = 0; x < MAXCOMBOS; ++x)
    {
       animated_combo_table[x][0] = y;
       animated_combo_table[x][1] = combobuf[x].tile;
@@ -104,7 +104,7 @@ void setup_combo_animations2()
    memset(animated_combo_table24, 0, MAXCOMBOS * 2 * 2);
    int y = 0;
 
-   for (word x = 0; x < MAXCOMBOS; ++x)
+   for (uint16_t x = 0; x < MAXCOMBOS; ++x)
    {
       animated_combo_table2[x][0] = y;
       animated_combo_table2[x][1] = combobuf[x].tile;
@@ -122,13 +122,13 @@ void setup_combo_animations2()
 
 void reset_combo_animations()
 {
-   for (word x = 0; x < animated_combos; ++x)
+   for (uint16_t x = 0; x < animated_combos; ++x)
       combobuf[animated_combo_table4[x][0]].tile = animated_combo_table[animated_combo_table4[x][0]][1];
 }
 
 void reset_combo_animations2()
 {
-   for (word x = 0; x < animated_combos; ++x)
+   for (uint16_t x = 0; x < animated_combos; ++x)
       combobuf[animated_combo_table24[x][0]].tile = animated_combo_table2[animated_combo_table24[x][0]][1];
 }
 
@@ -138,7 +138,7 @@ void animate_combos()
 {
    update_combo_cycling();
 
-   for (word x = 0; x < animated_combos; ++x)
+   for (uint16_t x = 0; x < animated_combos; ++x)
    {
       int y = animated_combo_table4[x][0];                    //combo number
 
@@ -169,7 +169,7 @@ void animate_combos()
       }
    }
 
-   for (word x = 0; x < animated_combos2; ++x)
+   for (uint16_t x = 0; x < animated_combos2; ++x)
    {
       int y = animated_combo_table24[x][0];                    //combo number
 
@@ -249,7 +249,7 @@ void reset_tile(tiledata *buf, int t, int format = 1)
    if (buf[t].data != NULL)
       free(buf[t].data);
 
-   buf[t].data = (byte *)malloc(tilesize(buf[t].format));
+   buf[t].data = (uint8_t *)malloc(tilesize(buf[t].format));
 
    if (buf[t].data == NULL)
       zc_error("Unable to initialize tile #%d.\n", t);
@@ -261,13 +261,13 @@ void reset_tile(tiledata *buf, int t, int format = 1)
 //clears the tile buffer
 void clear_tiles(tiledata *buf)
 {
-   for (word i = 0; i < NEWMAXTILES; ++i)
+   for (uint16_t i = 0; i < NEWMAXTILES; ++i)
       reset_tile(buf, i, tf4Bit);
 }
 
 void overlay_tile(tiledata *buf, int dest, int src, int cs, bool backwards)
 {
-   byte upbuf[256];
+   uint8_t upbuf[256];
 
    unpack_tile(buf, dest, 0, false);
 
@@ -308,7 +308,7 @@ bool copy_tile(tiledata *buf, int src, int dest, bool swap)
       return true;
 
    int tempformat = buf[dest].format;
-   byte *temptiledata = (byte *)malloc(tilesize(tempformat));
+   uint8_t *temptiledata = (uint8_t *)malloc(tilesize(tempformat));
 
    if (swap)
    {
@@ -338,8 +338,8 @@ bool copy_tile(tiledata *buf, int src, int dest, bool swap)
 // unpacks from tilebuf to unpackbuf
 void unpack_tile(tiledata *buf, int tile, int flip, bool force)
 {
-   static byte *si, *di;
-   static byte *oldnewtilebuf = buf[tile].data;
+   static uint8_t *si, *di;
+   static uint8_t *oldnewtilebuf = buf[tile].data;
    static int i, j, oldtile = -5, oldflip = -5;
 
    if (tile == oldtile && (flip & 5) == (oldflip & 5) && oldnewtilebuf == buf[tile].data && !force)
@@ -527,14 +527,14 @@ void unpack_tile(tiledata *buf, int tile, int flip, bool force)
 }
 
 // packs from src[256] to tilebuf
-void pack_tile(tiledata *buf, byte *src, int tile)
+void pack_tile(tiledata *buf, uint8_t *src, int tile)
 {
    pack_tiledata(buf[tile].data, src, buf[tile].format);
 }
 
-void pack_tiledata(byte *dest, byte *src, byte format)
+void pack_tiledata(uint8_t *dest, uint8_t *src, uint8_t format)
 {
-   byte *di = dest;
+   uint8_t *di = dest;
 
    switch (format)
    {
@@ -603,7 +603,7 @@ void puttiletranslucent8(BITMAP *dest, int tile, int x, int y, int cset, int fli
    cset &= 15;
    cset <<= CSET_SHFT;
    unpack_tile(newtilebuf, tile >> 2, 0, false);
-   byte *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
+   uint8_t *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
 
    if (flip & 1) //horizontal
       si += 7;
@@ -615,7 +615,7 @@ void puttiletranslucent8(BITMAP *dest, int tile, int x, int y, int cset, int fli
 
       for (int dy = (y < 0 ? 0 - y : 0); (dy < 8) && (dy + y < dest->h); ++dy)
       {
-         byte *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
+         uint8_t *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
 
          for (int i = 0; i < 8; ++i)
          {
@@ -642,7 +642,7 @@ void puttiletranslucent8(BITMAP *dest, int tile, int x, int y, int cset, int fli
 
       for (int dy = (y + 7 >= dest->h ? dest->h - y - 1 : 7); (dy >= 0) && (dy + y >= 0); --dy)
       {
-         byte *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
+         uint8_t *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
 
          for (int i = 0; i < 8; ++i)
          {
@@ -687,7 +687,7 @@ void overtiletranslucent8(BITMAP *dest, int tile, int x, int y, int cset, int fl
    cset &= 15;
    cset <<= CSET_SHFT;
    unpack_tile(newtilebuf, tile >> 2, 0, false);
-   byte *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
+   uint8_t *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
 
    if (flip & 1)
       si += 7;
@@ -699,7 +699,7 @@ void overtiletranslucent8(BITMAP *dest, int tile, int x, int y, int cset, int fl
 
       for (int dy = (y < 0 ? 0 - y : 0); (dy < 8) && (dy + y < dest->h); ++dy)
       {
-         byte *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
+         uint8_t *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
 
          for (int i = 0; i < 8; ++i)
          {
@@ -730,7 +730,7 @@ void overtiletranslucent8(BITMAP *dest, int tile, int x, int y, int cset, int fl
 
       for (int dy = (y + 7 >= dest->h ? dest->h - y - 1 : 7); (dy >= 0) && (dy + y >= 0); --dy)
       {
-         byte *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
+         uint8_t *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
 
          for (int i = 0; i < 8; ++i)
          {
@@ -782,8 +782,8 @@ void puttiletranslucent16(BITMAP *dest, int tile, int x, int y, int cset, int fl
    cset &= 15;
    cset <<= CSET_SHFT;
    unpack_tile(newtilebuf, tile, 0, false);
-   byte *si = unpackbuf;
-   byte *di;
+   uint8_t *si = unpackbuf;
+   uint8_t *di;
 
    if (flip & 1)
       si += 15;
@@ -901,8 +901,8 @@ void overtiletranslucent16(BITMAP *dest, int tile, int x, int y, int cset, int f
    cset &= 15;
    cset <<= CSET_SHFT;
    unpack_tile(newtilebuf, tile, flip & 5, false);
-   byte *si = unpackbuf;
-   byte *di;
+   uint8_t *si = unpackbuf;
+   uint8_t *di;
 
    if ((flip & 2) == 0)
    {
@@ -1020,8 +1020,8 @@ void overtilecloaked16(BITMAP *dest, int tile, int x, int y, int flip)
    }
 
    unpack_tile(newtilebuf, tile, 0, false);
-   byte *si = unpackbuf;
-   byte *di;
+   uint8_t *si = unpackbuf;
+   uint8_t *di;
 
    if (flip & 1)
       si += 15;
@@ -1352,7 +1352,7 @@ void puttile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
    cset &= 15;
    cset <<= CSET_SHFT;
-   dword lcset = (cset << 24) + (cset << 16) + (cset << 8) + cset;
+   uint32_t lcset = (cset << 24) + (cset << 16) + (cset << 8) + cset;
    unpack_tile(newtilebuf, tile >> 2, 0, false);
 
    //  to go to 24-bit color, do this kind of thing...
@@ -1360,13 +1360,13 @@ void puttile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
    switch (flip & 3)
    {
-      case 1:                                                 // 1 byte at a time
+      case 1:                                                 // 1 uint8_t at a time
       {
-         byte *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
+         uint8_t *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
 
          for (int dy = 0; dy < 8; ++dy)
          {
-            byte *di = &(dest->line[y + dy][x + 7]);
+            uint8_t *di = &(dest->line[y + dy][x + 7]);
 
             for (int i = 0; i < 8; ++i)
                *(di--) = *(si++) + cset;
@@ -1378,11 +1378,11 @@ void puttile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
       case 2:                                                 // 4 bytes at a time
       {
-         dword *si = ((dword *)unpackbuf) + ((tile & 2) << 4) + ((tile & 1) << 1);
+         uint32_t *si = ((uint32_t *)unpackbuf) + ((tile & 2) << 4) + ((tile & 1) << 1);
 
          for (int dy = 7; dy >= 0; --dy)
          {
-            dword *di = &((dword *)dest->line[y + dy])[x >> 2];
+            uint32_t *di = &((uint32_t *)dest->line[y + dy])[x >> 2];
             *(di++) = *(si++) + lcset;
             *(di++) = *(si++) + lcset;
             si += 2;
@@ -1392,11 +1392,11 @@ void puttile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
       case 3:                                                 // 1 byte at a time
       {
-         byte *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
+         uint8_t *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
 
          for (int dy = 7; dy >= 0; --dy)
          {
-            byte *di = &(dest->line[y + dy][x + 7]);
+            uint8_t *di = &(dest->line[y + dy][x + 7]);
 
             for (int i = 0; i < 8; ++i)
                *(di--) = *(si++) + cset;
@@ -1408,11 +1408,11 @@ void puttile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
       default:                                                // 4 bytes at a time
       {
-         dword *si = ((dword *)unpackbuf) + ((tile & 2) << 4) + ((tile & 1) << 1);
+         uint32_t *si = ((uint32_t *)unpackbuf) + ((tile & 2) << 4) + ((tile & 1) << 1);
 
          for (int dy = 0; dy < 8; ++dy)
          {
-            dword *di = &((dword *)dest->line[y + dy])[x >> 2];
+            uint32_t *di = &((uint32_t *)dest->line[y + dy])[x >> 2];
             *(di++) = *(si++) + lcset;
             *(di++) = *(si++) + lcset;
             si += 2;
@@ -1440,7 +1440,7 @@ void oldputtile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
    cset &= 15;
    cset <<= CSET_SHFT;
    unpack_tile(newtilebuf, tile >> 2, 0, false);
-   byte *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
+   uint8_t *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
 
    if (flip & 1)
       si += 7;
@@ -1452,7 +1452,7 @@ void oldputtile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
       for (int dy = (y < 0 ? 0 - y : 0); (dy < 8) && (dy + y < dest->h); ++dy)
       {
-         byte *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
+         uint8_t *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
 
          for (int i = 0; i < 8; ++i)
          {
@@ -1479,7 +1479,7 @@ void oldputtile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
       for (int dy = (y + 7 >= dest->h ? dest->h - y - 1 : 7); (dy >= 0) && (dy + y >= 0); --dy)
       {
-         byte *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
+         uint8_t *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
 
          for (int i = 0; i < 8; ++i)
          {
@@ -1521,7 +1521,7 @@ void overtile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
    cset &= 15;
    cset <<= CSET_SHFT;
    unpack_tile(newtilebuf, tile >> 2, 0, false);
-   byte *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
+   uint8_t *si = unpackbuf + ((tile & 2) << 6) + ((tile & 1) << 3);
 
    if (flip & 1)
       si += 7;
@@ -1533,7 +1533,7 @@ void overtile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
       for (int dy = (y < 0 ? 0 - y : 0); (dy < 8) && (dy + y < dest->h); ++dy)
       {
-         byte *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
+         uint8_t *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
 
          for (int i = 0; i < 8; ++i)
          {
@@ -1565,7 +1565,7 @@ void overtile8(BITMAP *dest, int tile, int x, int y, int cset, int flip)
 
       for (int dy = (y + 7 >= dest->h ? dest->h - y - 1 : 7); (dy >= 0) && (dy + y >= 0); --dy)
       {
-         byte *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
+         uint8_t *di = &(dest->line[y + dy][x < 0 ? 0 : x]);
 
          for (int i = 0; i < 8; ++i)
          {
@@ -1621,11 +1621,11 @@ void puttile16(BITMAP *dest, int tile, int x, int y, int cset, int flip) //fixed
       /*
         case 1:
         {
-        byte *si = unpackbuf;
+        uint8_t *si = unpackbuf;
         for(int dy=0; dy<16; ++dy)
         {
         // 1 byte at a time
-        byte *di = &(dest->line[y+dy][x+15]);
+        uint8_t *di = &(dest->line[y+dy][x+15]);
         for(int i=0; i<16; ++i)
         *(di--) = *(si++) + cset;
         }
@@ -1634,25 +1634,25 @@ void puttile16(BITMAP *dest, int tile, int x, int y, int cset, int flip) //fixed
       case 2: //vertical
       {
          /*
-           dword *si = (dword*)unpackbuf;
+           uint32_t *si = (uint32_t*)unpackbuf;
            for(int dy=15; dy>=0; --dy)
            {
            // 4 bytes at a time
-           dword *di=&((dword*)dest->line[y+dy])[x>>2];
+           uint32_t *di=&((uint32_t*)dest->line[y+dy])[x>>2];
            for(int i=0; i<16; i+=4)
            *(di++) = *(si++) + lcset;
            }
            */
-         qword llcset = (((qword)cset) << 56) + (((qword)cset) << 48) + (((qword)cset) << 40) + (((qword)cset) << 32) + (((
-                           qword)cset) << 24) + (cset << 16) + (cset << 8) + cset;
-         //      qword llcset = (((qword)cset)<<56)|(((qword)cset)<<48)|(((qword)cset)<<40)|(((qword)cset)<<32)|(((qword)cset)<<24)|(cset<<16)|(cset<<8)|cset;
-         qword *si = (qword *)unpackbuf;
+         uint64_t llcset = (((uint64_t)cset) << 56) + (((uint64_t)cset) << 48) + (((uint64_t)cset) << 40) + (((uint64_t)cset) << 32) + (((
+                           uint64_t)cset) << 24) + (cset << 16) + (cset << 8) + cset;
+         //      uint64_t llcset = (((uint64_t)cset)<<56)|(((uint64_t)cset)<<48)|(((uint64_t)cset)<<40)|(((uint64_t)cset)<<32)|(((uint64_t)cset)<<24)|(cset<<16)|(cset<<8)|cset;
+         uint64_t *si = (uint64_t *)unpackbuf;
 
          for (int dy = 15; dy >= 0; --dy)
          {
             // 4 bytes at a time
-            //        qword *di=&((qword*)dest->line[y+dy])[x>>3];
-            qword *di = (qword *)(dest->line[y + dy] + x);
+            //        uint64_t *di=&((uint64_t*)dest->line[y+dy])[x>>3];
+            uint64_t *di = (uint64_t *)(dest->line[y + dy] + x);
 
             for (int i = 0; i < 16; i += 8)
                * (di++) = *(si++) + llcset;
@@ -1663,11 +1663,11 @@ void puttile16(BITMAP *dest, int tile, int x, int y, int cset, int flip) //fixed
       /*
         case 3:
         {
-        byte *si = unpackbuf;
+        uint8_t *si = unpackbuf;
         for(int dy=15; dy>=0; --dy)
         {
         // 1 byte at a time
-        byte *di = &(dest->line[y+dy][x+15]);
+        uint8_t *di = &(dest->line[y+dy][x+15]);
         for(int i=0; i<16; ++i)
         *(di--) = *(si++) + cset;
         }
@@ -1676,25 +1676,25 @@ void puttile16(BITMAP *dest, int tile, int x, int y, int cset, int flip) //fixed
       default: //none or invalid
       {
          /*
-           dword *si = (dword*)unpackbuf;
+           uint32_t *si = (uint32_t*)unpackbuf;
            for(int dy=0; dy<16; ++dy)
            {
            // 4 bytes at a time
-           dword *di=&((dword*)dest->line[y+dy])[x>>2];
+           uint32_t *di=&((uint32_t*)dest->line[y+dy])[x>>2];
            for(int i=0; i<16; i+=4)
            *(di++) = *(si++) + lcset;
            }
            */
-         qword llcset = (((qword)cset) << 56) + (((qword)cset) << 48) + (((qword)cset) << 40) + (((qword)cset) << 32) + (((
-                           qword)cset) << 24) + (cset << 16) + (cset << 8) + cset;
-         //      qword llcset = (((qword)cset)<<56)|(((qword)cset)<<48)|(((qword)cset)<<40)|(((qword)cset)<<32)|(((qword)cset)<<24)|(cset<<16)|(cset<<8)|cset;
-         qword *si = (qword *)unpackbuf;
+         uint64_t llcset = (((uint64_t)cset) << 56) + (((uint64_t)cset) << 48) + (((uint64_t)cset) << 40) + (((uint64_t)cset) << 32) + (((
+                           uint64_t)cset) << 24) + (cset << 16) + (cset << 8) + cset;
+         //      uint64_t llcset = (((uint64_t)cset)<<56)|(((uint64_t)cset)<<48)|(((uint64_t)cset)<<40)|(((uint64_t)cset)<<32)|(((uint64_t)cset)<<24)|(cset<<16)|(cset<<8)|cset;
+         uint64_t *si = (uint64_t *)unpackbuf;
 
          for (int dy = 0; dy < 16; ++dy)
          {
             // 4 bytes at a time
-            //        qword *di=&((qword*)dest->line[y+dy])[x>>3];
-            qword *di = (qword *)(dest->line[y + dy] + x);
+            //        uint64_t *di=&((uint64_t*)dest->line[y+dy])[x>>3];
+            uint64_t *di = (uint64_t *)(dest->line[y + dy] + x);
 
             for (int i = 0; i < 16; i += 8)
                * (di++) = *(si++) + llcset;
@@ -1727,8 +1727,8 @@ void oldputtile16(BITMAP *dest, int tile, int x, int y, int cset, int flip) //fi
    cset &= 15;
    cset <<= CSET_SHFT;
    unpack_tile(newtilebuf, tile, flip & 5, false);
-   byte *si = unpackbuf;
-   byte *di;
+   uint8_t *si = unpackbuf;
+   uint8_t *di;
 
    if ((flip & 2) == 0)
    {
@@ -1830,8 +1830,8 @@ void overtile16(BITMAP *dest, int tile, int x, int y, int cset, int flip) //fixe
    cset &= 15;
    cset <<= CSET_SHFT;
    unpack_tile(newtilebuf, tile, flip & 5, false);
-   byte *si = unpackbuf;
-   byte *di;
+   uint8_t *si = unpackbuf;
+   uint8_t *di;
 
    if ((flip & 2) == 0)
    {
@@ -2137,7 +2137,7 @@ void overcombo2(BITMAP *dest, int x, int y, int cmbdat, int cset)
       overcombo(dest, x, y, cmbdat, cset);
 }
 
-int tilesize(byte format)
+int tilesize(uint8_t format)
 {
    switch (format)
    {
@@ -2162,7 +2162,7 @@ int tilesize(byte format)
    return 256;
 }
 
-int comboa_lmasktotal(byte layermask)
+int comboa_lmasktotal(uint8_t layermask)
 {
    int result = 0;
    result += layermask & 1;

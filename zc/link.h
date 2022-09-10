@@ -16,7 +16,7 @@
 extern movingblock mblock2;                                 //mblock[4]?
 extern sprite_list  guys, items, Ewpns, Lwpns, Sitems, chainlinks, decorations;
 
-extern const byte lsteps[8];
+extern const uint8_t lsteps[8];
 
 enum { did_fairy = 1, did_candle = 2, did_whistle = 4, did_magic = 8, did_glove = 16, did_all = 32 };
 
@@ -178,7 +178,7 @@ class LinkClass : public sprite
        stepoutdmap, // which dmap the passageway exits to
        stepoutscr, // which screen the passageway exits to
        slashxofs, slashyofs; // used by positionSword() and draw()
-   byte skipstep, lstep,
+   uint8_t skipstep, lstep,
         hopclk, // hopping into water timeout.
         diveclk, // diving timeout.
         whirlwind, // is Link inside an arriving whirlwind? (yes = 255)
@@ -197,7 +197,7 @@ class LinkClass : public sprite
    bool walkable;
    actiontype action; // current action
    int hshandle_id, hshead_id;
-   byte conveyor_flags;
+   uint8_t conveyor_flags;
    fix climb_cover_x, climb_cover_y;
    fix entry_x, entry_y; // When drowning, re-create Link here
    fix falling_oldy; // Used by the Stomp Boots in sideview
@@ -235,7 +235,7 @@ class LinkClass : public sprite
    bool can_attack();
    void do_rafting();
    void do_hopping();
-   WalkflagInfo walkflag(int wx, int wy, int cnt, byte d);
+   WalkflagInfo walkflag(int wx, int wy, int cnt, uint8_t d);
    WalkflagInfo walkflagMBlock(int wx, int wy);
    bool edge_of_dmap(int side);
    bool checkmaze(mapscr *scr, bool sound);

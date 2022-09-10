@@ -1949,7 +1949,7 @@ void draw_textbox(BITMAP *dest, int x, int y, int w, int h, FONT *tempfont, char
                oldscan = scanned;
                noignore = FALSE;
 
-               /* go backwards looking for start of word */
+               /* go backwards looking for start of uint16_t */
                while (!isspace(*scanned))
                {
                   /* don't wrap too far */
@@ -2242,7 +2242,7 @@ void drawgrid(BITMAP *dest, int x, int y, int c1, int c2)
 
    for (int y2 = 0; y2 <= 7; ++y2)
    {
-      byte dl = DMaps[get_currdmap()].grid[si];
+      uint8_t dl = DMaps[get_currdmap()].grid[si];
 
       for (int x2 = 0; x2 <= 7; ++x2)
       {
@@ -4627,8 +4627,8 @@ void markBmap(int dir, int sc)
    if (sc >= 128)
       return;
 
-   byte drow = DMaps[get_currdmap()].grid[sc >> 4];
-   byte mask = 1 << (7 - ((sc & 15) - DMaps[get_currdmap()].xoff));
+   uint8_t drow = DMaps[get_currdmap()].grid[sc >> 4];
+   uint8_t mask = 1 << (7 - ((sc & 15) - DMaps[get_currdmap()].xoff));
    int di = ((get_currdmap() - 1) << 6) + ((sc >> 4) << 3) + ((sc & 15) - DMaps[get_currdmap()].xoff);
    int code = 0;
 

@@ -57,8 +57,8 @@ public:
    int drawstyle;                                          //0=normal, 1=translucent, 2=cloaked
    int extend;
    // Scripting additions
-   long32 miscellaneous[16];
-   byte scriptcoldet;
+   int32_t miscellaneous[16];
+   uint8_t scriptcoldet;
    //long stack[256];
    //Are you kidding? Really? 256 * sizeof(long) = 2048 bytes = 2kb of wasted memory for every sprite, and it'll never
    //even get used because item scripts only run for one frame. Gah! Maybe when we have npc scripts, not not now...
@@ -66,19 +66,19 @@ public:
    //refInfo scriptData; //For when we have npc scripts maybe
    /*long d[8];
    long a[2];
-   byte ffcref;
-   dword itemref;
-   dword guyref;
-   dword lwpnref;
-   dword ewpnref;
-   byte sp;
-   word pc;
-   dword scriptflag;
-   word doscript;
-   byte itemclass;*/
-   //byte guyclass; //Not implemented
-   //byte lwpnclass;
-   //byte ewpnclass;
+   uint8_t ffcref;
+   uint32_t itemref;
+   uint32_t guyref;
+   uint32_t lwpnref;
+   uint32_t ewpnref;
+   uint8_t sp;
+   uint16_t pc;
+   uint32_t scriptflag;
+   uint16_t doscript;
+   uint8_t itemclass;*/
+   //uint8_t guyclass; //Not implemented
+   //uint8_t lwpnclass;
+   //uint8_t ewpnclass;
 
 
    sprite();
@@ -170,7 +170,7 @@ public:
    int oldcset;
    int endx, endy;
    bool trigger;
-   byte undercset;
+   uint8_t undercset;
 
    movingblock();
    void push(fix bx, fix by, int d, int f);

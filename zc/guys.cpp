@@ -10798,7 +10798,7 @@ int addenemy(int x, int y, int z, int id, int clk)
    {
       case eeMOLD:
       {
-         byte is = ((enemy *)guys.spr(guys.Count() - 1))->item_set;
+         uint8_t is = ((enemy *)guys.spr(guys.Count() - 1))->item_set;
          id &= 0xFFF;
 
          for (int i = 0; i < zc_max(1, zc_min(254, guysbuf[id].misc1)); i++)
@@ -10828,7 +10828,7 @@ int addenemy(int x, int y, int z, int id, int clk)
       {
          id &= 0xFFF;
          int shft = guysbuf[id].misc2;
-         byte is = ((enemy *)guys.spr(guys.Count() - 1))->item_set;
+         uint8_t is = ((enemy *)guys.spr(guys.Count() - 1))->item_set;
 
          if (!guys.add(new esLanmola((fix)x, (fix)y, id + 0x1000, 0)))
          {
@@ -11066,7 +11066,7 @@ void loadguys()
 
    loaded_guys = true;
 
-   byte Guy = 0;
+   uint8_t Guy = 0;
    // When in caves/item rooms, use mBELOW and ipONETIME2
    // Else use mITEM and ipONETIME
    int mf = (currscr >= 128) ? mBELOW : mITEM;
@@ -11183,7 +11183,7 @@ void loadguys()
 
 void loaditem()
 {
-   byte Item = 0;
+   uint8_t Item = 0;
 
    if (currscr < 128)
    {
@@ -11755,7 +11755,7 @@ void loadenemies()
 
    // dungeon basements
 
-   static byte dngn_enemy_x[4] = {32, 96, 144, 208};
+   static uint8_t dngn_enemy_x[4] = {32, 96, 144, 208};
 
    if (currscr >= 128)
    {
@@ -11999,7 +11999,7 @@ void setupscreen()
 {
    boughtsomething = false;
    int t = currscr < 128 ? 0 : 1;
-   word str = tmpscr[t].str;
+   uint16_t str = tmpscr[t].str;
 
    // Prices are already set to 0 in dowarp()
    switch (tmpscr[t].room)
@@ -12215,17 +12215,17 @@ void setupscreen()
 }
 
 // Increments msgptr and returns the control code argument pointed at.
-word grab_next_argument()
+uint16_t grab_next_argument()
 {
-   byte val = MsgStrings[msgstr].s[++msgptr] - 1;
-   word ret = val;
+   uint8_t val = MsgStrings[msgstr].s[++msgptr] - 1;
+   uint16_t ret = val;
 
    // If an argument is succeeded by 255, then it's a three-byte argument -
    // between 254 and 65535 (or whatever the maximum actually is)
    if ((unsigned char)(MsgStrings[msgstr].s[msgptr + 1]) == 255)
    {
       val = MsgStrings[msgstr].s[msgptr + 2];
-      word next = val;
+      uint16_t next = val;
       ret += 254 * next;
       msgptr += 2;
    }

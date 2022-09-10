@@ -119,17 +119,17 @@ enum { sstaLEFT, sstaCENTER, sstaRIGHT };
 
 struct subscreen_object
 {
-   byte  type;
-   byte  pos;
-   word  x;
-   word  y;
-   word  w;
-   word  h;
-   byte  colortype1;
+   uint8_t  type;
+   uint8_t  pos;
+   uint16_t  x;
+   uint16_t  y;
+   uint16_t  w;
+   uint16_t  h;
+   uint8_t  colortype1;
    short color1;
-   byte  colortype2;
+   uint8_t  colortype2;
    short color2;
-   byte  colortype3;
+   uint8_t  colortype3;
    short color3;
    int   d1;
    int   d2;
@@ -141,16 +141,16 @@ struct subscreen_object
    int   d8;
    int   d9;
    int   d10;
-   byte  frames;
-   byte  speed;
-   byte  delay;
-   word  frame;
+   uint8_t  frames;
+   uint8_t  speed;
+   uint8_t  delay;
+   uint16_t  frame;
    void  *dp1;
 };
 
 struct subscreen_group
 {
-   byte             ss_type;
+   uint8_t             ss_type;
    char             name[64];
    subscreen_object objects[MAXSUBSCREENITEMS];
 };
@@ -170,7 +170,7 @@ extern subscreen_group *current_subscreen_passive;
 
 extern item *Bitem, *Aitem;
 extern int   Bid, Aid;
-const byte tripiece[2][8][3] =
+const uint8_t tripiece[2][8][3] =
 {
    //  112,112,0, 128,112,1, 96,128,0, 144,128,1,
    //  112,128,2, 112,128,1, 128,128,3, 128,128,0
@@ -197,19 +197,19 @@ const byte tripiece[2][8][3] =
       {56, 56, 0}
    }
 };
-const byte bmap_original[2][16] =
+const uint8_t bmap_original[2][16] =
 {
    {0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0},
    {0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0}
 };
-const byte bmap_bs[2][12] =
+const uint8_t bmap_bs[2][12] =
 {
    {0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0},
    {0, 3, 0, 0, 3, 0, 0, 3, 0, 3, 0, 0}
 };
 const int fringe[8] = { 6, 2, 4, 7, 6, 8, 7, 5 };
 
-const byte bmaptiles_original[5][8] =
+const uint8_t bmaptiles_original[5][8] =
 {
    {0, 1, 2, 3, 2, 3, 3, 4},
    {20, 21, 22, 23, 22, 23, 23, 24},
@@ -218,7 +218,7 @@ const byte bmaptiles_original[5][8] =
    {40, 41, 42, 43, 42, 43, 43, 44}
 };
 
-const byte bmaptiles_bs[5][6] =
+const uint8_t bmaptiles_bs[5][6] =
 {
    {0, 1, 2, 3, 3, 4},
    {20, 21, 22, 23, 23, 24},

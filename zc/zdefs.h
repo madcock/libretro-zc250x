@@ -132,13 +132,6 @@ enum {ENC_METHOD_192B104 = 0, ENC_METHOD_192B105, ENC_METHOD_192B185, ENC_METHOD
 
 extern int CSET_SIZE;
 extern int CSET_SHFT;
-
-typedef unsigned char        byte;                               //0-                       255  ( 8 bits)
-typedef unsigned short       word;                               //0-                    65,535  (16 bits)
-typedef unsigned int         dword;                              //0-             4,294,967,295  (32 bits)
-typedef int                  long32;                             //-2147,483,648  2,147,483,647  (32 bits)
-typedef unsigned long long   qword;                              //0-18,446,744,073,709,551,616  (64 bits)
-
 extern bool fake_pack_writing;
 
 // system colors
@@ -824,23 +817,23 @@ enum { tfInvalid = 0, tf4Bit, tf8Bit, tf16Bit, tf24Bit, tf32Bit, tfMax };
 
 struct tiledata
 {
-   byte format;
-   byte *data;
+   uint8_t format;
+   uint8_t *data;
 };
 
 struct itemdata
 {
-   word tile;
-   byte misc;                                                // 0000vhtf (vh:flipping, t:two hands, f:flash)
-   byte csets;                                               // ffffcccc (f:flash cset, c:cset)
-   byte frames;                                              // animation frame count
-   byte speed;                                               // animation speed
-   byte delay;                                               // extra delay factor (-1) for first frame
-   long32 ltm;                                                 // Link Tile Modifier
-   byte family;                                   // What family the item is in
-   byte fam_type;                                 // What type in this family the item is
-   byte power;   // Damage, height, etc.
-   word flags;
+   uint16_t tile;
+   uint8_t misc;                                                // 0000vhtf (vh:flipping, t:two hands, f:flash)
+   uint8_t csets;                                               // ffffcccc (f:flash cset, c:cset)
+   uint8_t frames;                                              // animation frame count
+   uint8_t speed;                                               // animation speed
+   uint8_t delay;                                               // extra delay factor (-1) for first frame
+   int32_t ltm;                                                 // Link Tile Modifier
+   uint8_t family;                                   // What family the item is in
+   uint8_t fam_type;                                 // What type in this family the item is
+   uint8_t power;   // Damage, height, etc.
+   uint16_t flags;
 #define ITEM_GAMEDATA    0x0001  // Whether this item sets the corresponding gamedata value or not
 #define ITEM_EDIBLE      0x0002  // can be eaten by Like Like
 #define ITEM_COMBINE     0x0004  // blue potion + blue potion = red potion
@@ -854,50 +847,50 @@ struct itemdata
 #define ITEM_FLAG3     0x0400
 #define ITEM_FLAG4     0x0800
 #define ITEM_FLAG5     0x1000
-   word script;                                   // Which script the item is using
+   uint16_t script;                                   // Which script the item is using
    char count;
-   word amount;
+   uint16_t amount;
    short setmax;
-   word max;
-   byte playsound;
-   word collect_script;
-   //  byte exp[10];                                             // not used
-   long32 initiald[8];
-   byte initiala[2];
-   byte wpn;
-   byte wpn2;
-   byte wpn3;
-   byte wpn4;
-   byte wpn5;
-   byte wpn6;
-   byte wpn7;
-   byte wpn8;
-   byte wpn9;
-   byte wpn10;
-   byte pickup_hearts;
-   long32 misc1;
-   long32 misc2;
-   long32 misc3;
-   long32 misc4;
-   long32 misc5;
-   long32 misc6;
-   long32 misc7;
-   long32 misc8;
-   long32 misc9;
-   long32 misc10;
-   byte magic; // Magic usage!
-   byte usesound;
+   uint16_t max;
+   uint8_t playsound;
+   uint16_t collect_script;
+   //  uint8_t exp[10];                                             // not used
+   int32_t initiald[8];
+   uint8_t initiala[2];
+   uint8_t wpn;
+   uint8_t wpn2;
+   uint8_t wpn3;
+   uint8_t wpn4;
+   uint8_t wpn5;
+   uint8_t wpn6;
+   uint8_t wpn7;
+   uint8_t wpn8;
+   uint8_t wpn9;
+   uint8_t wpn10;
+   uint8_t pickup_hearts;
+   int32_t misc1;
+   int32_t misc2;
+   int32_t misc3;
+   int32_t misc4;
+   int32_t misc5;
+   int32_t misc6;
+   int32_t misc7;
+   int32_t misc8;
+   int32_t misc9;
+   int32_t misc10;
+   uint8_t magic; // Magic usage!
+   uint8_t usesound;
 };
 
 struct wpndata
 {
-   word tile;
-   byte misc;                                                // 000bvhff (vh:flipping, f:flash (1:NES, 2:BSZ))
-   byte csets;                                               // ffffcccc (f:flash cset, c:cset)
-   byte frames;                                              // animation frame count
-   byte speed;                                               // animation speed
-   byte type;                                                // used by certain weapons
-   word script;
+   uint16_t tile;
+   uint8_t misc;                                                // 000bvhff (vh:flipping, f:flash (1:NES, 2:BSZ))
+   uint8_t csets;                                               // ffffcccc (f:flash cset, c:cset)
+   uint8_t frames;                                              // animation frame count
+   uint8_t speed;                                               // animation speed
+   uint8_t type;                                                // used by certain weapons
+   uint16_t script;
 };
 
 #define WF_BEHIND   0x10    //Weapon renders behind other sprites
@@ -905,8 +898,8 @@ struct wpndata
 struct item_drop_object
 {
    char name[64];
-   word item[10];
-   word chance[11]; //0=none
+   uint16_t item[10];
+   uint16_t chance[11]; //0=none
 };
 
 #define guy_bhit        0x00000001
@@ -975,17 +968,17 @@ struct item_drop_object
 
 struct guydata
 {
-   dword flags;
-   dword flags2;
-   word  tile;
-   byte  width;
-   byte  height; //0=striped, 1+=rectangular
-   word  s_tile; //secondary (additional) tile(s)
-   byte  s_width;
-   byte  s_height;  //0=striped, 1+=rectangular
-   word  e_tile;
-   byte  e_width;
-   byte  e_height;
+   uint32_t flags;
+   uint32_t flags2;
+   uint16_t  tile;
+   uint8_t  width;
+   uint8_t  height; //0=striped, 1+=rectangular
+   uint16_t  s_tile; //secondary (additional) tile(s)
+   uint8_t  s_width;
+   uint8_t  s_height;  //0=striped, 1+=rectangular
+   uint16_t  e_tile;
+   uint8_t  e_width;
+   uint8_t  e_height;
 
    short hp;
 
@@ -993,35 +986,35 @@ struct guydata
    short  dp, wdp, weapon;
 
    short  rate, hrate, step, homing, grumble, item_set;
-   long32   misc1, misc2, misc3, misc4, misc5, misc6, misc7, misc8, misc9, misc10, misc11, misc12, misc13, misc14, misc15;
+   int32_t   misc1, misc2, misc3, misc4, misc5, misc6, misc7, misc8, misc9, misc10, misc11, misc12, misc13, misc14, misc15;
    short  bgsfx, bosspal, extend;
-   byte defense[edefLAST];
+   uint8_t defense[edefLAST];
    //  short  startx, starty;
    //  short  foo1,foo2,foo3,foo4,foo5,foo6;
-   byte  hitsfx, deadsfx;
+   uint8_t  hitsfx, deadsfx;
 };
 
 class refInfo
 {
 public:
-   //word script; //script number
-   dword pc; //current command offset
+   //uint16_t script; //script number
+   uint32_t pc; //current command offset
 
-   long32 d[8]; //d registers
-   long32 a[2]; //a regsisters (reference to another ffc on screen)
-   byte sp; //stack pointer for current script
-   dword scriptflag; //stores whether various operations were true/false etc.
+   int32_t d[8]; //d registers
+   int32_t a[2]; //a regsisters (reference to another ffc on screen)
+   uint8_t sp; //stack pointer for current script
+   uint32_t scriptflag; //stores whether various operations were true/false etc.
 
-   byte ffcref, idata; //current object pointers
-   dword itemref, guyref, lwpn, ewpn;
+   uint8_t ffcref, idata; //current object pointers
+   uint32_t itemref, guyref, lwpn, ewpn;
 
-   //byte ewpnclass, lwpnclass, guyclass; //Not implemented
+   //uint8_t ewpnclass, lwpnclass, guyclass; //Not implemented
 
    void Clear()
    {
       pc = 0, sp = 0, scriptflag = 0;
       ffcref = 0, idata = 0, itemref = 0, guyref = 0, lwpn = 0, ewpn = 0;
-      memset(d, 0, 8 * sizeof(long32));
+      memset(d, 0, 8 * sizeof(int32_t));
       a[0] = a[1] = 0;
    }
 
@@ -1040,8 +1033,8 @@ public:
       pc = rhs.pc, sp = rhs.sp, scriptflag = rhs.scriptflag;
       ffcref = rhs.ffcref, idata = rhs.idata;
       itemref = rhs.itemref, guyref = rhs.guyref, lwpn = rhs.lwpn, ewpn = rhs.ewpn;
-      memcpy(d, rhs.d, 8 * sizeof(long32));
-      memcpy(a, rhs.a, 2 * sizeof(long32));
+      memcpy(d, rhs.d, 8 * sizeof(int32_t));
+      memcpy(a, rhs.a, 2 * sizeof(int32_t));
       return *this;
    }
 };
@@ -1049,144 +1042,144 @@ public:
 
 struct mapscr
 {
-   byte valid;
-   byte guy;
-   word str;
-   byte room;
-   byte item;
-   byte hasitem;
-   byte tilewarptype[4];
-   byte tilewarpoverlayflags;
-   word door_combo_set;
-   byte warpreturnx[4];
-   byte warpreturny[4];
-   word warpreturnc;
-   byte stairx;
-   byte stairy;
-   byte itemx;
-   byte itemy;
-   word color;
-   byte enemyflags;
-   byte door[4];
-   word tilewarpdmap[4];
-   byte tilewarpscr[4];
-   byte exitdir;
-   word enemy[10];
-   byte pattern;
-   byte sidewarptype[4];
-   byte sidewarpoverlayflags;
-   byte warparrivalx;
-   byte warparrivaly;
-   byte path[4];
-   byte sidewarpscr[4];
-   word sidewarpdmap[4];
-   byte sidewarpindex;
-   word undercombo;
-   byte undercset;
-   word catchall;
-   byte flags;
-   byte flags2;
-   byte flags3;
-   byte flags4;
-   byte flags5;
-   byte flags6;
-   byte flags7;
-   byte flags8;
-   byte flags9;
-   byte flags10;
-   byte csensitive;
-   word noreset;
-   word nocarry;
-   byte layermap[6];
-   byte layerscreen[6];
-   //  byte layerxsize[6];
-   //  byte layerxspeed[6];
-   //  byte layerxdelay[6];
-   //  byte layerysize[6];
-   //  byte layeryspeed[6];
-   //  byte layerydelay[6];
-   byte layeropacity[6];
-   word timedwarptics;
-   byte nextmap;
-   byte nextscr;
-   word secretcombo[128];
-   byte secretcset[128];
-   byte secretflag[128];
+   uint8_t valid;
+   uint8_t guy;
+   uint16_t str;
+   uint8_t room;
+   uint8_t item;
+   uint8_t hasitem;
+   uint8_t tilewarptype[4];
+   uint8_t tilewarpoverlayflags;
+   uint16_t door_combo_set;
+   uint8_t warpreturnx[4];
+   uint8_t warpreturny[4];
+   uint16_t warpreturnc;
+   uint8_t stairx;
+   uint8_t stairy;
+   uint8_t itemx;
+   uint8_t itemy;
+   uint16_t color;
+   uint8_t enemyflags;
+   uint8_t door[4];
+   uint16_t tilewarpdmap[4];
+   uint8_t tilewarpscr[4];
+   uint8_t exitdir;
+   uint16_t enemy[10];
+   uint8_t pattern;
+   uint8_t sidewarptype[4];
+   uint8_t sidewarpoverlayflags;
+   uint8_t warparrivalx;
+   uint8_t warparrivaly;
+   uint8_t path[4];
+   uint8_t sidewarpscr[4];
+   uint16_t sidewarpdmap[4];
+   uint8_t sidewarpindex;
+   uint16_t undercombo;
+   uint8_t undercset;
+   uint16_t catchall;
+   uint8_t flags;
+   uint8_t flags2;
+   uint8_t flags3;
+   uint8_t flags4;
+   uint8_t flags5;
+   uint8_t flags6;
+   uint8_t flags7;
+   uint8_t flags8;
+   uint8_t flags9;
+   uint8_t flags10;
+   uint8_t csensitive;
+   uint16_t noreset;
+   uint16_t nocarry;
+   uint8_t layermap[6];
+   uint8_t layerscreen[6];
+   //  uint8_t layerxsize[6];
+   //  uint8_t layerxspeed[6];
+   //  uint8_t layerxdelay[6];
+   //  uint8_t layerysize[6];
+   //  uint8_t layeryspeed[6];
+   //  uint8_t layerydelay[6];
+   uint8_t layeropacity[6];
+   uint16_t timedwarptics;
+   uint8_t nextmap;
+   uint8_t nextscr;
+   uint16_t secretcombo[128];
+   uint8_t secretcset[128];
+   uint8_t secretflag[128];
    // you're listening to ptr radio, the sounds of insane. ;)
-   std::vector<word> data;
-   std::vector<byte> sflag;
-   std::vector<byte> cset;
-   word viewX;
-   word viewY;
-   byte scrWidth;
-   byte scrHeight;
+   std::vector<uint16_t> data;
+   std::vector<uint8_t> sflag;
+   std::vector<uint8_t> cset;
+   uint16_t viewX;
+   uint16_t viewY;
+   uint8_t scrWidth;
+   uint8_t scrHeight;
 
    //Why doesn't ffc get to be its own class?
-   dword numff;
-   word ffdata[32];
-   byte ffcset[32];
-   word ffdelay[32];
-   long32 ffx[32];
-   long32 ffy[32];
-   long32 ffxdelta[32];
-   long32 ffydelta[32];
-   long32 ffxdelta2[32];
-   long32 ffydelta2[32];
-   dword ffflags[32];
-   byte ffwidth[32];
-   byte ffheight[32];
-   byte fflink[32];
-   long32 ffmisc[32][16];
+   uint32_t numff;
+   uint16_t ffdata[32];
+   uint8_t ffcset[32];
+   uint16_t ffdelay[32];
+   int32_t ffx[32];
+   int32_t ffy[32];
+   int32_t ffxdelta[32];
+   int32_t ffydelta[32];
+   int32_t ffxdelta2[32];
+   int32_t ffydelta2[32];
+   uint32_t ffflags[32];
+   uint8_t ffwidth[32];
+   uint8_t ffheight[32];
+   uint8_t fflink[32];
+   int32_t ffmisc[32][16];
 
    //ffc script attachments
-   word ffscript[32];
-   long32 initd[32][8];
-   long32 inita[32][2];
+   uint16_t ffscript[32];
+   int32_t initd[32][8];
+   int32_t inita[32][2];
    bool initialized[32];
 
    refInfo scriptData[32];
-   /*long32 d[32][8];
-   long32 a[32][2];
-   word pc[32];
-   dword scriptflag[32];
-   byte sp[32]; //stack pointer
-   byte ffcref[32];
-   dword itemref[32];
-   byte itemclass[32];
-   dword lwpnref[32];
-   dword ewpnref[32];
-   dword guyref[32];*/
-   //byte lwpnclass[32]; Not implemented
-   //byte ewpnclass[32]; Not implemented
-   //byte guyclass[32]; Not implemented
+   /*int32_t d[32][8];
+   int32_t a[32][2];
+   uint16_t pc[32];
+   uint32_t scriptflag[32];
+   uint8_t sp[32]; //stack pointer
+   uint8_t ffcref[32];
+   uint32_t itemref[32];
+   uint8_t itemclass[32];
+   uint32_t lwpnref[32];
+   uint32_t ewpnref[32];
+   uint32_t guyref[32];*/
+   //uint8_t lwpnclass[32]; Not implemented
+   //uint8_t ewpnclass[32]; Not implemented
+   //uint8_t guyclass[32]; Not implemented
 
-   /*long32 map_stack[256];
-   long32 map_d[8];
-   word map_pc;
-   dword map_scriptflag;
-   byte map_sp;
-   byte map_itemref;
-   byte map_itemclass;
-   byte map_lwpnref;
-   byte map_lwpnclass;
-   byte map_ewpnref;
-   byte map_ewpnclass;
-   byte map_guyref;
-   byte map_guyclass;
-   byte map_ffcref;*/ //All this is trash because we don't have map scripts, waste of memory
-   word script_entry;
-   word script_occupancy;
-   word script_exit;
+   /*int32_t map_stack[256];
+   int32_t map_d[8];
+   uint16_t map_pc;
+   uint32_t map_scriptflag;
+   uint8_t map_sp;
+   uint8_t map_itemref;
+   uint8_t map_itemclass;
+   uint8_t map_lwpnref;
+   uint8_t map_lwpnclass;
+   uint8_t map_ewpnref;
+   uint8_t map_ewpnclass;
+   uint8_t map_guyref;
+   uint8_t map_guyclass;
+   uint8_t map_ffcref;*/ //All this is trash because we don't have map scripts, waste of memory
+   uint16_t script_entry;
+   uint16_t script_occupancy;
+   uint16_t script_exit;
 
-   byte oceansfx;
-   byte bosssfx;
-   byte secretsfx;
-   byte holdupsfx;
+   uint8_t oceansfx;
+   uint8_t bosssfx;
+   uint8_t secretsfx;
+   uint8_t holdupsfx;
 
    // for importing older quests...
-   byte old_cpage;
+   uint8_t old_cpage;
    short screen_midi;
-   byte lens_layer;
+   uint8_t lens_layer;
 
 
    void zero_memory()
@@ -1362,9 +1355,9 @@ struct mapscr
 
 struct ffscript
 {
-   word command;
-   long32 arg1;
-   long32 arg2;
+   uint16_t command;
+   int32_t arg1;
+   int32_t arg2;
    char *ptr;
 };
 
@@ -1383,90 +1376,90 @@ enum
 struct comboclass
 {
    char  name[64];                       //  name
-   byte  block_enemies;                  //  a (bit flags, 1=ground, 2=jump, 4=fly)
-   byte  block_hole;                     //  b
-   byte  block_trigger;                  //  c
-   byte  block_weapon[32];               //  d (ID of lweapons/eweapons to block)
+   uint8_t  block_enemies;                  //  a (bit flags, 1=ground, 2=jump, 4=fly)
+   uint8_t  block_hole;                     //  b
+   uint8_t  block_trigger;                  //  c
+   uint8_t  block_weapon[32];               //  d (ID of lweapons/eweapons to block)
    short conveyor_x_speed;               //  e
    short conveyor_y_speed;               //  f
-   word  create_enemy;                   //  g
-   byte  create_enemy_when;              //  h
-   long32  create_enemy_change;            //  i
-   byte  directional_change_type;        //  j
-   long32  distance_change_tiles;          //  k
+   uint16_t  create_enemy;                   //  g
+   uint8_t  create_enemy_when;              //  h
+   int32_t  create_enemy_change;            //  i
+   uint8_t  directional_change_type;        //  j
+   int32_t  distance_change_tiles;          //  k
    short dive_item;                      //  l
-   byte  dock;                           //  m
-   byte  fairy;                          //  n
-   byte  ff_combo_attr_change;           //  o
-   long32  foot_decorations_tile;          //  p
-   byte  foot_decorations_type;          //  q
-   byte  hookshot_grab_point;            //  r
-   byte  ladder_pass;                    //  s
-   byte  lock_block_type;                //  t
-   long32  lock_block_change;              //  u
-   byte  magic_mirror_type;              //  v
+   uint8_t  dock;                           //  m
+   uint8_t  fairy;                          //  n
+   uint8_t  ff_combo_attr_change;           //  o
+   int32_t  foot_decorations_tile;          //  p
+   uint8_t  foot_decorations_type;          //  q
+   uint8_t  hookshot_grab_point;            //  r
+   uint8_t  ladder_pass;                    //  s
+   uint8_t  lock_block_type;                //  t
+   int32_t  lock_block_change;              //  u
+   uint8_t  magic_mirror_type;              //  v
    short modify_hp_amount;               //  w
-   byte  modify_hp_delay;                //  x
-   byte  modify_hp_type;                 //  y
+   uint8_t  modify_hp_delay;                //  x
+   uint8_t  modify_hp_type;                 //  y
    short modify_mp_amount;               //  z
-   byte  modify_mp_delay;                // aa
-   byte  modify_mp_type;                 // ab
-   byte  no_push_blocks;                 // ac
-   byte  overhead;                       // ad
-   byte  place_enemy;                    // ae
-   byte  push_direction;                 // af
-   byte  push_weight;                    // ag
-   byte  push_wait;                      // ah
-   byte  pushed;                         // ai
-   byte  raft;                           // aj
-   byte  reset_room;                     // ak
-   byte  save_point_type;                // al
-   byte  screen_freeze_type;             // am
-   byte  secret_combo;                   // an
-   byte  singular;                       // ao
-   byte  slow_movement;                  // ap
-   byte  statue_type;                    // aq
-   byte  step_type;                      // ar
-   long32  step_change_to;                 // as
-   byte  strike_weapons[32];             // at
-   long32  strike_remnants;                // au
-   byte  strike_remnants_type;           // av
-   long32  strike_change;                  // aw
+   uint8_t  modify_mp_delay;                // aa
+   uint8_t  modify_mp_type;                 // ab
+   uint8_t  no_push_blocks;                 // ac
+   uint8_t  overhead;                       // ad
+   uint8_t  place_enemy;                    // ae
+   uint8_t  push_direction;                 // af
+   uint8_t  push_weight;                    // ag
+   uint8_t  push_wait;                      // ah
+   uint8_t  pushed;                         // ai
+   uint8_t  raft;                           // aj
+   uint8_t  reset_room;                     // ak
+   uint8_t  save_point_type;                // al
+   uint8_t  screen_freeze_type;             // am
+   uint8_t  secret_combo;                   // an
+   uint8_t  singular;                       // ao
+   uint8_t  slow_movement;                  // ap
+   uint8_t  statue_type;                    // aq
+   uint8_t  step_type;                      // ar
+   int32_t  step_change_to;                 // as
+   uint8_t  strike_weapons[32];             // at
+   int32_t  strike_remnants;                // au
+   uint8_t  strike_remnants_type;           // av
+   int32_t  strike_change;                  // aw
    short strike_item;                    // ax
    short touch_item;                     // ay
-   byte  touch_stairs;                   // az
-   byte  trigger_type;                   // ba
-   byte  trigger_sensitive;              // bb
-   byte  warp_type;                      // bc
-   byte  warp_sensitive;                 // bd
-   byte  warp_direct;                    // be
-   byte  warp_location;                  // bf
-   byte  water;                          // bg
-   byte  whistle;                        // bh
-   byte  win_game;                       // bi
-   byte  block_weapon_lvl;               // bj (maximum item level to block)
+   uint8_t  touch_stairs;                   // az
+   uint8_t  trigger_type;                   // ba
+   uint8_t  trigger_sensitive;              // bb
+   uint8_t  warp_type;                      // bc
+   uint8_t  warp_sensitive;                 // bd
+   uint8_t  warp_direct;                    // be
+   uint8_t  warp_location;                  // bf
+   uint8_t  water;                          // bg
+   uint8_t  whistle;                        // bh
+   uint8_t  win_game;                       // bi
+   uint8_t  block_weapon_lvl;               // bj (maximum item level to block)
 };
 
 enum {cfOFFSET, cfMAX};
 
 struct newcombo
 {
-   word tile;
-   byte flip;
-   byte walk;
-   byte type;
-   byte csets;
-   word foo; // used in zq_tiles for some reason. May be redundant. -- L.
-   byte frames;
-   byte speed;
-   word nextcombo;
-   byte nextcset;
-   byte flag;
-   byte skipanim;
-   word nexttimer;
-   byte skipanimy;
-   byte animflags;
-   byte expansion[6];
+   uint16_t tile;
+   uint8_t flip;
+   uint8_t walk;
+   uint8_t type;
+   uint8_t csets;
+   uint16_t foo; // used in zq_tiles for some reason. May be redundant. -- L.
+   uint8_t frames;
+   uint8_t speed;
+   uint16_t nextcombo;
+   uint8_t nextcset;
+   uint8_t flag;
+   uint8_t skipanim;
+   uint16_t nexttimer;
+   uint8_t skipanimy;
+   uint8_t animflags;
+   uint8_t expansion[6];
    //24
 };
 
@@ -1475,7 +1468,7 @@ struct newcombo
 
 struct ZCHEATS
 {
-   dword flags;
+   uint32_t flags;
    char  codes[4][41];
    //168
 };
@@ -1489,20 +1482,20 @@ struct zquestheader
    char  id_str[31];
    //32
    short zelda_version;
-   word  internal;
-   byte  quest_number;
-   byte  old_rules[2];
-   byte  old_map_count;
+   uint16_t  internal;
+   uint8_t  quest_number;
+   uint8_t  old_rules[2];
+   uint8_t  old_map_count;
    char  old_str_count;
    //41
-   byte  data_flags[ZQ_MAXDATA];
-   byte  old_rules2[2];
+   uint8_t  data_flags[ZQ_MAXDATA];
+   uint8_t  old_rules2[2];
    char  old_options;
    char  version[9];
    //73
    char  title[65];
    char  author[65];
-   //byte  padding;
+   //uint8_t  padding;
    //204
    //  short pwdkey;
    bool  dirty_password;
@@ -1510,20 +1503,20 @@ struct zquestheader
    unsigned char pwd_hash[16];
    //236
    char  minver[9];
-   byte  build;
-   byte  use_keyfile;
-   byte  old_foo[9];
-   byte  old_rules3[2];
-   byte  old_rules4[2];
-   byte  old_rules5[2];
-   byte  old_rules6[2];
-   byte  old_rules7[2];
-   byte  old_rules8[2];
-   byte  old_rules9[2];
-   byte  old_rules10[2];
-   byte  old_midi_flags[MIDIFLAGS_SIZE];
+   uint8_t  build;
+   uint8_t  use_keyfile;
+   uint8_t  old_foo[9];
+   uint8_t  old_rules3[2];
+   uint8_t  old_rules4[2];
+   uint8_t  old_rules5[2];
+   uint8_t  old_rules6[2];
+   uint8_t  old_rules7[2];
+   uint8_t  old_rules8[2];
+   uint8_t  old_rules9[2];
+   uint8_t  old_rules10[2];
+   uint8_t  old_midi_flags[MIDIFLAGS_SIZE];
    //304
-   byte  old_foo2[18];
+   uint8_t  old_foo2[18];
    char  templatepath[2048];
    //602
 };
@@ -1596,20 +1589,20 @@ enum
 struct MsgStr
 {
    char s[MSGSIZE + 1];
-   word nextstring;
-   word tile;
-   byte cset;
+   uint16_t nextstring;
+   uint16_t tile;
+   uint8_t cset;
    bool trans;
-   byte font;
+   uint8_t font;
    short x;
    short y;   // y position of message boxes.
    unsigned short w;
    unsigned short h;
-   byte sfx; // either WAV_MSG or something else.
-   word listpos;
-   byte vspace;
-   byte hspace;
-   byte stringflags;
+   uint8_t sfx; // either WAV_MSG or something else.
+   uint16_t listpos;
+   uint8_t vspace;
+   uint8_t hspace;
+   uint8_t stringflags;
 };
 
 enum {dt_pass = 0, dt_lock, dt_shut, dt_boss, dt_olck, dt_osht, dt_obos, dt_wall, dt_bomb, dt_walk, dt_max};
@@ -1618,78 +1611,78 @@ enum {df_walktrans = 0};
 struct DoorComboSet
 {
    char name[21];
-   //byte padding;
+   //uint8_t padding;
    //22
-   word doorcombo_u[9][4];                                   //[door type][door combo]
-   byte doorcset_u[9][4];                                    //[door type][door combo]
-   word doorcombo_d[9][4];                                   //[door type][door combo]
-   byte doorcset_d[9][4];                                    //[door type][door combo]
+   uint16_t doorcombo_u[9][4];                                   //[door type][door combo]
+   uint8_t doorcset_u[9][4];                                    //[door type][door combo]
+   uint16_t doorcombo_d[9][4];                                   //[door type][door combo]
+   uint8_t doorcset_d[9][4];                                    //[door type][door combo]
    //238 (216)
-   word doorcombo_l[9][6];                                   //[door type][door combo]
-   byte doorcset_l[9][6];                                    //[door type][door combo]
-   word doorcombo_r[9][6];                                   //[door type][door combo]
-   byte doorcset_r[9][6];                                    //[door type][door combo]
+   uint16_t doorcombo_l[9][6];                                   //[door type][door combo]
+   uint8_t doorcset_l[9][6];                                    //[door type][door combo]
+   uint16_t doorcombo_r[9][6];                                   //[door type][door combo]
+   uint8_t doorcset_r[9][6];                                    //[door type][door combo]
    //562 (324)
-   word bombdoorcombo_u[2];                                  //rubble
-   byte bombdoorcset_u[2];                                   //rubble
-   word bombdoorcombo_d[2];                                  //rubble
-   byte bombdoorcset_d[2];                                   //rubble
+   uint16_t bombdoorcombo_u[2];                                  //rubble
+   uint8_t bombdoorcset_u[2];                                   //rubble
+   uint16_t bombdoorcombo_d[2];                                  //rubble
+   uint8_t bombdoorcset_d[2];                                   //rubble
    //574 (12)
-   word bombdoorcombo_l[3];                                  //rubble
-   byte bombdoorcset_l[3];                                   //rubble
-   //byte padding;
-   word bombdoorcombo_r[3];                                  //rubble
-   byte bombdoorcset_r[3];                                   //rubble
-   //byte padding;
+   uint16_t bombdoorcombo_l[3];                                  //rubble
+   uint8_t bombdoorcset_l[3];                                   //rubble
+   //uint8_t padding;
+   uint16_t bombdoorcombo_r[3];                                  //rubble
+   uint8_t bombdoorcset_r[3];                                   //rubble
+   //uint8_t padding;
    //594 (18)
-   word walkthroughcombo[4];                                 //[n, s, e, w]
-   byte walkthroughcset[4];                                  //[n, s, e, w]
+   uint16_t walkthroughcombo[4];                                 //[n, s, e, w]
+   uint8_t walkthroughcset[4];                                  //[n, s, e, w]
 
-   byte flags[2];
-   byte expansion[30];
+   uint8_t flags[2];
+   uint8_t expansion[30];
    //638 (44)
 };
 
 struct dmap
 {
-   byte map;
-   word level;
+   uint8_t map;
+   uint16_t level;
    char xoff;
-   byte compass;
-   word color;
-   byte midi;
-   byte cont;
-   byte type;
+   uint8_t compass;
+   uint16_t color;
+   uint8_t midi;
+   uint8_t cont;
+   uint8_t type;
    //8
-   byte grid[8];
+   uint8_t grid[8];
    //16
    char name[21];
    char title[21];
    char intro[73];
-   //byte padding;
+   //uint8_t padding;
    //132
-   word minimap_1_tile;                                      //before getting map
-   byte minimap_1_cset;                                      //cset for minimap 1
-   //byte padding;
-   word minimap_2_tile;                                      //after getting map
-   byte minimap_2_cset;                                      //cset for minimap 2
-   //byte padding;
+   uint16_t minimap_1_tile;                                      //before getting map
+   uint8_t minimap_1_cset;                                      //cset for minimap 1
+   //uint8_t padding;
+   uint16_t minimap_2_tile;                                      //after getting map
+   uint8_t minimap_2_cset;                                      //cset for minimap 2
+   //uint8_t padding;
    //140
-   word largemap_1_tile;                                     //large map
-   byte largemap_1_cset;                                     //cset for large
-   //byte padding;
-   word largemap_2_tile;                                     //large map
-   byte largemap_2_cset;                                     //cset for large
+   uint16_t largemap_1_tile;                                     //large map
+   uint8_t largemap_1_cset;                                     //cset for large
+   //uint8_t padding;
+   uint16_t largemap_2_tile;                                     //large map
+   uint8_t largemap_2_cset;                                     //cset for large
    char tmusic[56];
-   byte tmusictrack;
-   byte active_subscreen;
-   byte passive_subscreen;
+   uint8_t tmusictrack;
+   uint8_t active_subscreen;
+   uint8_t passive_subscreen;
    // int emusic;
-   //byte padding;
+   //uint8_t padding;
    //204
-   byte disableditems[iMax];
+   uint8_t disableditems[iMax];
    // 460
-   long32 flags;
+   int32_t flags;
 };
 
 // DMap flags
@@ -1718,96 +1711,96 @@ struct combo_alias
    combo_alias()
    {
       memset(this, 0, sizeof(combo_alias));
-      combos = new word[1];
-      csets = new byte[1];
+      combos = new uint16_t[1];
+      csets = new uint8_t[1];
       combos[0] = 0;
       csets[0] = 0;
    }
 
-   byte width;      // Max 15
-   byte height;     // Max 10
-   byte layermask;  // Specifies layers to be drawn
-   word combo;      // Optional thumbnail combo for the alias list
-   word cset;
-   word *combos;    // Dynamic array. Will be stored in quest.
-   byte *csets;
+   uint8_t width;      // Max 15
+   uint8_t height;     // Max 10
+   uint8_t layermask;  // Specifies layers to be drawn
+   uint16_t combo;      // Optional thumbnail combo for the alias list
+   uint16_t cset;
+   uint16_t *combos;    // Dynamic array. Will be stored in quest.
+   uint8_t *csets;
 };
 
 struct shoptype
 {
    char name[32];
-   byte item[3];
-   byte hasitem[3];
-   word price[3];
+   uint8_t item[3];
+   uint8_t hasitem[3];
+   uint16_t price[3];
    //10
 };
 
 struct pondtype
 {
-   byte olditem[3];
-   byte newitem[3];
-   byte fairytile;
-   byte aframes;
-   byte aspeed;
-   word msg[15];
-   byte foo[32];
+   uint8_t olditem[3];
+   uint8_t newitem[3];
+   uint8_t fairytile;
+   uint8_t aframes;
+   uint8_t aspeed;
+   uint16_t msg[15];
+   uint8_t foo[32];
    //72
 };
 
 struct infotype
 {
    char name[32];
-   word str[3];
-   //byte padding;
-   word price[3];
+   uint16_t str[3];
+   //uint8_t padding;
+   uint16_t price[3];
    //14
 };
 
 struct warpring
 {
    char name[32];
-   word dmap[9];
-   byte scr[9];
-   byte size;
+   uint16_t dmap[9];
+   uint8_t scr[9];
+   uint8_t size;
    //18
 };
 
 struct zcolors
 {
-   byte text, caption;
-   byte overw_bg, dngn_bg;
-   byte dngn_fg, cave_fg;
-   byte bs_dk, bs_goal;
-   byte compass_lt, compass_dk;
+   uint8_t text, caption;
+   uint8_t overw_bg, dngn_bg;
+   uint8_t dngn_fg, cave_fg;
+   uint8_t bs_dk, bs_goal;
+   uint8_t compass_lt, compass_dk;
    //10
-   byte subscr_bg, subscr_shadow, triframe_color;
-   byte bmap_bg, bmap_fg;
-   byte link_dot;
+   uint8_t subscr_bg, subscr_shadow, triframe_color;
+   uint8_t bmap_bg, bmap_fg;
+   uint8_t link_dot;
    //15
-   byte triforce_cset;
-   byte triframe_cset;
-   byte overworld_map_cset;
-   byte dungeon_map_cset;
-   byte blueframe_cset;
+   uint8_t triforce_cset;
+   uint8_t triframe_cset;
+   uint8_t overworld_map_cset;
+   uint8_t dungeon_map_cset;
+   uint8_t blueframe_cset;
    //20
-   word triforce_tile;
-   word triframe_tile;
-   word overworld_map_tile;
-   word dungeon_map_tile;
-   word blueframe_tile;
+   uint16_t triforce_tile;
+   uint16_t triframe_tile;
+   uint16_t overworld_map_tile;
+   uint16_t dungeon_map_tile;
+   uint16_t blueframe_tile;
    //30
-   word HCpieces_tile;
-   byte HCpieces_cset;
-   byte msgtext;
-   byte foo[6];
+   uint16_t HCpieces_tile;
+   uint8_t HCpieces_cset;
+   uint8_t msgtext;
+   uint8_t foo[6];
    //40
-   byte foo2[256];
+   uint8_t foo2[256];
    //296 bytes
 };
 
 struct palcycle
 {
-   byte first, count, speed;
+   uint8_t first, count, speed;
    //3
 };
 
@@ -1822,17 +1815,17 @@ struct miscQdata
    palcycle cycles[256][3];
    //2832 (2304=3*256*3)
    //2850 (18=2*2)
-   byte     triforce[8];                                     // positions of triforce pieces on subscreen
+   uint8_t     triforce[8];                                     // positions of triforce pieces on subscreen
    //2858 (8)
    zcolors  colors;
    //3154 (296)
-   word     icons[4];
+   uint16_t     icons[4];
    //3162 (8=2*4)
    //pondtype pond[16];
    //4314 (1152=72*16)
-   word endstring;
-   //  byte dummy;  // left over from a word
-   //word expansion[98];
+   uint16_t endstring;
+   //  uint8_t dummy;  // left over from a uint16_t
+   //uint16_t expansion[98];
    //4512
 };
 
@@ -1849,18 +1842,18 @@ public:
 
    char title[36];
    //20
-   long32 start;
-   long32 loop_start;
-   long32 loop_end;
+   int32_t start;
+   int32_t loop_start;
+   int32_t loop_end;
    //32
    short loop;
    short volume;
-   byte flags;
+   uint8_t flags;
    // 37
    void *data;
    // 41
 
-   byte format;
+   uint8_t format;
 
    zctune()
    {
@@ -1869,8 +1862,8 @@ public:
       reset();
    }
 
-   zctune(char _title[36], long32 _start, long32 _loop_start, long32 _loop_end, short _loop, short _volume, void *_data,
-          byte _format)
+   zctune(char _title[36], int32_t _start, int32_t _loop_start, int32_t _loop_end, short _loop, short _volume, void *_data,
+          uint8_t _format)
       : start(_start), loop_start(_loop_start), loop_end(_loop_end), loop(_loop), volume(_volume), data(_data),
         format(_format)
    {
@@ -2004,62 +1997,62 @@ struct gamedata
 {
    //private:
    char  _name[9];
-   byte  _quest;
+   uint8_t  _quest;
    //10
-   //word _life,_maxlife;
+   //uint16_t _life,_maxlife;
    //short _drupy;
-   //word _rupies,_arrows,_maxarrows,
-   word _deaths;
+   //uint16_t _rupies,_arrows,_maxarrows,
+   uint16_t _deaths;
    //20
-   //byte  _keys,_maxbombs,
-   byte  /*_wlevel,*/_cheat;
+   //uint8_t  _keys,_maxbombs,
+   uint8_t  /*_wlevel,*/_cheat;
    //24
    bool  item[MAXITEMS];
-   byte  items_off[MAXITEMS];
+   uint8_t  items_off[MAXITEMS];
    //280
-   word _maxcounter[32];  // 0 - life, 1 - rupees, 2 - bombs, 3 - arrows, 4 - magic, 5 - keys, 6-super bombs
-   word _counter[32];
+   uint16_t _maxcounter[32];  // 0 - life, 1 - rupees, 2 - bombs, 3 - arrows, 4 - magic, 5 - keys, 6-super bombs
+   uint16_t _counter[32];
    short _dcounter[32];
 
    char  version[9];
    char  title[65];
    //354
-   byte  _hasplayed;
-   //byte  padding;
+   uint8_t  _hasplayed;
+   //uint8_t  padding;
    //356
-   dword _time;
+   uint32_t _time;
    //360
-   byte  _timevalid;
-   byte  lvlitems[MAXLEVELS];
-   byte  lvlkeys[MAXLEVELS];
-   //byte  _HCpieces;
-   byte  _continue_scrn;
-   word  _continue_dmap;
+   uint8_t  _timevalid;
+   uint8_t  lvlitems[MAXLEVELS];
+   uint8_t  lvlkeys[MAXLEVELS];
+   //uint8_t  _HCpieces;
+   uint8_t  _continue_scrn;
+   uint16_t  _continue_dmap;
    //620
-   /*word  _maxmagic, _magic;
+   /*uint16_t  _maxmagic, _magic;
    short _dmagic;*/
-   //byte  _magicdrainrate;
-   //byte  _canslash;                                           //Link slashes instead of stabs.
-   byte _generic[256]; // Generic gamedata. 0 - Heart pieces, 1- magicdrainrate, 2-canslash, 3-wlevel,
+   //uint8_t  _magicdrainrate;
+   //uint8_t  _canslash;                                           //Link slashes instead of stabs.
+   uint8_t _generic[256]; // Generic gamedata. 0 - Heart pieces, 1- magicdrainrate, 2-canslash, 3-wlevel,
    // 4- HC Pieces per container  5- Continue hearts  6- Continue percent (1=yes)
-   //byte  padding[2];
+   //uint8_t  padding[2];
    //636
-   byte  visited[MAXDMAPS];
+   uint8_t  visited[MAXDMAPS];
    //892 (256)
-   byte  bmaps[MAXDMAPS * 64];                               // the dungeon progress maps
+   uint8_t  bmaps[MAXDMAPS * 64];                               // the dungeon progress maps
    //17276 (16384)
-   word  maps[MAXMAPS2 * MAPSCRSNORMAL];                     // info on map changes, items taken, etc.
+   uint16_t  maps[MAXMAPS2 * MAPSCRSNORMAL];                     // info on map changes, items taken, etc.
    //82556 (65280)
-   byte  guys[MAXMAPS2 * MAPSCRSNORMAL];                     // guy counts (though dungeon guys are reset on entry)
+   uint8_t  guys[MAXMAPS2 * MAPSCRSNORMAL];                     // guy counts (though dungeon guys are reset on entry)
    //115196 (32640)
    char  qstpath[2048];
-   byte  icon[128];
-   byte  pal[48];
-   long32  screen_d[MAXDMAPS * MAPSCRSNORMAL][8];              // script-controlled screen variables
-   long32  global_d[256];                                      // script-controlled global variables
-   std::vector< ZCArray <long32> > globalRAM;
+   uint8_t  icon[128];
+   uint8_t  pal[48];
+   int32_t  screen_d[MAXDMAPS * MAPSCRSNORMAL][8];              // script-controlled screen variables
+   int32_t  global_d[256];                                      // script-controlled global variables
+   std::vector< ZCArray <int32_t> > globalRAM;
 
-   byte awpn, bwpn;                               // Currently selected weapon slots
+   uint8_t awpn, bwpn;                               // Currently selected weapon slots
 
    bool isclearing; // The gamedata is being cleared
    //115456 (260)
@@ -2087,132 +2080,132 @@ struct gamedata
    char *get_name();
    void set_name(char *n);
 
-   byte get_quest();
-   void set_quest(byte q);
+   uint8_t get_quest();
+   void set_quest(uint8_t q);
 
-   word get_counter(byte c);
-   void set_counter(word change, byte c);
-   void change_counter(short change, byte c);
+   uint16_t get_counter(uint8_t c);
+   void set_counter(uint16_t change, uint8_t c);
+   void change_counter(short change, uint8_t c);
 
-   word get_maxcounter(byte c);
-   void set_maxcounter(word change, byte c);
-   void change_maxcounter(short change, byte c);
+   uint16_t get_maxcounter(uint8_t c);
+   void set_maxcounter(uint16_t change, uint8_t c);
+   void change_maxcounter(short change, uint8_t c);
 
-   short get_dcounter(byte c);
-   void set_dcounter(short change, byte c);
-   void change_dcounter(short change, byte c);
+   short get_dcounter(uint8_t c);
+   void set_dcounter(short change, uint8_t c);
+   void change_dcounter(short change, uint8_t c);
 
-   word get_life();
-   void set_life(word l);
+   uint16_t get_life();
+   void set_life(uint16_t l);
    void change_life(short l);
 
-   word get_maxlife();
-   void set_maxlife(word m);
+   uint16_t get_maxlife();
+   void set_maxlife(uint16_t m);
    void change_maxlife(short m);
 
    short get_drupy();
    void set_drupy(short d);
    void change_drupy(short d);
 
-   word get_rupies();
-   word get_spendable_rupies();
-   void set_rupies(word r);
+   uint16_t get_rupies();
+   uint16_t get_spendable_rupies();
+   void set_rupies(uint16_t r);
    void change_rupies(short r);
 
-   word get_maxarrows();
-   void set_maxarrows(word a);
+   uint16_t get_maxarrows();
+   void set_maxarrows(uint16_t a);
    void change_maxarrows(short a);
 
-   word get_arrows();
-   void set_arrows(word a);
+   uint16_t get_arrows();
+   void set_arrows(uint16_t a);
    void change_arrows(short a);
 
-   word get_deaths();
-   void set_deaths(word d);
+   uint16_t get_deaths();
+   void set_deaths(uint16_t d);
    void change_deaths(short d);
 
-   word get_keys();
-   void set_keys(word k);
+   uint16_t get_keys();
+   void set_keys(uint16_t k);
    void change_keys(short k);
 
-   word get_bombs();
-   void set_bombs(word k);
+   uint16_t get_bombs();
+   void set_bombs(uint16_t k);
    void change_bombs(short k);
 
-   word get_maxbombs();
-   void set_maxbombs(word b, bool setSuperBombs = true);
+   uint16_t get_maxbombs();
+   void set_maxbombs(uint16_t b, bool setSuperBombs = true);
    void change_maxbombs(short b);
 
-   word get_sbombs();
-   void set_sbombs(word k);
+   uint16_t get_sbombs();
+   void set_sbombs(uint16_t k);
    void change_sbombs(short k);
 
-   word get_wlevel();
-   void set_wlevel(word l);
+   uint16_t get_wlevel();
+   void set_wlevel(uint16_t l);
    void change_wlevel(short l);
 
-   byte get_cheat();
-   void set_cheat(byte c);
+   uint8_t get_cheat();
+   void set_cheat(uint8_t c);
    void change_cheat(short c);
 
-   byte get_hasplayed();
-   void set_hasplayed(byte p);
+   uint8_t get_hasplayed();
+   void set_hasplayed(uint8_t p);
    void change_hasplayed(short p);
 
-   dword get_time();
-   void set_time(dword t);
-   void change_time(long32 t);
+   uint32_t get_time();
+   void set_time(uint32_t t);
+   void change_time(int32_t t);
 
-   byte get_timevalid();
-   void set_timevalid(byte t);
+   uint8_t get_timevalid();
+   void set_timevalid(uint8_t t);
    void change_timevalid(short t);
 
-   byte get_HCpieces();
-   void set_HCpieces(byte p);
+   uint8_t get_HCpieces();
+   void set_HCpieces(uint8_t p);
    void change_HCpieces(short p);
 
-   byte get_hcp_per_hc();
-   void set_hcp_per_hc(byte val);
+   uint8_t get_hcp_per_hc();
+   void set_hcp_per_hc(uint8_t val);
 
-   byte get_cont_hearts();
-   void set_cont_hearts(byte val);
+   uint8_t get_cont_hearts();
+   void set_cont_hearts(uint8_t val);
 
    bool get_cont_percent();
    void set_cont_percent(bool ispercent);
 
-   byte get_continue_scrn();
-   void set_continue_scrn(byte s);
+   uint8_t get_continue_scrn();
+   void set_continue_scrn(uint8_t s);
    void change_continue_scrn(short s);
 
-   word get_continue_dmap();
-   void set_continue_dmap(word d);
+   uint16_t get_continue_dmap();
+   void set_continue_dmap(uint16_t d);
    void change_continue_dmap(short d);
 
-   word get_maxmagic();
-   void set_maxmagic(word m);
+   uint16_t get_maxmagic();
+   void set_maxmagic(uint16_t m);
    void change_maxmagic(short m);
 
-   word get_magic();
-   void set_magic(word m);
+   uint16_t get_magic();
+   void set_magic(uint16_t m);
    void change_magic(short m);
 
    short get_dmagic();
    void set_dmagic(short d);
    void change_dmagic(short d);
 
-   byte get_magicdrainrate();
-   void set_magicdrainrate(byte r);
+   uint8_t get_magicdrainrate();
+   void set_magicdrainrate(uint8_t r);
    void change_magicdrainrate(short r);
 
-   byte get_canslash();
-   void set_canslash(byte s);
+   uint8_t get_canslash();
+   void set_canslash(uint8_t s);
    void change_canslash(short s);
 
-   short get_generic(byte c);
-   void set_generic(byte change, byte c);
-   void change_generic(short change, byte c);
+   short get_generic(uint8_t c);
+   void set_generic(uint8_t change, uint8_t c);
+   void change_generic(short change, uint8_t c);
 
-   byte get_lkeys();
+   uint8_t get_lkeys();
 
    void set_item(int id, bool value);
    void set_item_no_flush(int id, bool value);
@@ -2245,34 +2238,34 @@ enum
 
 struct zinitdata
 {
-   byte bombs, super_bombs;
+   uint8_t bombs, super_bombs;
    bool items[256];
    //94
-   byte hc;
-   word start_heart, cont_heart;
-   byte hcp, hcp_per_hc, max_bombs, keys;
-   byte arrows, max_arrows;
-   word rupies;
-   byte triforce;                                            // bit flags
-   byte map[64];
-   byte compass[64];
-   byte boss_key[64];
-   byte misc[16];
-   //  byte sword_hearts[4];
-   byte last_map;                                            //last map worked on
+   uint8_t hc;
+   uint16_t start_heart, cont_heart;
+   uint8_t hcp, hcp_per_hc, max_bombs, keys;
+   uint8_t arrows, max_arrows;
+   uint16_t rupies;
+   uint8_t triforce;                                            // bit flags
+   uint8_t map[64];
+   uint8_t compass[64];
+   uint8_t boss_key[64];
+   uint8_t misc[16];
+   //  uint8_t sword_hearts[4];
+   uint8_t last_map;                                            //last map worked on
    //220
-   byte last_screen;                                         //last screen worked on
-   word max_magic;
-   word magic;
-   byte bomb_ratio; // ratio of super bombs to bombs
-   byte msg_more_x, msg_more_y, msg_more_is_offset;
-   byte subscreen;
-   word start_dmap;
-   byte linkanimationstyle;
+   uint8_t last_screen;                                         //last screen worked on
+   uint16_t max_magic;
+   uint16_t magic;
+   uint8_t bomb_ratio; // ratio of super bombs to bombs
+   uint8_t msg_more_x, msg_more_y, msg_more_is_offset;
+   uint8_t subscreen;
+   uint16_t start_dmap;
+   uint8_t linkanimationstyle;
    //238
-   //byte expansion[98];
+   //uint8_t expansion[98];
    //336 bytes total
-   byte level_keys[MAXLEVELS];
+   uint8_t level_keys[MAXLEVELS];
    int ss_grid_x;
    int ss_grid_y;
    int ss_grid_xofs;
@@ -2281,31 +2274,31 @@ struct zinitdata
    int ss_bbox_1_color;
    int ss_bbox_2_color;
    int ss_flags;
-   byte subscreen_style;
-   byte usecustomsfx;
-   word max_rupees, max_keys;
-   byte gravity;
-   word terminalv;
-   byte msg_speed;
-   byte transition_type; // Can't edit, yet.
-   byte jump_link_layer_threshold; // Link is drawn above layer 3 if z > this.
-   byte link_swim_speed;
+   uint8_t subscreen_style;
+   uint8_t usecustomsfx;
+   uint16_t max_rupees, max_keys;
+   uint8_t gravity;
+   uint16_t terminalv;
+   uint8_t msg_speed;
+   uint8_t transition_type; // Can't edit, yet.
+   uint8_t jump_link_layer_threshold; // Link is drawn above layer 3 if z > this.
+   uint8_t link_swim_speed;
 };
 
 struct zcmap
 {
-   byte tileWidth;
-   byte tileHeight;
-   word subaWidth;
-   word subaHeight;
-   word subpWidth;
-   word subpHeight;
-   word scrResWidth;
-   word scrResHeight;
-   word viewWidth;
-   word viewHeight;
-   word viewX;
-   word viewY;
+   uint8_t tileWidth;
+   uint8_t tileHeight;
+   uint16_t subaWidth;
+   uint16_t subaHeight;
+   uint16_t subpWidth;
+   uint16_t subpHeight;
+   uint16_t scrResWidth;
+   uint16_t scrResHeight;
+   uint16_t viewWidth;
+   uint16_t viewHeight;
+   uint16_t viewX;
+   uint16_t viewY;
    bool subaTrans;
    bool subpTrans;
 };
@@ -2456,8 +2449,8 @@ inline bool p_iputw(int c, PACKFILE *f)
 
 inline bool p_igetl(void *p, PACKFILE *f, bool keepdata)
 {
-   dword *cp = (dword *)p;
-   long32 c;
+   uint32_t *cp = (uint32_t *)p;
+   int32_t c;
 
    if (!f) return false;
    if (f->normal.flags & PACKFILE_FLAG_WRITE) return false;  //must not be writing to file
@@ -2478,7 +2471,7 @@ inline bool p_igetl(void *p, PACKFILE *f, bool keepdata)
 
 inline bool p_igetd(void *p, PACKFILE *f, bool keepdata)
 {
-   long32 temp;
+   int32_t temp;
    bool result = p_igetl(&temp, f, keepdata);
    *(int *)p = (int)temp;
    return result;
@@ -2492,7 +2485,7 @@ inline bool p_igetf(void *p, PACKFILE *f, bool keepdata)
    if (pack_feof(f))
       return false;
 
-   byte tempfloat[sizeof(float)];
+   uint8_t tempfloat[sizeof(float)];
 
    if (!pfread(tempfloat, sizeof(float), f, true))
       return false;
@@ -2501,7 +2494,7 @@ inline bool p_igetf(void *p, PACKFILE *f, bool keepdata)
    {
       memset(p, 0, sizeof(float));
       for (int i = 0; i < (int)sizeof(float); i++)
-         ((byte *)p)[sizeof(float) - i - 1] = tempfloat[i];
+         ((uint8_t *)p)[sizeof(float) - i - 1] = tempfloat[i];
    }
 
    return true;
@@ -2561,8 +2554,8 @@ inline bool p_mputw(int c, PACKFILE *f)
 
 inline bool p_mgetl(void *p, PACKFILE *f, bool keepdata)
 {
-   dword *cp = (dword *)p;
-   long32 c;
+   uint32_t *cp = (uint32_t *)p;
+   int32_t c;
 
    if (!f) return false;
    if (f->normal.flags & PACKFILE_FLAG_WRITE) return false;  //must not be writing to file

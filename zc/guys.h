@@ -46,24 +46,24 @@ public:
    guydata *d;
    // Approximately all of these variables are accessed by either ffscript.cpp or inherited classes
    int o_tile, frate, hp, hclk, clk3, stunclk, timer, fading, superman, mainguy, did_armos;
-   byte movestatus, item_set, grumble, posframe;
+   uint8_t movestatus, item_set, grumble, posframe;
    bool itemguy, count_enemy, dying, ceiling, leader, scored, script_spawned;
    fix  step, floor_y;
 
    //d variables
-   dword flags;
-   dword flags2;
+   uint32_t flags;
+   uint32_t flags2;
 
    short  family, dcset, anim;
    short  dp, wdp, wpn;
 
    short  rate, hrate, homing;
    fix dstep;
-   long32 dmisc1, dmisc2, dmisc3, dmisc4, dmisc5, dmisc6, dmisc7, dmisc8, dmisc9, dmisc10, dmisc11, dmisc12, dmisc13,
+   int32_t dmisc1, dmisc2, dmisc3, dmisc4, dmisc5, dmisc6, dmisc7, dmisc8, dmisc9, dmisc10, dmisc11, dmisc12, dmisc13,
           dmisc14, dmisc15;
    short bgsfx, bosspal;
-   byte defense[edefLAST];
-   byte hitsfx, deadsfx;
+   uint8_t defense[edefLAST];
+   uint8_t hitsfx, deadsfx;
 
    fix  getX();
    fix  getY();
@@ -100,7 +100,7 @@ protected:
    int  clk2, sclk;
    int  starting_hp;
    int  ox, oy;
-   word  s_tile; //secondary (additional) tile(s)
+   uint16_t  s_tile; //secondary (additional) tile(s)
 
    // to allow for different sfx on defeating enemy
    virtual void death_sfx();

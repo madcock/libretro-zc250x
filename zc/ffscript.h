@@ -4,21 +4,21 @@
 #include "zdefs.h"
 #include <string>
 
-long32 get_register(const long32 arg);
-int run_script(const byte type, const word script, const byte i = -1); //Global scripts don't need 'i'
+int32_t get_register(const int32_t arg);
+int run_script(const uint8_t type, const uint16_t script, const uint8_t i = -1); //Global scripts don't need 'i'
 int ffscript_engine(const bool preload);
 
-void clear_ffc_stack(const byte i);
+void clear_ffc_stack(const uint8_t i);
 void clear_global_stack();
-void deallocateArray(const long32 ptrval);
+void deallocateArray(const int32_t ptrval);
 void clearScriptHelperData();
 
 struct script_command
 {
    char name[16];
-   byte args;
-   byte arg1_type; //0=reg, 1=val;
-   byte arg2_type; //0=reg, 1=val;
+   uint8_t args;
+   uint8_t arg1_type; //0=reg, 1=val;
+   uint8_t arg2_type; //0=reg, 1=val;
    bool more_stuff;
 };
 

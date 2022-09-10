@@ -26,18 +26,18 @@ int z3step = 2;
 bool did_scripta = false;
 bool did_scriptb = false;
 bool did_scriptl = false;
-byte lshift = 0;
+uint8_t lshift = 0;
 int dowpn = -1;
 int directItem = -1; //Is set if Link is currently using an item directly
 int directItemA = -1;
 int directItemB = -1;
 int directWpn = -1;
 int whistleitem = -1;
-extern word g_doscript;
+extern uint16_t g_doscript;
 
 void playLevelMusic();
 
-const byte lsteps[8] = { 1, 1, 2, 1, 1, 2, 1, 1 };
+const uint8_t lsteps[8] = { 1, 1, 2, 1, 1, 2, 1, 1 };
 
 
 int LinkClass::DrunkClock()
@@ -7174,7 +7174,7 @@ void LinkClass::move(int d2)
       sprite::move((fix)dx, (fix)dy);
 }
 
-LinkClass::WalkflagInfo LinkClass::walkflag(int wx, int wy, int cnt, byte d2)
+LinkClass::WalkflagInfo LinkClass::walkflag(int wx, int wy, int cnt, uint8_t d2)
 {
    WalkflagInfo ret;
 
@@ -9889,7 +9889,7 @@ int selectWlevel(int d)
    if (TriforceCount() == 0)
       return 0;
 
-   word l = game->get_wlevel();
+   uint16_t l = game->get_wlevel();
 
    do
    {
@@ -9938,8 +9938,8 @@ bool LinkClass::dowarp(int type, int index)
    if (index < 0)
       return false;
 
-   word wdmap = 0;
-   byte wscr = 0, wtype = 0, t = 0;
+   uint16_t wdmap = 0;
+   uint8_t wscr = 0, wtype = 0, t = 0;
    bool overlay = false;
    t = (currscr < 128) ? 0 : 1;
    int wrindex = 0;
@@ -10109,7 +10109,7 @@ bool LinkClass::dowarp(int type, int index)
          homescr = currscr;
          currscr = 0x81;
          specialcave = PASSAGEWAY;
-         byte warpscr2 = wscr + DMaps[wdmap].xoff;
+         uint8_t warpscr2 = wscr + DMaps[wdmap].xoff;
          draw_screen(tmpscr, false);
 
          if (!darkroom)
@@ -10431,7 +10431,7 @@ bool LinkClass::dowarp(int type, int index)
          {
             //ALLOFF kills the action, but we want to preserve Link's action if he's swimming or diving -DD
             bool wasswimming = (action == swimming);
-            byte olddiveclk = diveclk;
+            uint8_t olddiveclk = diveclk;
             ALLOFF();
 
             if (wasswimming)
@@ -12052,7 +12052,7 @@ void LinkClass::scrollscr(int scrolldir, int destscr, int destdmap)
    //Preloaded ffc scripts
    if (destdmap >= 0)
    {
-      long32 dmap = currdmap; // Kludge
+      int32_t dmap = currdmap; // Kludge
       currdmap = destdmap;
       ffscript_engine(true);
       currdmap = dmap;
@@ -12080,7 +12080,7 @@ void LinkClass::scrollscr(int scrolldir, int destscr, int destdmap)
    int no_move = 0;
    bool end_frames = false;
 
-   for (word i = 0; cx >= 0 && delay != 0; i++, cx--) //Go!
+   for (uint16_t i = 0; cx >= 0 && delay != 0; i++, cx--) //Go!
    {
       if (zc_state)
       {
