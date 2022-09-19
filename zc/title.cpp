@@ -16,10 +16,6 @@ extern int skipcont;
 /****  Game Selection Screens  *****/
 /***********************************/
 
-/* first the game saving & loading system */
-
-static char SAVE_FILE[1048] = {'\0'};
-
 int readsaves(gamedata *savedata, PACKFILE *f)
 {
    uint16_t qstpath_len;
@@ -300,13 +296,6 @@ int readsaves(gamedata *savedata, PACKFILE *f)
       if (!pfread(savedata[i].qstpath, qstpath_len, f, true))
          return 39;
 
-      // Convert path separators so save files work across platforms (hopefully)
-      for (int j = 0; j < qstpath_len; j++)
-      {
-         if (savedata[i].qstpath[j] == '\\')
-            savedata[i].qstpath[j] = '/';
-      }
-
       savedata[i].qstpath[qstpath_len] = 0;
 
       if (!pfread(savedata[i].icon, sizeof(savedata[i].icon), f, true))
@@ -459,10 +448,12 @@ int readsaves(gamedata *savedata, PACKFILE *f)
 // call once at startup
 int load_savedgames()
 {
+   char spath[MAX_STRLEN];
    PACKFILE *f = NULL;
 
-   /* Calculate the savefile name based on the quest filename */
-   replace_extension(SAVE_FILE, quest_path, "sav");
+   /* Calculate the save path to use */
+   sprintf(spath, "%s%c%s", save_path, OTHER_PATH_SEPARATOR, get_filename(qst_path));
+   replace_extension(spath, spath, "sav");
 
    if (saves == NULL)
    {
@@ -476,10 +467,10 @@ int load_savedgames()
       saves[i].Clear();
 
    // see if it's there
-   if (!file_exists(SAVE_FILE))
+   if (!file_exists(spath))
       goto newdata;
 
-   if (file_size(SAVE_FILE) == 0)
+   if (file_size(spath) == 0)
    {
       if (errno == 0) // No error, file's empty
          goto init;
@@ -488,7 +479,7 @@ int load_savedgames()
    }
 
    // load the games
-   f = pack_fopen(SAVE_FILE, F_READ_PACKED);
+   f = pack_fopen(spath, F_READ_PACKED);
 
    if (!f)
       goto cantopen;
@@ -500,18 +491,18 @@ int load_savedgames()
    return 0;
 
 newdata:
-   zc_message("Save file not found: %s. Creating new save file.", SAVE_FILE);
+   zc_message("Save file not found: %s. Creating new save file.", spath);
    goto init;
 
 cantopen:
-   zc_message("Can't Open Saved Game File: %s, exiting...", SAVE_FILE);
+   zc_message("Can't Open Saved Game File: %s, exiting...", spath);
    exit(1);
 
 reset:
    if (f)
       pack_fclose(f);
 
-   zc_message("Format error or entries don't match with quest: %s. Resetting game data... ", SAVE_FILE);
+   zc_message("Format error or entries don't match with quest: %s. Resetting game data... ", spath);
 
    for (int i = 0; i < MAXSAVES; i++)
       saves[i].Clear();
@@ -695,10 +686,16 @@ int writesaves(gamedata *savedata, PACKFILE *f)
 
 int save_savedgames()
 {
+   char spath[MAX_STRLEN];
+
    if (saves == NULL)
       return 1;
 
-   PACKFILE *f = pack_fopen(SAVE_FILE, F_WRITE_PACKED);
+   /* Calculate the save path to use */
+   sprintf(spath, "%s%c%s", save_path, OTHER_PATH_SEPARATOR, get_filename(qst_path));
+   replace_extension(spath, spath, "sav");
+
+   PACKFILE *f = pack_fopen(spath, F_WRITE_PACKED);
 
    if (!f)
       return 2;
@@ -930,7 +927,6 @@ static bool register_name()
    int grid_x = 0;
    int grid_y = 0;
 
-
    do
    {
       spos = grid_y * letter_grid_width + grid_x;
@@ -949,7 +945,7 @@ static bool register_name()
                grid_y = letter_grid_height - 1;
          }
 
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
       }
       else if (rRight())
       {
@@ -964,7 +960,7 @@ static bool register_name()
                grid_y = 0;
          }
 
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
       }
       else if (rUp())
       {
@@ -973,7 +969,7 @@ static bool register_name()
          if (grid_y < 0)
             grid_y = letter_grid_height - 1;
 
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
       }
       else if (rDown())
       {
@@ -982,7 +978,7 @@ static bool register_name()
          if (grid_y >= letter_grid_height)
             grid_y = 0;
 
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
       }
       else if (rBbtn())
       {
@@ -999,7 +995,7 @@ static bool register_name()
          if (x >= 8)
             x = 0;
 
-         sfx(WAV_PLACE);
+         sfx(SFX_PLACE);
       }
       else if (rSbtn())
       {
@@ -1056,7 +1052,7 @@ static bool register_name()
       game = saves + s;
 
       game->set_quest(0xFF); /* Now it will always be a custom quest */
-      sprintf(game->qstpath, "%s", quest_path);
+      sprintf(game->qstpath, "%s", get_filename(qst_path));
       strcpy(game->version, QHeader.version);
       strcpy(game->title, QHeader.title);
 
@@ -1098,7 +1094,7 @@ static bool copy_file(int file)
       saves[savecnt] = saves[file];
       ++savecnt;
       listpos = ((savecnt - 1) / 3) * 3;
-      sfx(WAV_SCALE);
+      sfx(SFX_SCALE);
       select_mode();
       return true;
    }
@@ -1119,7 +1115,7 @@ static bool delete_save(int file)
       if (listpos > savecnt - 1)
          listpos = zc_max(listpos - 3, 0);
 
-      sfx(WAV_OUCH);
+      sfx(SFX_OUCH);
       select_mode();
       return true;
    }
@@ -1161,7 +1157,7 @@ static int game_details(int file)
    textout_ex(framebuf, zfont, "STATUS", 40, 120, 2, -1);
 
    textout_ex(framebuf, zfont, "Custom Quest", 120, 104, 1, -1);
-   textprintf_ex(framebuf, zfont, 120, 112, 1, -1, "%s", get_filename(saves[file].qstpath));
+   textprintf_ex(framebuf, zfont, 120, 112, 1, -1, "%s", saves[file].qstpath);
 
    if (!saves[file].get_hasplayed())
       textout_ex(framebuf, zfont, "Empty Game", 120, 120, 1, -1);
@@ -1301,7 +1297,7 @@ static void select_game()
          if (pos < 0)
             pos = (mode) ? 2 : 5;
 
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
       }
 
       if (rDown())
@@ -1311,20 +1307,20 @@ static void select_game()
          if (pos > ((mode) ? 2 : 5))
             pos = 0;
 
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
       }
 
       if (rLeft() && listpos > 2)
       {
          listpos -= 3;
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
          zc_sync_pal = true;
       }
 
       if (rRight() && listpos + 3 < savecnt)
       {
          listpos += 3;
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
          zc_sync_pal = true;
       }
 
@@ -1361,7 +1357,7 @@ void titlescreen()
 {
    int q = zc_state;
 
-   zc_state = 0;
+   zc_state = ZC_RUN;
    playing = false;
 
    if (q == ZC_CONTINUE)
@@ -1394,9 +1390,9 @@ void game_over(int type)
    loadfullpal();
 
    if (zc_state == ZC_GAMEOVER)
-      jukebox(ZC_MIDI_GAMEOVER);
+      jukebox(MID_GAMEOVER);
 
-   zc_state = 0;
+   zc_state = ZC_RUN;
 
    clear_bitmap(framebuf);
    textout_ex(framebuf, zfont, "CONTINUE", 88, 72, QMisc.colors.msgtext, -1);
@@ -1426,7 +1422,7 @@ void game_over(int type)
       {
          if (rUp())
          {
-            sfx(WAV_CHINK);
+            sfx(SFX_CHINK);
             pos = (pos == 0) ? 2 : pos - 1;
 
             if (type)
@@ -1437,7 +1433,7 @@ void game_over(int type)
 
          if (rDown())
          {
-            sfx(WAV_CHINK);
+            sfx(SFX_CHINK);
             pos = (pos + 1) % 3;
 
             if (type)
@@ -1550,13 +1546,13 @@ bool save_game(bool savepoint, int type)
          {
             if (rUp())
             {
-               sfx(WAV_CHINK);
+               sfx(SFX_CHINK);
                pos = (pos == 0) ? 2 : pos - 1;
             }
 
             if (rDown())
             {
-               sfx(WAV_CHINK);
+               sfx(SFX_CHINK);
                pos = (pos + 1) % 3;
             }
 
@@ -1646,13 +1642,13 @@ bool save_game(bool savepoint, int type)
                {
                   if (rUp())
                   {
-                     sfx(WAV_CHINK);
+                     sfx(SFX_CHINK);
                      pos2 = (pos2 == 0) ? 1 : pos2 - 1;
                   }
 
                   if (rDown())
                   {
-                     sfx(WAV_CHINK);
+                     sfx(SFX_CHINK);
                      pos2 = (pos2 + 1) % 2;
                   }
 

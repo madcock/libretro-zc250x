@@ -3,12 +3,13 @@
 
 #include "zdefs.h"
 
-void Z_init_sound();
+int zc_initsound(void);
+void zc_deinitsound(void);
 
 void draw_lens_under(BITMAP *dest, bool layer);
 void draw_lens_over();
 void advanceframe(bool allow_gfx);
-void updatescr(bool allow_gfx);
+void update_video_frame(bool allow_gfx);
 void eat_buttons();
 
 extern bool control_state[18];

@@ -27,7 +27,6 @@ BITMAP *ScriptDrawingBitmapPool::_parent_bmp = 0;
 
 FONT *get_zc_font(int index)
 {
-   //return getfont(index);
    switch (index)
    {
       default:
@@ -52,7 +51,7 @@ FONT *get_zc_font(int index)
          return pfont;
 
       case font_mfont:
-         return mfont;
+         return zfont;
 
       case font_ztfont:
          return ztfont;

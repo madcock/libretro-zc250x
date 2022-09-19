@@ -1256,23 +1256,23 @@ int32_t get_register(const int32_t arg)
       case INPUTMOUSEX:
       {
          int leftOffset = 32;
-         ret = ((Mx - leftOffset)) * 10000;
+         ret = ((MouseX - leftOffset)) * 10000;
          break;
       }
 
       case INPUTMOUSEY:
       {
          int topOffset = 8;
-         ret = ((My - topOffset)) * 10000;
+         ret = ((MouseY - topOffset)) * 10000;
          break;
       }
 
       case INPUTMOUSEZ:
-         ret = Mz * 10000;
+         ret = MouseZ * 10000;
          break;
 
       case INPUTMOUSEB:
-         ret = Mb * 10000;
+         ret = MouseB * 10000;
          break;
 
       case INPUTPRESSSTART:
@@ -2346,7 +2346,7 @@ int32_t get_register(const int32_t arg)
          break;
 
       case GETMIDI:
-         ret = (sel_music - (ZC_MIDI_COUNT - 1)) * 10000;
+         ret = (sel_music - (MID_COUNT - 1)) * 10000;
          break;
 
       case CURDSCR:
@@ -3162,19 +3162,19 @@ void set_register(const int32_t arg, const int32_t value)
       case INPUTMOUSEX:
       {
          int leftOffset = 32;
-         Mx = (value / 10000) + leftOffset;
+         MouseX = (value / 10000) + leftOffset;
          break;
       }
 
       case INPUTMOUSEY:
       {
          int topOffset = 8;
-         My = (value / 10000) + topOffset;
+         MouseY = (value / 10000) + topOffset;
          break;
       }
 
       case INPUTMOUSEZ:
-         Mz = value / 10000;
+         MouseZ = value / 10000;
          break;
 
       ///----------------------------------------------------------------------------------------------------//
@@ -5877,7 +5877,7 @@ void do_midi(bool v)
    if (MIDI == 0)
       music_stop();
    else
-      jukebox(MIDI + (ZC_MIDI_COUNT - 1));
+      jukebox(MIDI + (MID_COUNT - 1));
 }
 
 void do_enh_music(bool v)

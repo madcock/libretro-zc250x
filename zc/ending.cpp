@@ -89,7 +89,7 @@ void putendmsg(const char *s, int x, int y, int speed, void(proc)())
       if ((f % speed) == 0)
       {
          if (s[i] != ' ')
-            sfx(WAV_MSG);
+            sfx(SFX_MSG);
 
          textprintf_ex(framebuf, zfont, x + (i << 3), y, WHITE, 0, "%c", s[i]);
          ++i;
@@ -165,8 +165,8 @@ void ending()
 
    music_stop();
    kill_sfx();
-   sfx(WAV_ZELDA);
-   zc_state = 0;
+   sfx(SFX_ZELDA);
+   zc_state = ZC_RUN;
 
    draw_screen_clip_rect_x1 = 0;
    draw_screen_clip_rect_x2 = 255;
@@ -288,7 +288,7 @@ void ending()
       if (f == 861)
       {
          blit(scrollbuf, framebuf, 0, 0, 0, PLAYFIELD_OFFSET != 0 ? 168 : 0, 256, SUBSCREEN_HEIGHT);
-         try_zcmusic((char *)"zelda.nsf", 1, ZC_MIDI_ENDING);
+         try_zcmusic((char *)"zelda.nsf", 1, MID_ENDING);
 
          for (int y = 0; y < 224; y++)
          {

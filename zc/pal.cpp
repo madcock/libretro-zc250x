@@ -498,7 +498,7 @@ void cycle_palette()
       }
    }
 
-   // No need to do handle zc_sync_pal here; it's done in updatescr().
+   // No need to do handle zc_sync_pal here; it's done in update_video_frame().
 }
 
 int reverse_NESpal(RGB c)

@@ -9,26 +9,38 @@
 
 #include "zcarray.h"
 
-#define ZELDA_VERSION       0x0250                          //version of the program
-#define ZC_VERSION          25300                           //Version ID for ZScript Game->Version
-#define VERSION_BUILD       28                              //build number of this version
+#define ZELDA_VERSION       0x0250                        /* version of the program */
+#define ZC_VERSION          25300                         /* Version ID for ZScript Game->Version */
+#define VERSION_BUILD       28                            /* build number of this version */
 #define DATE_STR            "October 4, 2014"
-#define DATA_PASSWORD       "longtan"                       /* Password used to encrypt the game datafiles */
+#define DATA_PASSWORD       "longtan"                     /* Password used to encrypt the game datafiles */
 
 #define MIN_VERSION         0x0184
 
-#define ZELDADAT_VERSION      0x0211                        //version of zelda.dat
-#define ZELDADAT_BUILD        17                            //build of zelda.dat
-#define SFXDAT_VERSION        0x0211                        //version of sfx.dat
-#define SFXDAT_BUILD          15                            //build of sfx.dat
-#define FONTSDAT_VERSION      0x0211                        //version of fonts.dat
-#define FONTSDAT_BUILD        18                            //build of fonts.dat
+#define ZCDAT_VERSION       0x0211                        /* version of zelda.dat */
+#define ZCDAT_BUILD         17                            /* build of zelda.dat */
+#define ZC_SYS_DIR          "zc250x"                      /* Zelda Classic directory within system path */
+#define ZC_SF2_DIR          "sf2"                         /* Soundfont directory within system path */
+#define SYSTEM_FILE         "zcdata.dat"                  /* system file required for ZC */
 
 enum {ENC_METHOD_192B104 = 0, ENC_METHOD_192B105, ENC_METHOD_192B185, ENC_METHOD_211B9, ENC_METHOD_211B18, ENC_METHOD_MAX};
 
 #define PI 3.14159265358979323846
 #define HP_PER_HEART          16
 #define DAMAGE_MULTIPLIER     2
+
+#define RETURN_ERROR \
+{                    \
+   success = false;  \
+   goto error;       \
+}
+
+#define RETURN_ERROR_M(message)  \
+{                                \
+   success = false;              \
+   zc_error(message);            \
+   goto error;                   \
+}
 
 #define ZC_ID(a,b,c,d)  (((a)<<24) | ((b)<<16) | ((c)<<8) | (d))
 
@@ -132,7 +144,6 @@ enum {ENC_METHOD_192B104 = 0, ENC_METHOD_192B105, ENC_METHOD_192B185, ENC_METHOD
 
 extern int CSET_SIZE;
 extern int CSET_SHFT;
-extern bool fake_pack_writing;
 
 // system colors
 #define lc1(x) ((x)+192)                                    // offset to 'level bg color' x (row 12)
@@ -1598,7 +1609,7 @@ struct MsgStr
    short y;   // y position of message boxes.
    unsigned short w;
    unsigned short h;
-   uint8_t sfx; // either WAV_MSG or something else.
+   uint8_t sfx; // either SFX_MSG or something else.
    uint16_t listpos;
    uint8_t vspace;
    uint8_t hspace;
@@ -2346,12 +2357,7 @@ inline fix abs(fix f)
 
 inline bool pfwrite(void *p, long n, PACKFILE *f)
 {
-   bool success = true;
-
-   if (!fake_pack_writing)
-      success = (pack_fwrite(p, n, f) == n);
-
-   return success;
+   return (pack_fwrite(p, n, f) == n);
 }
 
 inline bool pfread(void *p, long n, PACKFILE *f, bool keepdata)
@@ -2359,17 +2365,11 @@ inline bool pfread(void *p, long n, PACKFILE *f, bool keepdata)
    bool success;
 
    if (keepdata == true)
-   {
       success = (pack_fread(p, n, f) == n);
-
-      return success;
-   }
    else
-   {
       success = (pack_fseek(f, n) == 0);
 
-      return success;
-   }
+   return success;
 }
 
 inline bool p_getc(void *p, PACKFILE *f, bool keepdata)
@@ -2398,13 +2398,11 @@ inline bool p_putc(int c, PACKFILE *f)
 {
    bool success = true;
 
-   if (!fake_pack_writing)
-   {
-      if (!f) return false;
-      if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
-      pack_putc(c, f);
-      success = (pack_ferror(f) == 0);
-   }
+   if (!f) return false;
+   if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
+ 
+   pack_putc(c, f);
+   success = (pack_ferror(f) == 0);
 
    return success;
 }
@@ -2435,14 +2433,11 @@ inline bool p_iputw(int c, PACKFILE *f)
 {
    bool success = true;
 
-   if (!fake_pack_writing)
-   {
-      if (!f) return false;
-      if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
+   if (!f) return false;
+   if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
 
-      pack_iputw(c, f);
-      success = (pack_ferror(f) == 0);
-   }
+   pack_iputw(c, f);
+   success = (pack_ferror(f) == 0);
 
    return success;
 }
@@ -2504,13 +2499,11 @@ inline bool p_iputl(long c, PACKFILE *f)
 {
    bool success = true;
 
-   if (!fake_pack_writing)
-   {
-      if (!f) return false;
-      if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
-      pack_iputl(c, f);
-      success = (pack_ferror(f) == 0);
-   }
+   if (!f) return false;
+   if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
+
+   pack_iputl(c, f);
+   success = (pack_ferror(f) == 0);
 
    return success;
 }
@@ -2541,13 +2534,11 @@ inline bool p_mputw(int c, PACKFILE *f)
 {
    bool success = true;
 
-   if (!fake_pack_writing)
-   {
-      if (!f) return false;
-      if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
-      pack_mputw(c, f);
-      success = (pack_ferror(f) == 0);
-   }
+   if (!f) return false;
+   if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
+
+   pack_mputw(c, f);
+   success = (pack_ferror(f) == 0);
 
    return success;
 }
@@ -2578,14 +2569,11 @@ inline bool p_mputl(long c, PACKFILE *f)
 {
    bool success = true;
 
-   if (!fake_pack_writing)
-   {
-      if (!f) return false;
-      if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
+   if (!f) return false;
+   if (!(f->normal.flags & PACKFILE_FLAG_WRITE)) return false; //must be writing to file
 
-      pack_mputl(c, f);
-      success = (pack_ferror(f) == 0);
-   }
+   pack_mputl(c, f);
+   success = (pack_ferror(f) == 0);
 
    return success;
 }

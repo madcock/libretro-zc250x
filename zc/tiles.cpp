@@ -27,7 +27,6 @@ uint8_t unpackbuf[UNPACKSIZE];
 
 bool isblanktile(tiledata *buf, int i)
 {
-   //  uint8_t *tilestart=tilebuf+(i*128);
    uint8_t *tilestart = buf[i].data;
    uint64_t *di = (uint64_t *)tilestart;
    int parts = tilesize(buf[i].format) >> 3;
@@ -43,7 +42,6 @@ bool isblanktile(tiledata *buf, int i)
 
 void register_blank_tile_quarters(int tile)
 {
-   //  uint8_t *tilestart=tilebuf+(tile*128);
    uint32_t *di = (uint32_t *)newtilebuf[tile].data;
    blank_tile_quarters_table[(tile << 2)] = true;
    blank_tile_quarters_table[(tile << 2) + 1] = true;
@@ -335,7 +333,6 @@ bool copy_tile(tiledata *buf, int src, int dest, bool swap)
 }
 
 
-// unpacks from tilebuf to unpackbuf
 void unpack_tile(tiledata *buf, int tile, int flip, bool force)
 {
    static uint8_t *si, *di;
@@ -526,7 +523,6 @@ void unpack_tile(tiledata *buf, int tile, int flip, bool force)
    }
 }
 
-// packs from src[256] to tilebuf
 void pack_tile(tiledata *buf, uint8_t *src, int tile)
 {
    pack_tiledata(buf[tile].data, src, buf[tile].format);

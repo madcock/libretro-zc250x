@@ -3189,7 +3189,7 @@ FONT *ss_font(int fontnum)
          break;
 
       case ssfPROP:
-         tempfont = font;
+         tempfont = nfont;
          break;
 
       case ssfGBORACLE:
@@ -4431,7 +4431,7 @@ void dosubscr(miscQdata *misc)
    bool showtime = game->get_timevalid() && get_bit(quest_rules, qr_TIME);
    load_Sitems(misc);
 
-   pause_sfx(WAV_BRANG);
+   pause_sfx(SFX_BRANG);
 
    if (current_item_id(itype_brang) >= 0)
       pause_sfx(itemsbuf[current_item_id(itype_brang)].usesound);
@@ -4439,8 +4439,8 @@ void dosubscr(miscQdata *misc)
    if (current_item_id(itype_hookshot) >= 0)
       pause_sfx(itemsbuf[current_item_id(itype_hookshot)].usesound);
 
-   adjust_sfx(WAV_ER, 128, false);
-   adjust_sfx(WAV_MSG, 128, false);
+   adjust_sfx(SFX_ER, 128, false);
+   adjust_sfx(SFX_MSG, 128, false);
 
    set_clip_rect(scrollbuf, 0, 0, scrollbuf->w, scrollbuf->h);
    set_clip_rect(framebuf, 0, 0, framebuf->w, framebuf->h);
@@ -4516,7 +4516,7 @@ void dosubscr(miscQdata *misc)
             }
 
             Bwpn = Bweapon(Bpos);
-            sfx(WAV_PLACE);
+            sfx(SFX_PLACE);
 
             game->bwpn = Bpos;
             directItemB = directItem;
@@ -4531,7 +4531,7 @@ void dosubscr(miscQdata *misc)
             }
 
             Awpn = Bweapon(Bpos);
-            sfx(WAV_PLACE);
+            sfx(SFX_PLACE);
             game->awpn = Bpos;
             directItemA = directItem;
          }
@@ -4544,7 +4544,7 @@ void dosubscr(miscQdata *misc)
       }
 
       if (pos != Bpos)
-         sfx(WAV_CHIME);
+         sfx(SFX_CHIME);
 
       do_dcounters();
       Link.refill();
@@ -4615,7 +4615,7 @@ void dosubscr(miscQdata *misc)
    if (usebombpal)
       memcpy(RAMpal, temppal, PAL_SIZE * sizeof(RGB));
 
-   resume_sfx(WAV_BRANG);
+   resume_sfx(SFX_BRANG);
 }
 
 void markBmap(int dir, int sc)

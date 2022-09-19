@@ -13,11 +13,6 @@
 #include "ffscript.h"
 #include "particles.h"
 
-#define DegtoFix(d)     ((d)*0.71111111)
-
-
-FONT *get_zc_font(int index);
-
 extern sprite_list  guys, items, Ewpns, Lwpns, Sitems, chainlinks, decorations, particles;
 extern movingblock mblock2;                                 //mblock[4]?
 extern zinitdata zinit;
@@ -3272,7 +3267,7 @@ void openshutters()
          tmpscr->door[i] = dOPENSHUTTER;
       }
 
-   sfx(WAV_DOOR, 128);
+   sfx(SFX_DOOR, 128);
 }
 
 void loadscr(int tmp, int destdmap, int scr, int ldir, bool overlay = false)
@@ -4178,12 +4173,12 @@ void ViewMap()
       }
 
       if (show & 2 || r)
-         textprintf_ex(framebuf, font, 224, 216, WHITE, BLACK, "%1.2f", scale);
+         textprintf_ex(framebuf, nfont, 224, 216, WHITE, BLACK, "%1.2f", scale);
 
       if (r)
       {
-         textprintf_ex(framebuf, font, 0, 208, WHITE, BLACK, "m: %d %d", px, py);
-         textprintf_ex(framebuf, font, 0, 216, WHITE, BLACK, "x: %d %d", x, y);
+         textprintf_ex(framebuf, nfont, 0, 208, WHITE, BLACK, "m: %d %d", px, py);
+         textprintf_ex(framebuf, nfont, 0, 216, WHITE, BLACK, "x: %d %d", x, y);
       }
 
       //since stuff in here accesses tmpscr and tmpscr2... -DD
@@ -4206,7 +4201,7 @@ void onViewMap()
    if (playing && currscr < 128 && DMaps[currdmap].flags & dmfVIEWMAP)
    {
       clear_to_color(framebuf, BLACK);
-      textout_centre_ex(framebuf, font, "Drawing map...", 128, 108, WHITE, BLACK);
+      textout_centre_ex(framebuf, nfont, "Drawing map...", 128, 108, WHITE, BLACK);
       advanceframe(true);
       ViewMap();
    }

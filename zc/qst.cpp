@@ -11,7 +11,6 @@
 #include "defdata.h"
 #include "subscr.h"
 #include "custom.h"
-#include "sfx.h"
 
 using std::string;
 using std::pair;
@@ -24,7 +23,6 @@ extern DoorComboSet        *DoorComboSets;
 extern dmap                *DMaps;
 extern newcombo            *combobuf;
 extern uint8_t                *colordata;
-//extern uint8_t              *tilebuf;
 extern tiledata            *newtilebuf;
 extern itemdata            *itemsbuf;
 extern wpndata             *wpnsbuf;
@@ -84,7 +82,7 @@ void delete_combo_aliases()
 char *VerStr(int version)
 {
    static char ver_str[16];
-   sprintf(ver_str, "v%d.%02X", version >> 8, version & 0xFF);
+   sprintf(ver_str, "%d.%02X", version >> 8, version & 0xFF);
    return ver_str;
 }
 
@@ -174,56 +172,61 @@ PACKFILE *open_quest_file(int *open_error, const char *filename, char *deletefil
    return f;
 }
 
-int get_qst_buffers()
+int alloc_qst_buffers(void)
 {
+   bool success = true;
+
    /* TheMaps: is allocated at quest load time */
-
-   if ((ZCMaps = (zcmap *)malloc(sizeof(zcmap) * MAXMAPS2)) == NULL)
-      return 0;
-
    /* MsgStrings: We allocate the needed mem for the messages at load time when we know the exact qty required */
 
+   if ((ZCMaps = (zcmap *)malloc(sizeof(zcmap) * MAXMAPS2)) == NULL)
+      RETURN_ERROR;
+
    if ((DoorComboSets = (DoorComboSet *)malloc(sizeof(DoorComboSet) * MAXDOORCOMBOSETS)) == NULL)
-      return 0;
+      RETURN_ERROR;
 
    if ((DMaps = (dmap *)malloc(sizeof(dmap) * MAXDMAPS)) == NULL)
-      return 0;
+      RETURN_ERROR;
    memset(DMaps, 0, sizeof(dmap)*MAXDMAPS);
 
    if ((combobuf = (newcombo *)malloc(sizeof(newcombo) * MAXCOMBOS)) == NULL)
-      return 0;
+      RETURN_ERROR;
    memset(combobuf, 0, sizeof(newcombo)*MAXCOMBOS);
 
    if ((colordata = (uint8_t *)malloc(newerpsTOTAL)) == NULL)
-      return 0;
+      RETURN_ERROR;
 
    if ((newtilebuf = (tiledata *)malloc(NEWMAXTILES * sizeof(tiledata))) == NULL)
-      return 0;
+      RETURN_ERROR;
    memset(newtilebuf, 0, NEWMAXTILES * sizeof(tiledata));
    clear_tiles(newtilebuf);
 
    // Big, ugly band-aid here. Perhaps the most common cause of random crashes
    // has been inadvertently accessing itemsbuf[-1]. All such crashes should be
    // fixed by ensuring there's actually itemdata there.
-   // If you change this, be sure to update del_qst_buffers, too.
+   // If you change this, be sure to update free_qst_buffers, too.
 
    if ((itemsbuf = (itemdata *)malloc(sizeof(itemdata) * (MAXITEMS + 1))) == NULL)
-      return 0;
+      RETURN_ERROR;
    memset(itemsbuf, 0, sizeof(itemdata) * (MAXITEMS + 1));
    itemsbuf++;
 
    if ((wpnsbuf = (wpndata *)malloc(sizeof(wpndata) * MAXWPNS)) == NULL)
-      return 0;
+      RETURN_ERROR;
    memset(wpnsbuf, 0, sizeof(wpndata)*MAXWPNS);
 
    if ((guysbuf = (guydata *)malloc(sizeof(guydata) * MAXGUYS)) == NULL)
-      return 0;
+      RETURN_ERROR;
    memset(guysbuf, 0, sizeof(guydata)*MAXGUYS);
 
    if ((combo_class_buf = (comboclass *)malloc(sizeof(comboclass) * cMAX)) == NULL)
-      return 0;
+      RETURN_ERROR;
 
-   return 1;
+error:
+   if (!success)
+      zc_error("Error allocating quest buffers.");
+
+   return success;
 }
 
 
@@ -239,40 +242,33 @@ void free_newtilebuf()
    }
 }
 
-void del_qst_buffers()
+#define FREE_BUF(a)  if (a) {     \
+                        free(a);  \
+                        a = NULL; \
+                     }
+
+void free_qst_buffers(void)
 {
-   zc_message("Cleaning maps. \n");
+   FREE_BUF(ZCMaps)
+   FREE_BUF(MsgStrings)
+   FREE_BUF(DoorComboSets)
+   FREE_BUF(DMaps)
+   FREE_BUF(combobuf)
+   FREE_BUF(colordata)
+   FREE_BUF(wpnsbuf)
+   FREE_BUF(guysbuf)
+   FREE_BUF(combo_class_buf)
 
-   if (ZCMaps) free(ZCMaps);
-
-   if (MsgStrings) free(MsgStrings);
-
-   if (DoorComboSets) free(DoorComboSets);
-
-   if (DMaps) free(DMaps);
-
-   if (combobuf) free(combobuf);
-
-   if (colordata) free(colordata);
-
-   zc_message("Cleaning tile buffers. \n");
-   free_newtilebuf();
-
-   zc_message("Cleaning misc. \n");
-
-   // See get_qst_buffers
    if (itemsbuf)
    {
       itemsbuf--;
-      free(itemsbuf);
+      FREE_BUF(itemsbuf)
    }
 
-   if (wpnsbuf) free(wpnsbuf);
-
-   if (guysbuf) free(guysbuf);
-
-   if (combo_class_buf) free(combo_class_buf);
+   free_newtilebuf();
 }
+
+#undef FREE_BUF
 
 void clear_combo(int i)
 {
@@ -1165,7 +1161,7 @@ int readstrings(PACKFILE *f, zquestheader *Header, bool keepdata)
          tempMsgString.trans = false;
          tempMsgString.font = font_zfont;
          tempMsgString.y = 32;
-         tempMsgString.sfx = WAV_MSG;
+         tempMsgString.sfx = SFX_MSG;
          tempMsgString.listpos = x;
          tempMsgString.x = 24;
          tempMsgString.w = 24 * 8;
@@ -1251,7 +1247,7 @@ int readstrings(PACKFILE *f, zquestheader *Header, bool keepdata)
          tempMsgString.trans = false;
          tempMsgString.font = font_zfont;
          tempMsgString.y = 32;
-         tempMsgString.sfx = WAV_MSG;
+         tempMsgString.sfx = SFX_MSG;
          tempMsgString.listpos = i;
          tempMsgString.x = 24;
          tempMsgString.w = 24 * 8;
@@ -2577,7 +2573,7 @@ int readitems(PACKFILE *f, uint16_t version, uint16_t build, bool keepdata, bool
                itemsbuf[i].wpn4 = itemsbuf[i].pickup_hearts = itemsbuf[i].misc1 =
                                      itemsbuf[i].misc2 = itemsbuf[i].magic = tempitem.usesound = 0;
          itemsbuf[i].count = -1;
-         itemsbuf[i].playsound = WAV_SCALE;
+         itemsbuf[i].playsound = SFX_SCALE;
          reset_itembuf(&itemsbuf[i], i);
       }
    }
@@ -2631,7 +2627,7 @@ int readitems(PACKFILE *f, uint16_t version, uint16_t build, bool keepdata, bool
             tempitem.flags = tempitem.wpn = tempitem.wpn2 = tempitem.wpn3 = tempitem.pickup_hearts =
                                                tempitem.misc1 = tempitem.misc2 = tempitem.usesound = 0;
             tempitem.family = 0xFF;
-            tempitem.playsound = WAV_SCALE;
+            tempitem.playsound = SFX_SCALE;
             reset_itembuf(&tempitem, i);
 
             if (keepdata == true)
@@ -2863,7 +2859,7 @@ int readitems(PACKFILE *f, uint16_t version, uint16_t build, bool keepdata, bool
          tempitem.family = itype_misc;
          tempitem.flags = tempitem.wpn = tempitem.wpn2 = tempitem.wpn3 = tempitem.pickup_hearts = tempitem.misc1 = tempitem.misc2
                                          = tempitem.usesound = 0;
-         tempitem.playsound = WAV_SCALE;
+         tempitem.playsound = SFX_SCALE;
          reset_itembuf(&tempitem, i);
       }
 
@@ -3327,7 +3323,7 @@ int readitems(PACKFILE *f, uint16_t version, uint16_t build, bool keepdata, bool
          if (s_version < 11 && tempitem.family == itype_triforcepiece)
          {
             tempitem.flags = (tempitem.fam_type ? ITEM_GAMEDATA : 0);
-            tempitem.playsound = (tempitem.fam_type ? WAV_SCALE : WAV_CLEARED);
+            tempitem.playsound = (tempitem.fam_type ? SFX_SCALE : SFX_CLEARED);
          }
 
          if (s_version < 12) // June 2007: More Misc. attributes.
@@ -3355,64 +3351,64 @@ int readitems(PACKFILE *f, uint16_t version, uint16_t build, bool keepdata, bool
             switch (tempitem.family)
             {
                case itype_hoverboots:
-                  tempitem.usesound = WAV_ZN1HOVER;
+                  tempitem.usesound = SFX_ZN1HOVER;
                   break;
 
                case itype_wand:
                case itype_book:
-                  tempitem.usesound = WAV_WAND;
+                  tempitem.usesound = SFX_WAND;
                   break;
 
                case itype_arrow:
-                  tempitem.usesound = WAV_ARROW;
+                  tempitem.usesound = SFX_ARROW;
                   break;
 
                case itype_hookshot:
-                  tempitem.usesound = WAV_HOOKSHOT;
+                  tempitem.usesound = SFX_HOOKSHOT;
                   break;
 
                case itype_brang:
-                  tempitem.usesound = WAV_BRANG;
+                  tempitem.usesound = SFX_BRANG;
                   break;
 
                case itype_shield:
-                  tempitem.usesound = WAV_CHINK;
+                  tempitem.usesound = SFX_CHINK;
                   break;
 
                case itype_sword:
-                  tempitem.usesound = WAV_SWORD;
+                  tempitem.usesound = SFX_SWORD;
                   break;
 
                case itype_whistle:
-                  tempitem.usesound = WAV_WHISTLE;
+                  tempitem.usesound = SFX_WHISTLE;
                   break;
 
                case itype_hammer:
-                  tempitem.usesound = WAV_HAMMER;
+                  tempitem.usesound = SFX_HAMMER;
                   break;
 
                case itype_dinsfire:
-                  tempitem.usesound = WAV_ZN1DINSFIRE;
+                  tempitem.usesound = SFX_ZN1DINSFIRE;
                   break;
 
                case itype_faroreswind:
-                  tempitem.usesound = WAV_ZN1FARORESWIND;
+                  tempitem.usesound = SFX_ZN1FARORESWIND;
                   break;
 
                case itype_nayruslove:
-                  tempitem.usesound = WAV_ZN1NAYRUSLOVE1;
+                  tempitem.usesound = SFX_ZN1NAYRUSLOVE1;
                   break;
 
                case itype_bomb:
                case itype_sbomb:
                case itype_quakescroll:
                case itype_quakescroll2:
-                  tempitem.usesound = WAV_BOMB;
+                  tempitem.usesound = SFX_BOMB;
                   break;
 
                case itype_spinscroll:
                case itype_spinscroll2:
-                  tempitem.usesound = WAV_ZN1SPINATTACK;
+                  tempitem.usesound = SFX_ZN1SPINATTACK;
                   break;
             }
          }
@@ -3438,7 +3434,7 @@ int readitems(PACKFILE *f, uint16_t version, uint16_t build, bool keepdata, bool
          {
             if (tempitem.family == itype_fairy)
             {
-               tempitem.usesound = WAV_SCALE;
+               tempitem.usesound = SFX_SCALE;
 
                if (tempitem.fam_type)
                   tempitem.misc3 = 50;
@@ -5611,16 +5607,15 @@ void setupsfx()
    {
       int j = i;
 
-      if (i > Z35)
-         i = Z35;
+      if (i > SFX_Z35)
+         i = SFX_Z35;
 
       SAMPLE *temp_sample = (SAMPLE *)sfxdata[i].dat;
 
       if (customsfxdata[j].data != NULL)
          free(customsfxdata[j].data);
 
-      customsfxdata[j].data = calloc((temp_sample->bits == 8 ? 1 : 2) * (temp_sample->stereo == 0 ? 1 : 2) * temp_sample->len,
-                                     1);
+      customsfxdata[j].data = calloc((temp_sample->bits == 8 ? 1 : 2) * (temp_sample->stereo == 0 ? 1 : 2) * temp_sample->len, 1);
       customsfxdata[j].bits = temp_sample->bits;
       customsfxdata[j].stereo = temp_sample->stereo;
       customsfxdata[j].freq = temp_sample->freq;
@@ -6213,8 +6208,8 @@ int readguys(PACKFILE *f, zquestheader *Header, bool keepdata)
                          || tempguy.family == eeGLEEOK || tempguy.family == eePATRA || tempguy.family == eeGANON || tempguy.family == eeMOLD);
 
             tempguy.hitsfx = (boss && tempguy.family != eeMOLD && tempguy.family != eeDONGO
-                              && tempguy.family != eeDIG) ? WAV_GASP : 0;
-            tempguy.deadsfx = (boss && (tempguy.family != eeDIG || tempguy.misc10 == 0)) ? WAV_GASP : WAV_EDEAD;
+                              && tempguy.family != eeDIG) ? SFX_GASP : 0;
+            tempguy.deadsfx = (boss && (tempguy.family != eeDIG || tempguy.misc10 == 0)) ? SFX_GASP : SFX_EDEAD;
 
             if (tempguy.family == eeAQUA)
                for (int j = 0; j < edefLAST; j++) tempguy.defense[j] = default_guys[eRAQUAM].defense[j];
@@ -7070,16 +7065,16 @@ int readmapscreen(PACKFILE *f, zquestheader *Header, mapscr *temp_mapscr, zcmap 
       if (temp_mapscr->flags & 8) //fROAR
       {
          temp_mapscr->bosssfx =
-            (temp_mapscr->flags3 & 2) ? WAV_DODONGO : // fDODONGO
-            (temp_mapscr->flags2 & 32) ? WAV_VADER : // fVADER
-            WAV_ROAR;
+            (temp_mapscr->flags3 & 2) ? SFX_DODONGO : // fDODONGO
+            (temp_mapscr->flags2 & 32) ? SFX_VADER : // fVADER
+            SFX_ROAR;
       }
 
       if (temp_mapscr->flags & 128) //fSEA
-         temp_mapscr->oceansfx = WAV_SEA;
+         temp_mapscr->oceansfx = SFX_SEA;
 
       if (!(temp_mapscr->flags3 & 64)) //fNOSECRETSOUND
-         temp_mapscr->secretsfx = WAV_SECRET;
+         temp_mapscr->secretsfx = SFX_SECRET;
 
       temp_mapscr->flags3 &= ~66; //64|2
       temp_mapscr->flags2 &= ~32;
@@ -7098,7 +7093,7 @@ int readmapscreen(PACKFILE *f, zquestheader *Header, mapscr *temp_mapscr, zcmap 
    }
 
    if (version < 15) // October 2007: another SFX
-      temp_mapscr->holdupsfx = WAV_PICKUP;
+      temp_mapscr->holdupsfx = SFX_PICKUP;
    else
    {
       if (!p_getc(&(temp_mapscr->holdupsfx), f, true))

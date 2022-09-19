@@ -728,7 +728,7 @@ void enemy::FireWeapon()
                   ((enemy *)guys.spr(kids + i))->count_enemy = false;
             }
 
-            sfx(get_bit(quest_rules, qr_MORESOUNDS) ? WAV_ZN1SUMMON : WAV_FIRE, pan(int(x)));
+            sfx(get_bit(quest_rules, qr_MORESOUNDS) ? SFX_ZN1SUMMON : SFX_FIRE, pan(int(x)));
          }
 
          break;
@@ -769,7 +769,7 @@ void enemy::FireWeapon()
             }
 
             if (summoned)
-               sfx(get_bit(quest_rules, qr_MORESOUNDS) ? WAV_ZN1SUMMON : WAV_FIRE, pan(int(x)));
+               sfx(get_bit(quest_rules, qr_MORESOUNDS) ? SFX_ZN1SUMMON : SFX_FIRE, pan(int(x)));
          }
 
          break;
@@ -851,7 +851,7 @@ int enemy::defend(int wpnId, int *power, int edef)
                return 0;
       }
 
-      sfx(WAV_CHINK, pan(int(x)));
+      sfx(SFX_CHINK, pan(int(x)));
       return 1;
    }
 
@@ -860,7 +860,7 @@ int enemy::defend(int wpnId, int *power, int edef)
       case edSTUNORCHINK:
          if (*power <= 0)
          {
-            sfx(WAV_CHINK, pan(int(x)));
+            sfx(SFX_CHINK, pan(int(x)));
             return 1;
          }
 
@@ -873,7 +873,7 @@ int enemy::defend(int wpnId, int *power, int edef)
             return 1;
 
          stunclk = 160;
-         sfx(WAV_EHIT, pan(int(x)));
+         sfx(SFX_EHIT, pan(int(x)));
          return 1;
 
       case edCHINKL1:
@@ -892,7 +892,7 @@ int enemy::defend(int wpnId, int *power, int edef)
          if (*power >= 8 * DAMAGE_MULTIPLIER) break;
 
       case edCHINK:
-         sfx(WAV_CHINK, pan(int(x)));
+         sfx(SFX_CHINK, pan(int(x)));
          return 1;
 
       case edIGNOREL1:
@@ -1279,13 +1279,13 @@ hitclock:
    if (((wpnId == wBrang) || (get_bit(quest_rules, qr_NOFLASHDEATH))) && hp <= 0)
       fading = fade_blue_poof;
 
-   sfx(WAV_EHIT, pan(int(x)));
+   sfx(SFX_EHIT, pan(int(x)));
 
    if (hitsfx > 0)
       sfx(hitsfx, pan(int(x)));
 
    if (family == eeGUY)
-      sfx(WAV_EDEAD, pan(int(x)));
+      sfx(SFX_EDEAD, pan(int(x)));
 
    // Penetrating weapons
    if ((wpnId == wArrow || wpnId == wBeam) && !cannotpenetrate())
@@ -3730,21 +3730,21 @@ int wpnsfx(int wpn)
       case ewFlame:
       case ewFlame2Trail:
       case ewFlame2:
-         return WAV_FIRE;
+         return SFX_FIRE;
 
       case ewWind:
       case ewMagic:
-         return WAV_WAND;
+         return SFX_WAND;
 
       case ewIce:
-         return WAV_ZN1ICE;
+         return SFX_ZN1ICE;
 
       case ewRock:
-         if (get_bit(quest_rules, qr_MORESOUNDS)) return WAV_ZN1ROCK;
+         if (get_bit(quest_rules, qr_MORESOUNDS)) return SFX_ZN1ROCK;
 
       case ewFireball2:
       case ewFireball:
-         if (get_bit(quest_rules, qr_MORESOUNDS)) return WAV_ZN1FIREBALL;
+         if (get_bit(quest_rules, qr_MORESOUNDS)) return SFX_ZN1FIREBALL;
    }
 
    return -1;
@@ -5170,7 +5170,7 @@ bool eTrap2::animate(int index)
          }
 
          if (get_bit(quest_rules, qr_MORESOUNDS))
-            sfx(WAV_ZN1TAP, pan(int(x)));
+            sfx(SFX_ZN1TAP, pan(int(x)));
 
          dir = dir ^ 1;
       }
@@ -5182,7 +5182,7 @@ bool eTrap2::animate(int index)
       if (!trapmove(dir) || clip())
       {
          if (get_bit(quest_rules, qr_MORESOUNDS))
-            sfx(WAV_ZN1TAP, pan(int(x)));
+            sfx(SFX_ZN1TAP, pan(int(x)));
 
          dir = dir ^ 1;
       }
@@ -6144,7 +6144,7 @@ bool eStalfos::animate(int index)
                      facelink(false);
                      sclk=16+((dir^1)<<8);
                  fall=-FEATHERJUMP;
-                     sfx(WAV_ZN1JUMP,pan(int(x)));
+                     sfx(SFX_ZN1JUMP,pan(int(x)));
                    }*/
                break;
 
@@ -6652,7 +6652,7 @@ void eStalfos::KillWeapon()
    }
 
    if (wpn == ewBrang && !Ewpns.idCount(ewBrang))
-      stop_sfx(WAV_BRANG);
+      stop_sfx(SFX_BRANG);
 }
 
 void eStalfos::break_shield()
@@ -6899,7 +6899,7 @@ void eWizzrobe::wizzrobe_attack_for_real()
    if (dmisc2 == 0) //normal weapon
    {
       addEwpn(x, y, z, wpn, 0, wdp, dir, getUID());
-      sfx(WAV_WAND, pan(int(x)));
+      sfx(SFX_WAND, pan(int(x)));
    }
    else if (dmisc2 == 1) // ring of fire
    {
@@ -6911,7 +6911,7 @@ void eWizzrobe::wizzrobe_attack_for_real()
       addEwpn(x, y, z, wpn, 0, wdp, r_up, getUID());
       addEwpn(x, y, z, wpn, 0, wdp, l_down, getUID());
       addEwpn(x, y, z, wpn, 0, wdp, r_down, getUID());
-      sfx(WAV_FIRE, pan(int(x)));
+      sfx(SFX_FIRE, pan(int(x)));
    }
    else if (dmisc2 == 2) // summons specific enemy
    {
@@ -6935,7 +6935,7 @@ void eWizzrobe::wizzrobe_attack_for_real()
                ((enemy *)guys.spr(kids + i))->count_enemy = false;
          }
 
-         sfx(WAV_FIRE, pan(int(x)));
+         sfx(SFX_FIRE, pan(int(x)));
       }
    }
    else if (dmisc2 == 3) //summon from layer
@@ -6973,7 +6973,7 @@ void eWizzrobe::wizzrobe_attack_for_real()
          }
 
          if (summoned)
-            sfx(get_bit(quest_rules, qr_MORESOUNDS) ? WAV_ZN1SUMMON : WAV_FIRE, pan(int(x)));
+            sfx(get_bit(quest_rules, qr_MORESOUNDS) ? SFX_ZN1SUMMON : SFX_FIRE, pan(int(x)));
       }
    }
 }
@@ -7106,7 +7106,7 @@ void eWizzrobe::wizzrobe_attack()
          if (lined_up(8, false) == dir)
          {
             //        addEwpn(x,y,z,wpn,0,wdp,dir,getUID());
-            //        sfx(WAV_WAND,pan(int(x)));
+            //        sfx(SFX_WAND,pan(int(x)));
             wizzrobe_attack_for_real();
             fclk = 30;
          }
@@ -7279,7 +7279,7 @@ int eDodongo::takehit(weapon *w)
       case wSword:
          if (stunclk)
          {
-            sfx(WAV_EHIT, pan(int(x)));
+            sfx(SFX_EHIT, pan(int(x)));
             hp = 0;
             item_set = (misc == wSBomb) ? isSBOMB100 : isBOMB100;
             fading = 0;                                         // don't flash
@@ -7287,7 +7287,7 @@ int eDodongo::takehit(weapon *w)
          }
 
       default:
-         sfx(WAV_CHINK, pan(int(x)));
+         sfx(SFX_CHINK, pan(int(x)));
    }
 
    return 1;
@@ -7448,7 +7448,7 @@ int eDodongo2::takehit(weapon *w)
       case wSword:
          if (stunclk)
          {
-            sfx(WAV_EHIT, pan(int(x)));
+            sfx(SFX_EHIT, pan(int(x)));
             hp = 0;
             item_set = (misc == wSBomb) ? isSBOMB100 : isBOMB100;
             fading = 0;                                         // don't flash
@@ -7456,7 +7456,7 @@ int eDodongo2::takehit(weapon *w)
          }
 
       default:
-         sfx(WAV_CHINK, pan(int(x)));
+         sfx(SFX_CHINK, pan(int(x)));
    }
 
    return 1;
@@ -7790,7 +7790,7 @@ int eGohma::takehit(weapon *w)
    {
       if (!((wpnDir == up || wpnDir == l_up || wpnDir == r_up) && abs(int(x) - wpnx) <= 8 && clk3 >= 16 && clk3 < 116))
       {
-         sfx(WAV_CHINK, pan(int(x)));
+         sfx(SFX_CHINK, pan(int(x)));
          return 1;
       }
    }
@@ -8099,11 +8099,11 @@ bool eGanon::animate(int index)
          hxofs = 1000;
          loadpalset(9, pSprite(spPILE));
          music_stop();
-         stop_sfx(WAV_ROAR);
+         stop_sfx(SFX_ROAR);
 
          if (deadsfx > 0) sfx(deadsfx, pan(int(x)));
 
-         sfx(WAV_GANON);
+         sfx(SFX_GANON);
          items.add(new item(x + 8, y + 8, (fix)0, iPile, ipDUMMY, 0));
          break;
 
@@ -8119,7 +8119,7 @@ bool eGanon::animate(int index)
                return true;
             }
 
-            sfx(WAV_CLEARED);
+            sfx(SFX_CLEARED);
             items.add(new item(x + 8, y + 8, (fix)0, iBigTri, ipBIGTRI, 0));
             setmapflag();
          }
@@ -8159,7 +8159,7 @@ int eGanon::takehit(weapon *w)
             hp = guysbuf[id & 0xFFF].hp;                          //16*DAMAGE_MULTIPLIER;
          }
 
-         sfx(WAV_EHIT, pan(int(x)));
+         sfx(SFX_EHIT, pan(int(x)));
 
          if (hitsfx > 0) sfx(hitsfx, pan(int(x)));
 
@@ -8432,7 +8432,7 @@ esMoldorm::esMoldorm(fix X, fix Y, int Id, int Clk) : enemy(X, Y, Id, Clk)
    parentclk = 0;
    bgsfx = -1;
    flags &= ~guy_neverret;
-   //deadsfx = WAV_EDEAD;
+   //deadsfx = SFX_EDEAD;
 }
 
 bool esMoldorm::animate(int index)
@@ -8984,11 +8984,11 @@ int eManhandla::takehit(weapon *w)
 
       case wHookshot:
       case wBrang:
-         sfx(WAV_CHINK, pan(int(x)));
+         sfx(SFX_CHINK, pan(int(x)));
          break;
 
       default:
-         sfx(WAV_EHIT, pan(int(x)));
+         sfx(SFX_EHIT, pan(int(x)));
 
    }
 
@@ -9137,7 +9137,7 @@ esManhandla::esManhandla(fix X, fix Y, int Id, int Clk) : enemy(X, Y, Id, Clk)
    dummy_bool[0] = false;
    item_set = 0;
    bgsfx = -1;
-   deadsfx = WAV_EDEAD;
+   deadsfx = SFX_EDEAD;
    flags &= (~guy_neverret);
 }
 
@@ -9322,7 +9322,7 @@ bool eGleeok::animate(int index)
 
             if (hitsfx > 0) sfx(hitsfx, pan(int(head->x)));
 
-            sfx(WAV_EHIT, pan(int(head->x)));
+            sfx(SFX_EHIT, pan(int(head->x)));
          }
 
          head->hclk = 0;
@@ -10033,8 +10033,8 @@ esPatra::esPatra(fix X, fix Y, int Id, int Clk) : enemy(X, Y, Id, Clk)
    bgsfx = -1;
    //o_tile=0;
    flags &= (~guy_neverret);
-   deadsfx = WAV_EDEAD;
-   hitsfx = WAV_EHIT;
+   deadsfx = SFX_EDEAD;
+   hitsfx = SFX_EHIT;
 }
 
 bool esPatra::animate(int index)
@@ -10323,8 +10323,8 @@ esPatraBS::esPatraBS(fix X, fix Y, int Id, int Clk) : enemy(X, Y, Id, Clk)
    hxsz = hysz = 16;
    bgsfx = -1;
    mainguy = count_enemy = false;
-   deadsfx = WAV_EDEAD;
-   hitsfx = WAV_EHIT;
+   deadsfx = SFX_EDEAD;
+   hitsfx = SFX_EHIT;
    flags &= ~guy_neverret;
 }
 
@@ -11157,7 +11157,7 @@ void loadguys()
             blockpath = true;
 
          if (currscr < 128)
-            sfx(WAV_SCALE);
+            sfx(SFX_SCALE);
 
          addguy(120, 64, Guy, (dlevel || BSZ) ? -15 : startguy[rand() & 7], true);
          Link.Freeze();
@@ -11165,7 +11165,7 @@ void loadguys()
    }
    else if (Guy == gFAIRY) // The only Guy that somewhat ignores the "Guys In Caves Only" DMap flag
    {
-      sfx(WAV_SCALE);
+      sfx(SFX_SCALE);
       addguy(120, 62, gFAIRY, -14, false);
    }
 
@@ -12318,7 +12318,7 @@ bool parsemsgcode()
          if (music == 0)
             music_stop();
          else
-            jukebox(music + (ZC_MIDI_COUNT - 1));
+            jukebox(music + (MID_COUNT - 1));
 
          return true;
       }
@@ -12732,7 +12732,7 @@ disappear:
                game->set_magicdrainrate(1);
 
             adjustmagic = false;
-            sfx(WAV_SCALE);
+            sfx(SFX_SCALE);
             setmapflag();
          }
 
@@ -12740,7 +12740,7 @@ disappear:
          {
             game->set_canslash(1);
             learnslash = false;
-            sfx(WAV_SCALE);
+            sfx(SFX_SCALE);
             setmapflag();
          }
       }

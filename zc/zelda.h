@@ -9,12 +9,11 @@
 #include "zdefs.h"
 #include "zcarray.h"
 #include "zcsys.h"
-#include "zeldadat.h"
-#include "sfx.h"
+#include "zcdata.h"
 #include "zcmusic.h"
 #include "scriptdraw.h"
 
-#define  MAXMIDIS     ZC_MIDI_COUNT+MAXCUSTOMTUNES
+#define  MAXMIDIS     MID_COUNT+MAXCUSTOMTUNES
 
 // saved games
 #define MAXSAVES      6 // It's constant enough... :p
@@ -118,12 +117,12 @@ extern COLOR_MAP trans_table, trans_table2;
 extern BITMAP     *framebuf, *scrollbuf, *tempbuf, *msgbmpbuf, *msgdisplaybuf, *pricesdisplaybuf,
        *prim_bmp, *lens_scr;
 extern DATAFILE *data, *sfxdata, *fontsdata, *mididata;
-extern FONT  *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *pfont, *mfont, *ztfont, *sfont,
-       *sfont2, *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont, *font,
+extern FONT  *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *pfont, *ztfont, *sfont,
+       *sfont2, *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont,
        *goronfont, *zoranfont, *hylian1font, *hylian2font, *hylian3font, *hylian4font, *gboraclefont, *gboraclepfont,
        *dsphantomfont, *dsphantompfont;
 extern PALETTE  RAMpal;
-extern uint8_t     *colordata;
+extern uint8_t  *colordata;
 extern itemdata *itemsbuf;
 extern wpndata  *wpnsbuf;
 extern comboclass *combo_class_buf;
@@ -203,7 +202,7 @@ extern ZScriptDrawingRenderTarget *zscriptDrawingRenderTarget;
 
 uint32_t getNumGlobalArrays();
 
-extern char quest_path[1024];
+extern char qst_path[MAX_STRLEN];
 extern gamedata *saves;
 extern gamedata *game;
 

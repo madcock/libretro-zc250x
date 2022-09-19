@@ -12,7 +12,6 @@
 #include "tiles.h"
 #include "pal.h"
 #include "qst.h"
-#include "fontsdat.h"
 #include "particles.h"
 #include "ffscript.h"
 #include "zcarray.h"
@@ -64,8 +63,8 @@ COLOR_MAP trans_table, trans_table2;
 BITMAP     *framebuf, *scrollbuf, *tempbuf, *msgdisplaybuf, *pricesdisplaybuf, *prim_bmp,
            *lens_scr = NULL;
 DATAFILE   *data, *sfxdata, *fontsdata, *mididata;
-FONT       *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *pfont, *mfont, *ztfont, *sfont, *sfont2,
-           *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont, *font,
+FONT       *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *pfont, *ztfont, *sfont, *sfont2,
+           *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont,
            *goronfont, *zoranfont, *hylian1font, *hylian2font, *hylian3font, *hylian4font, *gboraclefont, *gboraclepfont,
            *dsphantomfont, *dsphantompfont;
 PALETTE    RAMpal;
@@ -105,9 +104,7 @@ bool screenscrolling = false;
 PALETTE tempbombpal;
 bool usebombpal;
 
-bool fake_pack_writing = false;
-combo_alias
-combo_aliases[MAXCOMBOALIASES];  //Temporarily here so ZC can compile. All memory from this is freed after loading the quest file.
+combo_alias combo_aliases[MAXCOMBOALIASES];
 
 SAMPLE customsfxdata[SFX_COUNT];
 bool use_sfxdat = true;
@@ -116,8 +113,8 @@ int homescr, currscr, frame = 0, currmap = 0, dlevel, warpscr, worldscr;
 int newscr_clk = 0, opendoors = 0, currdmap = 0, fadeclk = -1, currgame = 0, listpos = 0;
 int lastentrance = 0, lastentrance_dmap = 0, prices[3], loadside, Bwpn, Awpn;
 int master_vol, music_vol, sfx_vol, mix_quality, sel_music, hasitem, whistleclk, pan_style;
-int Akey, Bkey, Ekey, Skey, Lkey, Rkey, Mkey, Ckey, Exkey1, Exkey2, Exkey3, Exkey4, zc_state = 0;
-int DUkey, DDkey, DLkey, DRkey, Mx, My, Mz, Mb;
+int AKey, BKey, SelectKey, StartKey, Lkey, Rkey, MapKey, ModKey, Ex1key, Ex2key, Ex3key, Ex4key, zc_state = ZC_RUN;
+int UpKey, DownKey, LeftKey, RightKey, MouseX, MouseY, MouseZ, MouseB;
 int hs_startx, hs_starty, hs_xdist, hs_ydist, clockclk, clock_zoras[eMAXGUYS];
 int cheat_goto_dmap = 0, cheat_goto_screen = 0, currcset;
 int gfc, gfc2, pitx, pity, refill_what, refill_why, heart_beep_timer = 0, new_enemy_tile_start = 1580;
@@ -144,9 +141,6 @@ uint8_t COOLSCROLL;
 
 int  add_asparkle = 0, add_bsparkle = 0;
 
-char   zeldadat_sig[52];
-char   sfxdat_sig[52];
-char   fontsdat_sig[52];
 short  visited[6];
 uint8_t   guygrid[176];
 mapscr tmpscr[2];
@@ -189,7 +183,7 @@ std::vector<mapscr> TheMaps;
 zcmap               *ZCMaps;
 uint32_t               quest_map_pos[MAPSCRS * MAXMAPS2];
 
-char     quest_path[1024] = {'\0'};
+char     qst_path[MAX_STRLEN];
 gamedata *saves = NULL;
 
 bool blockmoving;
@@ -330,7 +324,7 @@ FONT *setmsgfont()
          return pfont;
 
       case font_mfont:
-         return mfont;
+         return zfont;
 
       case font_ztfont:
          return ztfont;
@@ -551,7 +545,7 @@ void ALLOFF(bool messagesToo, bool decorationsToo)
       Link.setClock(false);
 
    watch = freeze_guys = loaded_guys = loaded_enemies = blockpath = false;
-   stop_sfx(WAV_BRANG);
+   stop_sfx(SFX_BRANG);
 
    for (int i = 0; i < 176; i++)
       guygrid[i] = 0;
@@ -1125,7 +1119,7 @@ void putintro()
          ++intropos;
    }
 
-   sfx(WAV_MSG);
+   sfx(SFX_MSG);
 
 
    //using the clip value to indicate the bitmap is "dirty"
@@ -1594,7 +1588,7 @@ void do_dcounters()
       }
 
       if ((sfxon || i == 1) && !lensclk && (i < 2 || i == 4)) // Life, Rupees and Magic
-         sfx(WAV_MSG);
+         sfx(SFX_MSG);
    }
 }
 
@@ -1844,47 +1838,49 @@ bool no_subscreen()
    return (tmpscr->flags3 & fNOSUBSCR) != 0;
 }
 
-/**************************/
-/********** Main **********/
-/**************************/
+#define FREE_BITMAP(a)  if (a) {              \
+                           destroy_bitmap(a); \
+                           a = NULL;          \
+                        }
 
-bool zc_init(const char *qpath)
+void free_bitmap_buffers(void)
 {
-   zc_message("Zelda Classic %s (Build %d)\n", VerStr(ZELDA_VERSION), VERSION_BUILD);
+   FREE_BITMAP(framebuf)
+   FREE_BITMAP(scrollbuf)
+   FREE_BITMAP(tempbuf)
+   FREE_BITMAP(msgdisplaybuf)
+   FREE_BITMAP(pricesdisplaybuf)
+   FREE_BITMAP(msgbmpbuf)
+   FREE_BITMAP(prim_bmp)
+   FREE_BITMAP(lens_scr)
+}
 
-   if (qpath != NULL)
-      strcpy(quest_path, qpath);
+#undef FREE_BITMAP
 
-   // Validate that the quest file really exists.
-   if (!file_exists(quest_path))
-   {
-      printf("Quest file doesn't exist or it's invalid: %s\n", quest_path);
-      exit(-1);
-   }
+int alloc_bitmap_buffers(void)
+{
+   bool success = true;
 
-   // allocate quest data buffers
-   if (!get_qst_buffers())
-   {
-      zc_error("Error");
-      zc_deinit();
-   }
+   if(!(framebuf = create_bitmap(256, 224)))
+      RETURN_ERROR;
 
-   // allocate bitmap buffers
-   zc_message("Allocating bitmap buffers... ");
+   if(!(scrollbuf = create_bitmap(512, 406)))
+      RETURN_ERROR;
 
-   framebuf  = create_bitmap(256, 224);
-   scrollbuf = create_bitmap(512, 406);
-   tempbuf   = create_bitmap(320, 224);
-   prim_bmp  = create_bitmap(512, 512);
-   msgdisplaybuf = create_bitmap(256, 176);
-   msgbmpbuf = create_bitmap(512 + 16, 512 + 16);
-   pricesdisplaybuf = create_bitmap(256, 176);
+   if(!(tempbuf = create_bitmap(320, 224)))
+      RETURN_ERROR;
 
-   if (!framebuf || !scrollbuf || !tempbuf || !prim_bmp || !msgdisplaybuf || !msgbmpbuf || !pricesdisplaybuf)
-   {
-      zc_error("Error");
-      zc_deinit();
-   }
+   if(!(prim_bmp = create_bitmap(512, 512)))
+      RETURN_ERROR;
+
+   if(!(msgdisplaybuf = create_bitmap(256, 176)))
+      RETURN_ERROR;
+
+   if(!(msgbmpbuf = create_bitmap(512 + 16, 512 + 16)))
+      RETURN_ERROR;
+
+   if(!(pricesdisplaybuf = create_bitmap(256, 176)))
+      RETURN_ERROR;
 
    clear_bitmap(scrollbuf);
    clear_bitmap(framebuf);
@@ -1892,103 +1888,73 @@ bool zc_init(const char *qpath)
    set_clip_state(msgdisplaybuf, 1);
    clear_bitmap(pricesdisplaybuf);
    set_clip_state(pricesdisplaybuf, 1);
-   zc_message("OK\n");
+   
+error:
+   if (!success)
+      zc_error("Error allocating bitmap buffers memory.");
 
-   zcmusic_init(1 / TIMING_FPS);
+   return success;
+}
 
-   // load the data files
-   zc_message("Loading data files:\n");
+bool zc_init(const char *qpath)
+{
+   bool success = true;
+   int res;
+   char temp[MAX_STRLEN];
 
-   sprintf(zeldadat_sig, "Zelda.Dat %s Build %d", VerStr(ZELDADAT_VERSION), ZELDADAT_BUILD);
-   sprintf(sfxdat_sig, "SFX.Dat %s Build %d", VerStr(SFXDAT_VERSION), SFXDAT_BUILD);
-   sprintf(fontsdat_sig, "Fonts.Dat %s Build %d", VerStr(FONTSDAT_VERSION), FONTSDAT_BUILD);
+   zc_message("Zelda Classic %s (Build %d)\n", VerStr(ZELDA_VERSION), VERSION_BUILD);
+   zc_message("Armageddon Games web site: http://www.armageddongames.com");
+   zc_message("Zelda Classic web site: http://www.zeldaclassic.com");
 
-   packfile_password(NULL);
-   zc_message("Zelda.Dat...");
+   // allocate quest data buffers
+   if (!alloc_qst_buffers())
+      RETURN_ERROR;
 
-   if ((data = load_datafile("zelda.dat")) == NULL)
-   {
-      zc_error("failed");
-      zc_deinit();
-   }
+   if (!alloc_bitmap_buffers())
+      RETURN_ERROR;
 
-   if (strncmp((char *)data[0].dat, zeldadat_sig, 24))
-   {
-      zc_error("\nIncompatible version of zelda.dat.\nPlease upgrade to %s Build %d", VerStr(ZELDADAT_VERSION),
-              ZELDADAT_BUILD);
-      zc_deinit();
-   }
+   sprintf(temp, "%s%c" ZC_SYS_DIR "%c" SYSTEM_FILE, system_path, OTHER_PATH_SEPARATOR, OTHER_PATH_SEPARATOR);
 
-   zc_message("OK\n");
-   packfile_password(DATA_PASSWORD);
+   if ((data = load_datafile(temp)) == NULL)
+      RETURN_ERROR_M("Error loading " SYSTEM_FILE " system datafile.");
 
-   zc_message("Fonts.Dat...");
+   sprintf(temp, "zcdata.dat v%s Build %d", VerStr(ZCDAT_VERSION), ZCDAT_BUILD);
 
-   if ((fontsdata = load_datafile("fonts.dat")) == NULL)
-   {
-      zc_error("failed");
-      zc_deinit();
-   }
+   if (strncmp((char *)data[_SIGNATURE].dat, temp, 25))
+      RETURN_ERROR_M("Not a valid " SYSTEM_FILE " file.");
 
-   if (strncmp((char *)fontsdata[0].dat, fontsdat_sig, 24))
-   {
-      zc_error("\nIncompatible version of fonts.dat.\nPlease upgrade to %s Build %d", VerStr(FONTSDAT_VERSION),
-              FONTSDAT_BUILD);
-      zc_deinit();
-   }
+   sfxdata =  (DATAFILE *)data[SFX].dat;
+   fontsdata = (DATAFILE *)data[FON].dat;
+   mididata = (DATAFILE *)data[MID].dat;
 
-   zc_message("OK\n");
-
-   packfile_password(NULL);
-
-   zc_message("SFX.Dat...");
-
-   if ((sfxdata = load_datafile("sfx.dat")) == NULL)
-   {
-      zc_error("failed");
-      zc_deinit();
-   }
-
-   if (strncmp((char *)sfxdata[0].dat, sfxdat_sig, 22) || sfxdata[Z35].type != DAT_ID('S', 'A', 'M', 'P'))
-   {
-      zc_error("\nIncompatible version of sfx.dat.\nPlease upgrade to %s Build %d", VerStr(SFXDAT_VERSION), SFXDAT_BUILD);
-      zc_deinit();
-   }
-
-   zc_message("OK\n");
-
-   mididata = (DATAFILE *)data[ZC_MIDI].dat;
-
-   //deffont = (FONT *)fontsdata[FONT_DEF_FONT].dat;
-   nfont = (FONT *)fontsdata[FONT_GUI_PROP].dat;
-   font = nfont;
-   pfont = (FONT *)fontsdata[FONT_8xPROP_THIN].dat;
-   lfont = (FONT *)fontsdata[FONT_LARGEPROP].dat;
-   lfont_l = (FONT *)fontsdata[FONT_LARGEPROP_L].dat;
-   zfont = (FONT *)fontsdata[FONT_NES].dat;
-   z3font = (FONT *)fontsdata[FONT_Z3].dat;
-   z3smallfont = (FONT *)fontsdata[FONT_Z3SMALL].dat;
-   mfont = (FONT *)fontsdata[FONT_MATRIX].dat;
-   ztfont = (FONT *)fontsdata[FONT_ZTIME].dat;
-   sfont = (FONT *)fontsdata[FONT_6x6].dat;
-   sfont2 = (FONT *)fontsdata[FONT_6x4].dat;
-   sfont3 = (FONT *)fontsdata[FONT_12x8].dat;
-   spfont = (FONT *)fontsdata[FONT_6xPROP].dat;
-   ssfont1 = (FONT *)fontsdata[FONT_SUBSCREEN1].dat;
-   ssfont2 = (FONT *)fontsdata[FONT_SUBSCREEN2].dat;
-   ssfont3 = (FONT *)fontsdata[FONT_SUBSCREEN3].dat;
-   ssfont4 = (FONT *)fontsdata[FONT_SUBSCREEN4].dat;
-   gblafont = (FONT *)fontsdata[FONT_GB_LA].dat;
-   goronfont = (FONT *)fontsdata[FONT_GORON].dat;
-   zoranfont = (FONT *)fontsdata[FONT_ZORAN].dat;
-   hylian1font = (FONT *)fontsdata[FONT_HYLIAN1].dat;
-   hylian2font = (FONT *)fontsdata[FONT_HYLIAN2].dat;
-   hylian3font = (FONT *)fontsdata[FONT_HYLIAN3].dat;
-   hylian4font = (FONT *)fontsdata[FONT_HYLIAN4].dat;
-   gboraclefont = (FONT *)fontsdata[FONT_GB_ORACLE].dat;
-   gboraclepfont = (FONT *)fontsdata[FONT_GB_ORACLE_P].dat;
-   dsphantomfont = (FONT *)fontsdata[FONT_DS_PHANTOM].dat;
-   dsphantompfont = (FONT *)fontsdata[FONT_DS_PHANTOM_P].dat;
+   deffont = (FONT *)fontsdata[FON_ALLEGRO].dat;
+   nfont = (FONT *)fontsdata[FON_GUI_PROP].dat;
+   pfont = (FONT *)fontsdata[FON_8xPROP_THIN].dat;
+   lfont = (FONT *)fontsdata[FON_LARGEPROP].dat;
+   lfont_l = (FONT *)fontsdata[FON_LARGEPROP_L].dat;
+   zfont = (FONT *)fontsdata[FON_NES].dat;
+   z3font = (FONT *)fontsdata[FON_Z3].dat;
+   z3smallfont = (FONT *)fontsdata[FON_Z3SMALL].dat;
+   ztfont = (FONT *)fontsdata[FON_ZTIME].dat;
+   sfont = (FONT *)fontsdata[FON_6x6].dat;
+   sfont2 = (FONT *)fontsdata[FON_6x4].dat;
+   sfont3 = (FONT *)fontsdata[FON_12x8].dat;
+   spfont = (FONT *)fontsdata[FON_6xPROP].dat;
+   ssfont1 = (FONT *)fontsdata[FON_SUBSCREEN1].dat;
+   ssfont2 = (FONT *)fontsdata[FON_SUBSCREEN2].dat;
+   ssfont3 = (FONT *)fontsdata[FON_SUBSCREEN3].dat;
+   ssfont4 = (FONT *)fontsdata[FON_SUBSCREEN4].dat;
+   gblafont = (FONT *)fontsdata[FON_GB_LA].dat;
+   goronfont = (FONT *)fontsdata[FON_GORON].dat;
+   zoranfont = (FONT *)fontsdata[FON_ZORAN].dat;
+   hylian1font = (FONT *)fontsdata[FON_HYLIAN1].dat;
+   hylian2font = (FONT *)fontsdata[FON_HYLIAN2].dat;
+   hylian3font = (FONT *)fontsdata[FON_HYLIAN3].dat;
+   hylian4font = (FONT *)fontsdata[FON_HYLIAN4].dat;
+   gboraclefont = (FONT *)fontsdata[FON_GB_ORACLE].dat;
+   gboraclepfont = (FONT *)fontsdata[FON_GB_ORACLE_P].dat;
+   dsphantomfont = (FONT *)fontsdata[FON_DS_PHANTOM].dat;
+   dsphantompfont = (FONT *)fontsdata[FON_DS_PHANTOM_P].dat;
 
    for (int i = 0; i < 4; i++)
    {
@@ -2005,48 +1971,51 @@ bool zc_init(const char *qpath)
    for (int i = 0; i < eMAXGUYS; i++)
       guy_string[i] = new char[64];
 
+   // Script initialization
    init_scripts();
-
-   //script drawing bitmap allocation
    zscriptDrawingRenderTarget = new ZScriptDrawingRenderTarget();
 
-   zc_message("Initializing sound driver... ");
+   /* Load the qst file and confirm it is valid. */
+   packfile_password(DATA_PASSWORD);
+   if ((res = loadquest(qpath, &QHeader, &QMisc, tunes + MID_COUNT)))
+   {
+      zc_error("Error loading quest. %s.", qst_error[res]);
+      RETURN_ERROR;
+   }
+   packfile_password(NULL);
 
-   Z_init_sound();
+   if (!zc_initsound())
+      RETURN_ERROR;
+
+   /* keep the qst path to use it during the gameplay */
+   strcpy(qst_path, qpath);
+
+   /* load saved games */
+   if (load_savedgames() != 0)
+      RETURN_ERROR_M("Error loading saved games.");
 
    zc_palette = RAMpal;
-   
-   packfile_password(DATA_PASSWORD);
-   int ret = loadquest(quest_path, &QHeader, &QMisc, tunes + ZC_MIDI_COUNT);
-   if (ret)
-   {
-      zc_message("FAIL (Error loading:  %s: %s)\n", quest_path, qst_error[ret]);
-      exit(-1);
-   }
-
-   // load saved games
-   zc_message("Loading saved games... ");
-   packfile_password(NULL);
-   if (load_savedgames() != 0)
-   {
-      zc_error("Insufficient memory");
-      zc_deinit();
-   }
-
-   zc_message("OK\n");
-
-   zc_state = ZC_RESET;
    rgb_map = &rgb_table;
 
-   // set up an initial game save slot (for the list_saves function)
+   /* set up initial game save slot (for the list_saves function) */
    game = new gamedata;
    game->Clear();
 
-   return true;
+error:
+   if (!success)
+      zc_deinit();
+
+   return success;
 }
 
-void zc_gameloop(void *arg)
+void zc_gameloop(void *)
 {
+   slock_lock(mutex);
+   
+   /* wait the main thread's
+    * signal to continue. */
+   scond_wait(cond, mutex);
+
    while (zc_state != ZC_EXIT)
    {
       titlescreen();
@@ -2109,37 +2078,22 @@ void zc_gameloop(void *arg)
 
 void zc_deinit(void)
 {
-   // clean up
-   music_stop();
-   kill_sfx();
+   zc_deinitsound();
 
    save_savedgames();
+   if (saves) delete [] saves;
+   if (game) delete game;
 
-   script_drawing_commands.Dispose(); //for allegro bitmaps
+   script_drawing_commands.Dispose(); //for bitmaps
 
    delete_combo_aliases();
    reset_subscr_items();
    delete_selectors();
    Sitems.clear();
 
-   zc_message("Freeing Data: \n");
-
-   if (game) delete game;
    if (data) unload_datafile(data);
-   if (fontsdata) unload_datafile(fontsdata);
-   if (sfxdata) unload_datafile(sfxdata);
 
-   zc_message("Bitmaps... \n");
-   destroy_bitmap(framebuf);
-   destroy_bitmap(scrollbuf);
-   destroy_bitmap(tempbuf);
-   destroy_bitmap(prim_bmp);
-   destroy_bitmap(msgdisplaybuf);
-   destroy_bitmap(msgbmpbuf);
-   destroy_bitmap(pricesdisplaybuf);
-   if (lens_scr) destroy_bitmap(lens_scr);
-
-   zc_message("Subscreens... \n");
+   free_bitmap_buffers();
 
    for (int i = 0; i < 4; i++)
    {
@@ -2156,32 +2110,25 @@ void zc_deinit(void)
       }
    }
 
-   zcmusic_exit();
-   zc_message("SFX... \n");
-
    for (int i = 0; i < SFX_COUNT; i++)
    {
       if (customsfxdata[i].data != NULL)
          free(customsfxdata[i].data);
    }
 
-   zc_message("Misc... \n");
-
    for (int i = 0; i < ITEMCNT; i++)
-      delete [] item_string[i];
+      if (item_string[i]) delete [] item_string[i];
 
    for (int i = 0; i < eMAXGUYS; i++)
-      delete [] guy_string[i];
-
-   zc_message("Script buffers... \n");
+      if (guy_string[i]) delete [] guy_string[i];
 
    delete_scripts();
 
-   delete zscriptDrawingRenderTarget;
+   if (zscriptDrawingRenderTarget)
+   {
+      delete zscriptDrawingRenderTarget;
+      zscriptDrawingRenderTarget = NULL;
+   }
 
-   zc_message("Deleting quest buffers... \n");
-   del_qst_buffers();
-
-   zc_message("Armageddon Games web site: http://www.armageddongames.com\n");
-   zc_message("Zelda Classic web site: http://www.zeldaclassic.com\n");
+   free_qst_buffers();
 }

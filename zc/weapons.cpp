@@ -236,11 +236,11 @@ weapon::~weapon()
    switch (id)
    {
       case wWind:
-         stop_sfx(WAV_ZN1WHIRLWIND);
+         stop_sfx(SFX_ZN1WHIRLWIND);
          break;
 
       case ewBrang:
-         //stop_sfx(WAV_BRANG); //causes a bug -L
+         //stop_sfx(SFX_BRANG); //causes a bug -L
          break;
 
       case wBrang:
@@ -393,7 +393,7 @@ weapon::weapon(fix X, fix Y, fix Z, int Id, int Type, int pow, int Dir, int Pare
          LOADGFX(defaultw);
 
          if (get_bit(quest_rules, qr_MORESOUNDS))
-            cont_sfx(WAV_ZN1WHIRLWIND);
+            cont_sfx(SFX_ZN1WHIRLWIND);
 
          clk = -14;
          step = 2;
@@ -1105,7 +1105,7 @@ weapon::weapon(fix X, fix Y, fix Z, int Id, int Type, int pow, int Dir, int Pare
          {
             case pDINSFIREROCKET:
                if (get_bit(quest_rules, qr_MORESOUNDS))
-                  sfx(WAV_ZN1ROCKETUP, (int)x);
+                  sfx(SFX_ZN1ROCKETUP, (int)x);
 
                LOADGFX(itemsbuf[parentitem].wpn);
                step = 4;
@@ -1113,7 +1113,7 @@ weapon::weapon(fix X, fix Y, fix Z, int Id, int Type, int pow, int Dir, int Pare
 
             case pDINSFIREROCKETRETURN:
                if (get_bit(quest_rules, qr_MORESOUNDS))
-                  sfx(WAV_ZN1ROCKETDOWN, (int)x);
+                  sfx(SFX_ZN1ROCKETDOWN, (int)x);
 
                LOADGFX(itemsbuf[parentitem].wpn2);
                step = 4;
@@ -1135,7 +1135,7 @@ weapon::weapon(fix X, fix Y, fix Z, int Id, int Type, int pow, int Dir, int Pare
                LOADGFX(itemsbuf[parentitem].wpn);
 
                if (get_bit(quest_rules, qr_MORESOUNDS))
-                  sfx(WAV_ZN1ROCKETUP, (int)x);
+                  sfx(SFX_ZN1ROCKETUP, (int)x);
 
                step = 4;
                drawstyle = itemsbuf[parentitem].flags & ITEM_FLAG2 ? 1 : 0;
@@ -1145,7 +1145,7 @@ weapon::weapon(fix X, fix Y, fix Z, int Id, int Type, int pow, int Dir, int Pare
                LOADGFX(itemsbuf[parentitem].wpn2);
 
                if (get_bit(quest_rules, qr_MORESOUNDS))
-                  sfx(WAV_ZN1ROCKETDOWN, (int)x);
+                  sfx(SFX_ZN1ROCKETDOWN, (int)x);
 
                step = 4;
                drawstyle = itemsbuf[parentitem].flags & ITEM_FLAG2 ? 1 : 0;
@@ -1754,11 +1754,11 @@ bool weapon::animate(int)
          else if (Link.getAction() != inwind && ((dir == right && x >= 240) || (dir == down && y >= 160) || (dir == left
                                                  && x <= 0) || (dir == up && y <= 0)))
          {
-            stop_sfx(WAV_ZN1WHIRLWIND);
+            stop_sfx(SFX_ZN1WHIRLWIND);
             dead = 1;
          }
          else if (get_bit(quest_rules, qr_MORESOUNDS))
-            sfx(WAV_ZN1WHIRLWIND, pan(int(x)), true, false);
+            sfx(SFX_ZN1WHIRLWIND, pan(int(x)), true, false);
 
          if (get_bit(quest_rules, qr_WHIRLWINDMIRROR))
             goto mirrors;
@@ -1868,7 +1868,7 @@ bool weapon::animate(int)
 
          if (clk == (misc - 1) && step == 0)
          {
-            sfx((id >= wEnemyWeapons || parentitem < 0) ? WAV_BOMB :
+            sfx((id >= wEnemyWeapons || parentitem < 0) ? SFX_BOMB :
                 itemsbuf[parentitem].usesound, pan(int(x)));
 
             if (id == wSBomb || id == wLitSBomb || id == ewSBomb || id == ewLitSBomb)
@@ -2783,9 +2783,9 @@ mirrors:
             if (get_bit(quest_rules, qr_MORESOUNDS))
             {
                //if (step!=0)
-               sfx(WAV_BRANG, pan(int(x)), true);
+               sfx(SFX_BRANG, pan(int(x)), true);
                //else
-               ;//stop_sfx(WAV_BRANG);
+               ;//stop_sfx(SFX_BRANG);
             }
          }
 
@@ -2838,7 +2838,7 @@ mirrors:
                if ((abs(x - guys.getX(index)) < 7) && (abs(y - guys.getY(index)) < 7))
                {
                   if (get_bit(quest_rules, qr_MORESOUNDS) && !Lwpns.idCount(wBrang) && Ewpns.idCount(ewBrang) <= 1)
-                     stop_sfx(WAV_BRANG);
+                     stop_sfx(SFX_BRANG);
 
                   return true;
                }
@@ -2888,7 +2888,7 @@ mirrors:
          if (killrang || dead == 1)
          {
             if (get_bit(quest_rules, qr_MORESOUNDS) && !Lwpns.idCount(wBrang) && Ewpns.idCount(ewBrang) <= 1)
-               stop_sfx(WAV_BRANG);
+               stop_sfx(SFX_BRANG);
 
             dead = 1;
          }
@@ -3200,7 +3200,7 @@ offscreenCheck:
                (itemsbuf[current_item_id(itype_book)].flags & ITEM_FLAG1))) && Lwpns.idCount(wFire) < 2)
          {
             Lwpns.add(new weapon(x, y, z, wFire, 2, 1 * DAMAGE_MULTIPLIER, 0, current_item_id(itype_book), -1));
-            sfx(WAV_FIRE, pan(x));
+            sfx(SFX_FIRE, pan(x));
          }
 
          break;

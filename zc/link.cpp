@@ -1284,7 +1284,7 @@ attack:
 
          if (attackclk == 15 && z == 0 && (sideviewhammerpound() || !(tmpscr->flags7 & fSIDEVIEW)))
             sfx(((iswater(MAPCOMBO(x + wx + 8, y + wy)) || COMBOTYPE(x + wx + 8, y + wy) == cSHALLOWWATER)
-                 && get_bit(quest_rules, qr_MORESOUNDS)) ? WAV_ZN1SPLASH : itemsbuf[itemid].usesound, pan(int(x)));
+                 && get_bit(quest_rules, qr_MORESOUNDS)) ? SFX_ZN1SPLASH : itemsbuf[itemid].usesound, pan(int(x)));
 
          xofs = oxofs;
          yofs = oyofs;
@@ -2170,7 +2170,7 @@ void LinkClass::check_slash_block(int bx, int by)
       if (isBushType(type) || isFlowersType(type) || isGrassType(type))
       {
          if (get_bit(quest_rules, qr_MORESOUNDS))
-            sfx(WAV_ZN1GRASSCUT, int(bx));
+            sfx(SFX_ZN1GRASSCUT, int(bx));
 
          if (isBushType(type))
             decorations.add(new dBushLeaves((fix)fx, (fix)fy, dBUSHLEAVES, 0));
@@ -2206,7 +2206,7 @@ void LinkClass::check_slash_block(int bx, int by)
       if (isBushType(type2) || isFlowersType(type2) || isGrassType(type2))
       {
          if (get_bit(quest_rules, qr_MORESOUNDS))
-            sfx(WAV_ZN1GRASSCUT, int(bx));
+            sfx(SFX_ZN1GRASSCUT, int(bx));
 
          if (isBushType(type2))
             decorations.add(new dBushLeaves((fix)fx, (fix)fy, dBUSHLEAVES, 0));
@@ -2391,7 +2391,7 @@ void LinkClass::check_pound_block(int bx, int by)
       }
 
       if (type == cPOUND && get_bit(quest_rules, qr_MORESOUNDS))
-         sfx(WAV_ZN1HAMMERPOST, int(bx));
+         sfx(SFX_ZN1HAMMERPOST, int(bx));
 
       putcombo(scrollbuf, (i & 15) << 4, i & 0xF0, s->data[i], s->cset[i]);
    }
@@ -2401,7 +2401,7 @@ void LinkClass::check_pound_block(int bx, int by)
       set_bit(ffcgrid, current_ffcombo, 1);
 
       if (type2 == cPOUND && get_bit(quest_rules, qr_MORESOUNDS))
-         sfx(WAV_ZN1HAMMERPOST, int(bx));
+         sfx(SFX_ZN1HAMMERPOST, int(bx));
    }
 
    return;
@@ -2790,7 +2790,7 @@ void LinkClass::checkhit()
             }
 
             hclk = 48;
-            sfx(WAV_OUCH, pan(int(x)));
+            sfx(SFX_OUCH, pan(int(x)));
             return;
          }
       }
@@ -2937,7 +2937,7 @@ killweapon:
             }
 
             hclk = 48;
-            sfx(WAV_OUCH, pan(int(x)));
+            sfx(SFX_OUCH, pan(int(x)));
             return;
          }
       }
@@ -3001,7 +3001,7 @@ killweapon:
          tapping = false;
       }
 
-      sfx(WAV_OUCH, pan(int(x)));
+      sfx(SFX_OUCH, pan(int(x)));
       return;
    }
 
@@ -3032,7 +3032,7 @@ killweapon:
          tapping = false;
       }
 
-      sfx(WAV_OUCH, pan(int(x)));
+      sfx(SFX_OUCH, pan(int(x)));
       return;
    }
 
@@ -3143,7 +3143,7 @@ bool LinkClass::checkdamagecombos(int dx1, int dx2, int dy1, int dy2, int layer,
             tapping = false;
          }
 
-         sfx(WAV_OUCH, pan(int(x)));
+         sfx(SFX_OUCH, pan(int(x)));
          return true;
       }
       else paymagiccost(itemid); // Boots are successful
@@ -3187,7 +3187,7 @@ void LinkClass::hitlink(int hit2)
       action = gothit;
 
    hclk = 48;
-   sfx(WAV_OUCH, pan(int(x)));
+   sfx(SFX_OUCH, pan(int(x)));
 
    if (charging > 0 || spins > 0 || attack == wSword || attack == wHammer)
    {
@@ -3517,7 +3517,7 @@ bool LinkClass::animate(int)
          if (fall > 0)
          {
             if ((iswater(MAPCOMBO(x, y + 8)) && ladderx <= 0 && laddery <= 0) || COMBOTYPE(x, y + 8) == cSHALLOWWATER)
-               sfx(WAV_ZN1SPLASH, int(x));
+               sfx(SFX_ZN1SPLASH, int(x));
 
             stomping = true;
          }
@@ -4184,7 +4184,7 @@ bool LinkClass::animate(int)
    if (game->get_life() <= (HP_PER_HEART) && !(game->get_maxlife() <= (HP_PER_HEART)))
    {
       if (heart_beep)
-         cont_sfx(WAV_ER);
+         cont_sfx(SFX_ER);
       else
       {
          if (heart_beep_timer == -1)
@@ -4193,16 +4193,16 @@ bool LinkClass::animate(int)
          if (heart_beep_timer > 0)
          {
             --heart_beep_timer;
-            cont_sfx(WAV_ER);
+            cont_sfx(SFX_ER);
          }
          else
-            stop_sfx(WAV_ER);
+            stop_sfx(SFX_ER);
       }
    }
    else
    {
       heart_beep_timer = -1;
-      stop_sfx(WAV_ER);
+      stop_sfx(SFX_ER);
    }
 
    if (rSbtn())
@@ -4491,7 +4491,7 @@ bool LinkClass::startwpn(int itemid)
 
          Lwpns.add(new weapon((fix)wx, (fix)wy, (fix)wz, wLitBomb, itemsbuf[itemid].fam_type,
                               itemsbuf[itemid].power * DAMAGE_MULTIPLIER, dir, itemid, getUID()));
-         sfx(WAV_PLACE, pan(wx));
+         sfx(SFX_PLACE, pan(wx));
       }
       break;
 
@@ -4536,7 +4536,7 @@ bool LinkClass::startwpn(int itemid)
 
          Lwpns.add(new weapon((fix)wx, (fix)wy, (fix)wz, wLitSBomb, itemsbuf[itemid].fam_type,
                               itemsbuf[itemid].power * DAMAGE_MULTIPLIER, dir, itemid, getUID()));
-         sfx(WAV_PLACE, pan(wx));
+         sfx(SFX_PLACE, pan(wx));
       }
       break;
 
@@ -4598,7 +4598,7 @@ bool LinkClass::startwpn(int itemid)
 
          Lwpns.add(new weapon((fix)wx, (fix)wy, (fix)wz, wBeam, itemsbuf[itemid].fam_type, int(temppower), dir, itemid,
                               getUID()));
-         sfx(WAV_BEAM, pan(wx));
+         sfx(SFX_BEAM, pan(wx));
       }
       break;
 
@@ -4982,7 +4982,7 @@ bool LinkClass::doattack()
       if (charging == normalcharge)
       {
          paymagiccost(itemid);
-         sfx(WAV_ZN1CHARGE, pan(int(x)));
+         sfx(SFX_ZN1CHARGE, pan(int(x)));
       }
       else if (charging == magiccharge)
       {
@@ -4992,7 +4992,7 @@ bool LinkClass::doattack()
          {
             paymagiccost(itemid);
             charging++; // charging>magiccharge signifies a successful supercharge.
-            sfx(WAV_ZN1CHARGE2, pan(int(x)));
+            sfx(SFX_ZN1CHARGE2, pan(int(x)));
          }
       }
    }
@@ -5207,7 +5207,7 @@ void do_lens()
          lensid = -1;
          lensclk = 0;
 
-         if (get_bit(quest_rules, qr_MORESOUNDS)) sfx(WAV_ZN1LENSOFF);
+         if (get_bit(quest_rules, qr_MORESOUNDS)) sfx(SFX_ZN1LENSOFF);
       }
    }
 }
@@ -7857,7 +7857,7 @@ void LinkClass::checkpushblock()
             mblock2.push((fix)bx, (fix)by, dir, f);
 
             if (get_bit(quest_rules, qr_MORESOUNDS))
-               sfx(WAV_ZN1PUSHBLOCK, (int)x);
+               sfx(SFX_ZN1PUSHBLOCK, (int)x);
 
             //       break;
          }
@@ -7963,7 +7963,7 @@ void LinkClass::checklockblock()
 
    setmapflag(mLOCKBLOCK);
    remove_lockblocks((currscr >= 128) ? 1 : 0);
-   sfx(WAV_DOOR);
+   sfx(SFX_DOOR);
 }
 
 void LinkClass::checkbosslockblock()
@@ -8029,7 +8029,7 @@ void LinkClass::checkbosslockblock()
 
    setmapflag(mBOSSLOCKBLOCK);
    remove_bosslockblocks((currscr >= 128) ? 1 : 0);
-   sfx(WAV_DOOR);
+   sfx(SFX_DOOR);
 }
 
 void LinkClass::checkchest(int type)
@@ -8167,7 +8167,7 @@ void LinkClass::checklocked()
 
                   if (di != 0xFFFF)
                      setmapflag(di, mDOOR_DOWN);
-                  sfx(WAV_DOOR);
+                  sfx(SFX_DOOR);
                   markBmap(-1);
                }
                else return;
@@ -8182,7 +8182,7 @@ void LinkClass::checklocked()
 
                   if (di != 0xFFFF)
                      setmapflag(di, mDOOR_DOWN);
-                  sfx(WAV_DOOR);
+                  sfx(SFX_DOOR);
                   markBmap(-1);
                }
                else return;
@@ -8207,7 +8207,7 @@ void LinkClass::checklocked()
 
                   if (di != 0xFFFF)
                      setmapflag(di, mDOOR_UP);
-                  sfx(WAV_DOOR);
+                  sfx(SFX_DOOR);
                   markBmap(-1);
                }
                else return;
@@ -8222,7 +8222,7 @@ void LinkClass::checklocked()
 
                   if (di != 0xFFFF)
                      setmapflag(di, mDOOR_UP);
-                  sfx(WAV_DOOR);
+                  sfx(SFX_DOOR);
                   markBmap(-1);
                }
                else return;
@@ -8245,7 +8245,7 @@ void LinkClass::checklocked()
 
                   if (di != 0xFFFF)
                      setmapflag(di, mDOOR_RIGHT);
-                  sfx(WAV_DOOR);
+                  sfx(SFX_DOOR);
                   markBmap(-1);
                }
                else return;
@@ -8260,7 +8260,7 @@ void LinkClass::checklocked()
 
                   if (di != 0xFFFF)
                      setmapflag(di, mDOOR_RIGHT);
-                  sfx(WAV_DOOR);
+                  sfx(SFX_DOOR);
                   markBmap(-1);
                }
                else return;
@@ -8287,7 +8287,7 @@ void LinkClass::checklocked()
 
                   if (di != 0xFFFF)
                      setmapflag(di, mDOOR_LEFT);
-                  sfx(WAV_DOOR);
+                  sfx(SFX_DOOR);
                   markBmap(-1);
                }
                else return;
@@ -8302,7 +8302,7 @@ void LinkClass::checklocked()
 
                   if (di != 0xFFFF)
                      setmapflag(di, mDOOR_LEFT);
-                  sfx(WAV_DOOR);
+                  sfx(SFX_DOOR);
                   markBmap(-1);
                }
                else return;
@@ -8335,7 +8335,7 @@ void LinkClass::checklocked()
 
                      if (di != 0xFFFF)
                         setmapflag(di, mDOOR_DOWN);
-                     sfx(WAV_DOOR);
+                     sfx(SFX_DOOR);
                      markBmap(-1);
                   }
                   else return;
@@ -8350,7 +8350,7 @@ void LinkClass::checklocked()
 
                      if (di != 0xFFFF)
                         setmapflag(di, mDOOR_DOWN);
-                     sfx(WAV_DOOR);
+                     sfx(SFX_DOOR);
                      markBmap(-1);
                   }
                   else return;
@@ -8384,7 +8384,7 @@ void LinkClass::checklocked()
 
                      if (di != 0xFFFF)
                         setmapflag(di, mDOOR_UP);
-                     sfx(WAV_DOOR);
+                     sfx(SFX_DOOR);
                      markBmap(-1);
                   }
                   else return;
@@ -8399,7 +8399,7 @@ void LinkClass::checklocked()
 
                      if (di != 0xFFFF)
                         setmapflag(di, mDOOR_UP);
-                     sfx(WAV_DOOR);
+                     sfx(SFX_DOOR);
                      markBmap(-1);
                   }
                   else return;
@@ -8431,7 +8431,7 @@ void LinkClass::checklocked()
 
                      if (di != 0xFFFF)
                         setmapflag(di, mDOOR_RIGHT);
-                     sfx(WAV_DOOR);
+                     sfx(SFX_DOOR);
                      markBmap(-1);
                   }
                   else return;
@@ -8446,7 +8446,7 @@ void LinkClass::checklocked()
 
                      if (di != 0xFFFF)
                         setmapflag(di, mDOOR_RIGHT);
-                     sfx(WAV_DOOR);
+                     sfx(SFX_DOOR);
                      markBmap(-1);
                   }
                   else return;
@@ -8480,7 +8480,7 @@ void LinkClass::checklocked()
 
                      if (di != 0xFFFF)
                         setmapflag(di, mDOOR_LEFT);
-                     sfx(WAV_DOOR);
+                     sfx(SFX_DOOR);
                      markBmap(-1);
                   }
                   else return;
@@ -8496,7 +8496,7 @@ void LinkClass::checklocked()
 
                      if (di != 0xFFFF)
                         setmapflag(di, mDOOR_LEFT);
-                     sfx(WAV_DOOR);
+                     sfx(SFX_DOOR);
                      markBmap(-1);
 
                   }
@@ -8592,7 +8592,7 @@ void LinkClass::checkswordtap()
                   break;
             }
 
-      sfx(hollow ? WAV_ZN1TAP2 : WAV_ZN1TAP, pan(int(x)));
+      sfx(hollow ? SFX_ZN1TAP2 : SFX_ZN1TAP, pan(int(x)));
    }
 
 }
@@ -8974,7 +8974,7 @@ void LinkClass::checkspecial()
          if (!getmapflag(mITEM) && (tmpscr->hasitem != 0))
          {
             if (hasitem == 1)
-               sfx(WAV_CLEARED);
+               sfx(SFX_CLEARED);
 
             items.add(new item((fix)tmpscr->itemx,
                                (tmpscr->flags7 & fITEMFALLS && tmpscr->flags7 & fSIDEVIEW) ? (fix) - 170 : (fix)tmpscr->itemy + 1,
@@ -9771,13 +9771,13 @@ void LinkClass::checkspecial2(int *ls)
                   zcmusic->track != DMaps[tdm].tmusictrack)
                music_stop();
          }
-         else if (DMaps[tmpscr->tilewarpdmap[index]].midi != (sel_music - ZC_MIDI_COUNT + 4) &&
+         else if (DMaps[tmpscr->tilewarpdmap[index]].midi != (sel_music - MID_COUNT + 4) &&
                   TheMaps[(DMaps[tdm].map * MAPSCRS + (tmpscr[t].tilewarpscr[index] + DMaps[tdm].xoff))].screen_midi !=
-                  (sel_music - ZC_MIDI_COUNT + 4))
+                  (sel_music - MID_COUNT + 4))
             music_stop();
       }
 
-      stop_sfx(WAV_ER);
+      stop_sfx(SFX_ER);
       bool opening = (tmpscr[t].tilewarptype[index] <= wtPASS && !(DMaps[currdmap].flags & dmfCAVES
                       && tmpscr[t].tilewarptype[index] == wtCAVE)
                       ? false : COOLSCROLL);
@@ -9916,7 +9916,7 @@ void kill_enemy_sfx()
    }
 
    if (tmpscr->room == rGANON)
-      stop_sfx(WAV_ROAR);
+      stop_sfx(SFX_ROAR);
 }
 
 void LinkClass::setEntryPoints(int x2, int y2)
@@ -10698,7 +10698,7 @@ bool LinkClass::dowarp(int type, int index)
 
 void LinkClass::exitcave()
 {
-   stop_sfx(WAV_ER);
+   stop_sfx(SFX_ER);
    currscr = homescr;
    loadscr(0, currdmap, currscr, 255, false);                               // bogus direction
    x = tmpscr->warpreturnx[0];
@@ -10891,7 +10891,7 @@ void LinkClass::walkdown(bool opening) //entering cave
 
    hclk = 0;
    stop_item_sfx(itype_brang);
-   sfx(WAV_STAIRS, pan(int(x)));
+   sfx(SFX_STAIRS, pan(int(x)));
    clk = 0;
    //  int cmby=(int(y)&0xF0)+16;
    // Fix Link's position to the grid
@@ -10946,7 +10946,7 @@ void LinkClass::walkdown2(bool opening) //exiting cave 2
 
    hclk = 0;
    stop_item_sfx(itype_brang);
-   sfx(WAV_STAIRS, pan(int(x)));
+   sfx(SFX_STAIRS, pan(int(x)));
    clk = 0;
    //  int cmby=int(y)&0xF0;
    action = climbcovertop;
@@ -10998,7 +10998,7 @@ void LinkClass::walkup(bool opening) //exiting cave
 
    hclk = 0;
    stop_item_sfx(itype_brang);
-   sfx(WAV_STAIRS, pan(int(x)));
+   sfx(SFX_STAIRS, pan(int(x)));
    dir = down;
    clk = 0;
    //  int cmby=int(y)&0xF0;
@@ -11044,7 +11044,7 @@ void LinkClass::walkup2(bool opening) //entering cave2
 
    hclk = 0;
    stop_item_sfx(itype_brang);
-   sfx(WAV_STAIRS, pan(int(x)));
+   sfx(SFX_STAIRS, pan(int(x)));
    dir = up;
    clk = 0;
    //  int cmby=int(y)&0xF0;
@@ -11087,7 +11087,7 @@ void LinkClass::stepout() // Step out of item cellars and passageways
 {
    int sc = specialcave; // This gets erased by ALLOFF()
    ALLOFF();
-   stop_sfx(WAV_ER);
+   stop_sfx(SFX_ER);
    map_bkgsfx(false);
    kill_enemy_sfx();
    draw_screen(tmpscr, false);
@@ -11868,7 +11868,7 @@ void LinkClass::scrollscr(int scrolldir, int destscr, int destdmap)
       return;
 
    kill_enemy_sfx();
-   stop_sfx(WAV_ER);
+   stop_sfx(SFX_ER);
    screenscrolling = true;
 
    tmpscr[1] = tmpscr[0];
@@ -12453,7 +12453,7 @@ void LinkClass::scrollscr(int scrolldir, int destscr, int destdmap)
 
             putdoor(scrollbuf, 0, scrolldir ^ 1, tmpscr->door[scrolldir ^ 1]);
             opendoors = -4;
-            sfx(WAV_DOOR);
+            sfx(SFX_DOOR);
             break;
 
          default:
@@ -13679,8 +13679,8 @@ void LinkClass::StartRefill(int refillWhat)
    if (!refilling)
    {
       refillclk = 21;
-      stop_sfx(WAV_ER);
-      sfx(WAV_REFILL, 128, true);
+      stop_sfx(SFX_ER);
+      sfx(SFX_REFILL, 128, true);
       refilling = refillWhat;
 
       if (refill_why >= 0) // Item index
@@ -13738,7 +13738,7 @@ bool LinkClass::refill()
             {
                game->set_life(refill_heart_stop);
                kill_sfx();
-               sfx(WAV_MSG);
+               sfx(SFX_MSG);
                refilling = REFILL_NONE;
                return false;
             }
@@ -13752,7 +13752,7 @@ bool LinkClass::refill()
             {
                game->set_magic(refill_magic_stop);
                kill_sfx();
-               sfx(WAV_MSG);
+               sfx(SFX_MSG);
                refilling = REFILL_NONE;
                return false;
             }
@@ -13768,7 +13768,7 @@ bool LinkClass::refill()
                game->set_life(refill_heart_stop);
                game->set_magic(refill_magic_stop);
                kill_sfx();
-               sfx(WAV_MSG);
+               sfx(SFX_MSG);
                refilling = REFILL_NONE;
                return false;
             }
@@ -13803,9 +13803,9 @@ void LinkClass::getTriforce(int id2)
    music_stop();
 
    if (itemsbuf[id2].misc1)
-      jukebox(itemsbuf[id2].misc1 + ZC_MIDI_COUNT - 1);
+      jukebox(itemsbuf[id2].misc1 + MID_COUNT - 1);
    else
-      try_zcmusic((char *)"zelda.nsf", 5, ZC_MIDI_TRIFORCE);
+      try_zcmusic((char *)"zelda.nsf", 5, MID_TRIFORCE);
 
    if (itemsbuf[id2].flags & ITEM_GAMEDATA)
       game->lvlitems[dlevel] |= liTRIFORCE;
@@ -14340,15 +14340,15 @@ void LinkClass::gameover()
       switch (f)
       {
          case   0:
-            sfx(WAV_OUCH, pan(int(x)));
+            sfx(SFX_OUCH, pan(int(x)));
             break;
 
          case  60:
-            sfx(WAV_SPIRAL);
+            sfx(SFX_SPIRAL);
             break;
 
          case 194:
-            sfx(WAV_MSG);
+            sfx(SFX_MSG);
             break;
       }
 
@@ -14403,9 +14403,9 @@ void LinkClass::ganon_intro()
       if (f == 47)
       {
          music_stop();
-         stop_sfx(WAV_ROAR);
-         sfx(WAV_GASP);
-         sfx(WAV_GANON);
+         stop_sfx(SFX_ROAR);
+         sfx(SFX_GASP);
+         sfx(SFX_GANON);
          int Id = 0;
 
          for (int i = 0; i < eMAXGUYS; i++)
@@ -14460,7 +14460,7 @@ void LinkClass::ganon_intro()
 
    currcset = DMaps[currdmap].color;
    dointro();
-   cont_sfx(WAV_ROAR);
+   cont_sfx(SFX_ROAR);
 }
 
 void LinkClass::saved_Zelda()

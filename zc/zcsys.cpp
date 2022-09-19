@@ -2351,7 +2351,7 @@ void draw_fuzzy(int fuzz)
    }
 }
 
-void updatescr(bool allow_gfx)
+void update_video_frame(bool allow_gfx)
 {
    if (!playing)
       black_opening_count = 0;
@@ -2434,9 +2434,6 @@ void zc_action(int state)
 
 void advanceframe(bool allow_gfx)
 {
-   if (zcmusic != NULL)
-      zcmusic_poll();
-
    if (zc_state)
       return;
 
@@ -2445,7 +2442,19 @@ void advanceframe(bool allow_gfx)
 
    ++frame;
 
-   updatescr(allow_gfx);
+   /* process midi and zcmusic */
+   midi_fill_buffer();
+   zcmusic_poll();
+
+   /* prepare the video frame */
+   update_video_frame(allow_gfx);
+
+   /* signal main thread to continue
+    * and wait for it to ask for the
+    * next iteration. */
+   scond_signal(cond);
+   scond_wait(cond, mutex);
+
    sfx_cleanup();
 }
 
@@ -2713,7 +2722,7 @@ bool try_zcmusic(char *filename, int track, int midi)
 
    // try the quest directory
    char musicpath[2048];
-   replace_filename(musicpath, quest_path, filename);
+   replace_filename(musicpath, qst_path, filename);
    newzcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
 
    // Found it
@@ -2784,7 +2793,7 @@ void play_DmapMusic()
          if (zcmusic == NULL)
          {
             char musicpath[2048];
-            replace_filename(musicpath, quest_path, DMaps[currdmap].tmusic);
+            replace_filename(musicpath, qst_path, DMaps[currdmap].tmusic);
             zcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
          }
 
@@ -2812,20 +2821,20 @@ void play_DmapMusic()
       switch (m)
       {
          case 1:
-            jukebox(ZC_MIDI_OVERWORLD);
+            jukebox(MID_OVERWORLD);
             break;
 
          case 2:
-            jukebox(ZC_MIDI_DUNGEON);
+            jukebox(MID_DUNGEON);
             break;
 
          case 3:
-            jukebox(ZC_MIDI_LEVEL9);
+            jukebox(MID_LEVEL9);
             break;
 
          default:
             if (m >= 4 && m < 4 + MAXCUSTOMMIDIS)
-               jukebox(m - 4 + ZC_MIDI_COUNT);
+               jukebox(m - 4 + MID_COUNT);
             else
                music_stop();
       }
@@ -2847,20 +2856,20 @@ void playLevelMusic()
          break;
 
       case 1:
-         jukebox(ZC_MIDI_OVERWORLD);
+         jukebox(MID_OVERWORLD);
          break;
 
       case 2:
-         jukebox(ZC_MIDI_DUNGEON);
+         jukebox(MID_DUNGEON);
          break;
 
       case 3:
-         jukebox(ZC_MIDI_LEVEL9);
+         jukebox(MID_LEVEL9);
          break;
 
       default:
          if (m >= 4 && m < 4 + MAXCUSTOMMIDIS)
-            jukebox(m - 4 + ZC_MIDI_COUNT);
+            jukebox(m - 4 + MID_COUNT);
          else
             music_stop();
    }
@@ -2880,16 +2889,48 @@ void update_music_volume(void)
 // array of voices, one for each sfx sample in the data file
 // 0+ = voice #
 // -1 = voice not allocated
-void Z_init_sound()
+int zc_initsound(void)
 {
+   char temp[MAX_STRLEN];
+
+   /* Init mixer */
+   if (!mixer_init(sampling_rate / TIMING_FPS, sampling_rate, mix_quality, MIXER_MAX_SFX))
+      return false;
+
+   /* calculate the Sound Font path to load with the midi engine */
+   sprintf(temp, "%s%c" ZC_SYS_DIR "%c" ZC_SF2_DIR "%c%s.sf2", system_path, 
+           OTHER_PATH_SEPARATOR, OTHER_PATH_SEPARATOR, OTHER_PATH_SEPARATOR, sf2_file);
+   
+   if (!file_exists(temp))
+      return false;
+
+   /* Setup the midi processor */
+   if (!midi_init(sampling_rate, 1 / TIMING_FPS, temp))
+      return false;
+
+   if (!zcmusic_init(1 / TIMING_FPS))
+      return false;
+
+   /* Apply master volume */
+   mixer_set_volume(master_vol);
+
    for (int i = 0; i < SFX_COUNT; i++)
       sfx_voice[i] = -1;
 
-   for (int i = 0; i < ZC_MIDI_COUNT; i++)
+   for (int i = 0; i < MID_COUNT; i++)
       tunes[i].data = mididata[i].dat;
 
    for (int j = 0; j < MAXCUSTOMMIDIS; j++)
-      tunes[ZC_MIDI_COUNT + j].data = NULL;
+      tunes[MID_COUNT + j].data = NULL;
+
+   return true;
+}
+
+void zc_deinitsound(void)
+{
+   midi_deinit();
+   zcmusic_exit();
+   mixer_exit();
 }
 
 // returns number of voices currently allocated
@@ -2936,10 +2977,10 @@ bool sfx_init(int index)
    {
       if (use_sfxdat)
       {
-         if (index < Z35)
+         if (index < SFX_Z35)
             sfx_voice[index] = allocate_voice((SAMPLE *)sfxdata[index].dat);
          else
-            sfx_voice[index] = allocate_voice((SAMPLE *)sfxdata[Z35].dat);
+            sfx_voice[index] = allocate_voice((SAMPLE *)sfxdata[SFX_Z35].dat);
       }
       else
          sfx_voice[index] = allocate_voice(&customsfxdata[index]);
@@ -3108,24 +3149,24 @@ bool button_hold[18] = {false, false, false, false, false, false, false, false, 
 
 void load_control_state()
 {
-   control_state[0] = DUkey;
-   control_state[1] = DDkey;
-   control_state[2] = DLkey;
-   control_state[3] = DRkey;
-   control_state[4] = Akey;
-   control_state[5] = Bkey;
-   control_state[6] = Skey;
+   control_state[0] = UpKey;
+   control_state[1] = DownKey;
+   control_state[2] = LeftKey;
+   control_state[3] = RightKey;
+   control_state[4] = AKey;
+   control_state[5] = BKey;
+   control_state[6] = StartKey;
    control_state[7] = Lkey;
    control_state[8] = Rkey;
-   control_state[9] = Mkey;
-   control_state[10] = Exkey1;
-   control_state[11] = Exkey2;
-   control_state[12] = Exkey3;
-   control_state[13] = Exkey4;
-   control_state[14] = DUkey;
-   control_state[15] = DDkey;
-   control_state[16] = DLkey;
-   control_state[17] = DRkey;
+   control_state[9] = MapKey;
+   control_state[10] = Ex1key;
+   control_state[11] = Ex2key;
+   control_state[12] = Ex3key;
+   control_state[13] = Ex4key;
+   control_state[14] = UpKey;
+   control_state[15] = DownKey;
+   control_state[16] = LeftKey;
+   control_state[17] = RightKey;
 
    button_press[0] = rButton(Up, button_hold[0]);
    button_press[1] = rButton(Down, button_hold[1]);

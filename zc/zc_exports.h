@@ -35,14 +35,13 @@ extern bool allow_cheats;
 extern bool heart_beep;
 extern bool nes_quit;
 extern bool use_sfxdat;
-extern char sfx_file[16];
 extern char sf2_file[16];
 
 /* input keys */
-extern int Akey, Bkey, Ekey, Skey, Lkey, Rkey, Mkey, Ckey;
-extern int Exkey1, Exkey2, Exkey3, Exkey4;
-extern int Mx, My, Mz, Mb; /* Mouse buttons */
-extern int DUkey, DDkey, DLkey, DRkey;
+extern int AKey, BKey, SelectKey, StartKey, Lkey, Rkey, MapKey, ModKey;
+extern int Ex1key, Ex2key, Ex3key, Ex4key;
+extern int MouseX, MouseY, MouseZ, MouseB; /* Mouse buttons */
+extern int UpKey, DownKey, LeftKey, RightKey;
 
 /* thread stuff */
 extern slock_t *mutex;

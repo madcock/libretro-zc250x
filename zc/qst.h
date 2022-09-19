@@ -62,8 +62,8 @@ void clear_combos();
 void pack_combos();
 void fix_maps(mapscr *buf, int cnt);
 
-int get_qst_buffers();
-void del_qst_buffers();
+int alloc_qst_buffers(void);
+void free_qst_buffers(void);
 int loadquest(const char *filename, zquestheader *Header, miscQdata *Misc, zctune *tunes);
 
 void update_guy_1(guydata *tempguy);
