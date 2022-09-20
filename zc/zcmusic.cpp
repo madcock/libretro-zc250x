@@ -193,7 +193,7 @@ int zcmusic_get_tracks(ZCMUSIC *zcm)
          break;
 
       case STREAM_GME:
-         gme_track_count((GME *)zcm->stream);
+         return gme_track_count((GME *)zcm->stream);
 
          break;
    }
@@ -214,6 +214,7 @@ int zcmusic_change_track(int tracknum)
 
       case STREAM_GME:
          gme_change_track(tracknum);
+         cur_zcm->track = tracknum;
          break;
    }
 

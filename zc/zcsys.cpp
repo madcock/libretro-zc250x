@@ -2773,7 +2773,6 @@ void jukebox(int index)
 
 void play_DmapMusic()
 {
-   static int ttrack = 0;
    bool domidi = false;
 
    if (DMaps[currdmap].tmusic[0] != 0)
@@ -2801,10 +2800,8 @@ void play_DmapMusic()
          {
             midi_stop();
             zcmusic_play(zcmusic);
-            int temptracks = 0;
-            temptracks = zcmusic_get_tracks(zcmusic);
-            temptracks = (temptracks < 2) ? 1 : temptracks;
-            ttrack = vbound(DMaps[currdmap].tmusictrack, 0, temptracks - 1);
+            int temptracks = zcmusic_get_tracks(zcmusic);
+            int ttrack = vbound(DMaps[currdmap].tmusictrack, 0, temptracks - 1);
             zcmusic_change_track(ttrack);
          }
          else
