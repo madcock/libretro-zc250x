@@ -42,6 +42,7 @@ static FONT *read_font(PACKFILE *pack)
    f->first = pack_mgetl(pack);
    f->last = pack_mgetl(pack) + 1;
    f->total_glyphs = f->last - f->first;
+   f->height = 0; /* initial value */
 
    gl = (FONT_GLYPH *)malloc(sizeof(FONT_GLYPH) * f->total_glyphs);
    if (!gl)
