@@ -2752,24 +2752,23 @@ bool try_zcmusic(char *filename, int track, int midi)
 void jukebox(int index)
 {
    if (index < 0) index = MAXMIDIS - 1;
-
    if (index >= MAXMIDIS) index = 0;
 
-   // do nothing if it's already playing
+   /* do nothing if it's already playing */
    if (index == sel_music && midi_isplaying())
       return;
 
-   sel_music = index;
-
    music_stop();
+
+   sel_music = index;
    update_music_volume();
-   midi_play(tunes[index].data, tunes[index].loop);
+   midi_play(tunes[sel_music].data, tunes[sel_music].loop);
 
-   if (tunes[index].start > 0)
-      midi_fastforward(tunes[index].start);
+   if (tunes[sel_music].start > 0)
+      midi_fastforward(tunes[sel_music].start);
 
-   midi_loopend(tunes[index].loop_end);
-   midi_loopstart(tunes[index].loop_start);
+   midi_loopend(tunes[sel_music].loop_end);
+   midi_loopstart(tunes[sel_music].loop_start);
 }
 
 void play_DmapMusic()
@@ -2789,7 +2788,7 @@ void play_DmapMusic()
             zcmusic = NULL;
          }
 
-         // Not in ZC directory, try the quest directory
+         /* Look for the music at the quest directory */
          if (zcmusic == NULL)
          {
             char musicpath[2048];
