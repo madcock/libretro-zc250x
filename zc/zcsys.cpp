@@ -2734,6 +2734,7 @@ bool try_zcmusic(char *filename, int track, int midi)
 
       zcmusic = newzcmusic;
       zcmusic_play(zcmusic);
+      update_music_volume();
 
       if (track > 0)
          zcmusic_change_track(track);
@@ -2800,6 +2801,8 @@ void play_DmapMusic()
          {
             midi_stop();
             zcmusic_play(zcmusic);
+            update_music_volume();
+
             int temptracks = zcmusic_get_tracks(zcmusic);
             int ttrack = vbound(DMaps[currdmap].tmusictrack, 0, temptracks - 1);
             zcmusic_change_track(ttrack);
@@ -2877,6 +2880,7 @@ void update_music_volume(void)
    int i = MIN(MAX(sel_music, 0), MAXMUSIC - 1);
    int vol = mixvol(tunes[i].volume, music_vol);
    midi_set_volume(vol);
+   zcmusic_set_volume(music_vol);
 }
 
 /*****************/
