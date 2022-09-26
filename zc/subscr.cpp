@@ -3424,7 +3424,6 @@ void show_custom_subscreen(BITMAP *dest, miscQdata *misc, subscreen_group *css, 
 
             case ssoLARGEMAP:
             {
-               //putBmap(dest, misc, x, y, showmap,                 showlink,              showrooms,             roomcolor,                                                                 linkcolor,                                                                 large)
                putBmap(dest, misc, x, y, css->objects[i].d1 != 0, css->objects[i].d2 != 0, css->objects[i].d3 != 0,
                        subscreen_color(misc, css->objects[i].colortype1, css->objects[i].color1), subscreen_color(misc,
                              css->objects[i].colortype2, css->objects[i].color2), css->objects[i].d10 != 0);
@@ -4462,26 +4461,21 @@ void dosubscr(miscQdata *misc)
    else
       Bpos = zc_max(game->bwpn, 0);
 
-   for (int y = 168 - 2; y >= 6; y -= 3)
+   for (int y = 168; y >= 6; y -= 3)
    {
       do_dcounters();
       Link.refill();
       //fill in the screen with black to prevent the hall of mirrors effect
       rectfill(framebuf, 0, 0, 255, 223, 0);
 
+      /* copy the playing field back onto the screen */
       if (COOLSCROLL)
-      {
-         //copy the playing field back onto the screen
          blit(scrollbuf, framebuf, 0, 168, 0, SUBSCREEN_HEIGHT, 256, 168);
-      }
       else
-      {
-         //scroll the playing field (copy the copy we made)
-         blit(scrollbuf, framebuf, 256, 0, 0, 168 - 2 - y + SUBSCREEN_HEIGHT, 256, y);
-      }
+         blit(scrollbuf, framebuf, 256, 0, 0, 168 - y + SUBSCREEN_HEIGHT, 256, y);
 
       //throw the passive subscreen onto the screen
-      put_passive_subscr(framebuf, misc, 0, 168 - 2 - y, showtime, sspSCROLLING);
+      put_passive_subscr(framebuf, misc, 0, 168 - y, showtime, sspSCROLLING);
       //put the active subscreen above the passive subscreen
       put_active_subscr(misc, y, sspSCROLLING);
       advanceframe(false);
@@ -4552,18 +4546,12 @@ void dosubscr(miscQdata *misc)
       //fill in the screen with black to prevent the hall of mirrors effect
       rectfill(framebuf, 0, 0, 255, 223, 0);
 
+      /* copy the playing field back onto the screen */
       if (COOLSCROLL)
-      {
-         //copy the playing field back onto the screen
          blit(scrollbuf, framebuf, 0, 168, 0, SUBSCREEN_HEIGHT, 256, 168);
-      }
-      else
-      {
-         //nothing to do; the playing field has scrolled off the screen
-      }
 
       //throw the passive subscreen onto the screen
-      put_passive_subscr(framebuf, misc, 0, 168 - 2 - miny, showtime, sspDOWN);
+      put_passive_subscr(framebuf, misc, 0, 168 - miny, showtime, sspDOWN);
       //put the active subscreen above the passive subscreen
       put_active_subscr(misc, miny, sspDOWN);
 
@@ -4583,26 +4571,21 @@ void dosubscr(miscQdata *misc)
    }
    while (!done);
 
-   for (int y = 6; y <= 166; y += 3)
+   for (int y = 6; y <= 168; y += 3)
    {
       do_dcounters();
       Link.refill();
       //fill in the screen with black to prevent the hall of mirrors effect
       rectfill(framebuf, 0, 0, 255, 223, 0);
 
+      /* copy the playing field back onto the screen */
       if (COOLSCROLL)
-      {
-         //copy the playing field back onto the screen
         blit(scrollbuf, framebuf, 0, 168, 0, SUBSCREEN_HEIGHT, 256, 168);
-      }
       else
-      {
-         //scroll the playing field (copy the copy we made)
-         blit(scrollbuf, framebuf, 256, 0, 0, 168 - 2 - y + SUBSCREEN_HEIGHT, 256, y);
-      }
+         blit(scrollbuf, framebuf, 256, 0, 0, 168 - y + SUBSCREEN_HEIGHT, 256, y);
 
       //throw the passive subscreen onto the screen
-      put_passive_subscr(framebuf, misc, 0, 168 - 2 - y, showtime, sspSCROLLING);
+      put_passive_subscr(framebuf, misc, 0, 168 - y, showtime, sspSCROLLING);
       //put the active subscreen above the passive subscreen
       put_active_subscr(misc, y, sspSCROLLING);
       advanceframe(false);
@@ -4619,10 +4602,6 @@ void dosubscr(miscQdata *misc)
 
 void markBmap(int dir, int sc)
 {
-   /*
-     if((DMaps[get_currdmap()].type&dmfTYPE)==dmOVERW)
-       return;
-   */
    if (sc >= 128)
       return;
 

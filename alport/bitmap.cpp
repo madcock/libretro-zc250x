@@ -189,27 +189,50 @@ void masked_blit(BITMAP *src, BITMAP *dst, int sx, int sy, int dx, int dy,
 /* draw_sprite:
  *  Draws a sprite onto a linear bitmap at the specified x, y position,
  *  using a masked drawing mode where zero pixels are not output.
+ *  Bounds check is only done at the top since that's the only one
+ *  required on ZC.
  */
 void draw_sprite(BITMAP *bmp, BITMAP *sprite, int dx, int dy)
 {
-   masked_blit(sprite, bmp, 0, 0, dx, dy, sprite->w, sprite->h);
+   int sy = 0;
+   
+   if (dy < 0)
+   {
+      if(dy + sprite->h - 1 < 0)
+         return;
+
+      sy = -dy;
+      dy = 0;
+   }
+
+   masked_blit(sprite, bmp, 0, sy, dx, dy, sprite->w, sprite->h - sy);
 }
 
 
 /* draw_sprite_v_flip:
  *  Draws a sprite to a linear bitmap, flipping vertically.
+ *  Bounds check is only done at the top since that's the only one
+ *  required on ZC.
  */
 void draw_sprite_v_flip(BITMAP *bmp, BITMAP *sprite, int dx, int dy)
 {
-   int x, y;
    int h = sprite->h - 1;
+   
+   if (dy < 0)
+   {
+      if(dy + h < 0)
+         return;
 
-   for (y = 0; y <= h; y++)
+      h+= dy;
+      dy = 0;
+   }
+
+   for (int y = 0; y <= h; y++)
    {
       unsigned char *s = sprite->line[h - y];
       unsigned char *d = bmp->line[y + dy] + dx;
 
-      for (x = 0; x < sprite->w; s++, d++, x++)
+      for (int x = 0; x < sprite->w; s++, d++, x++)
       {
          unsigned char c = *s;
 
