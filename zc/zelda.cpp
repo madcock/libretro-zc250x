@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "zscriptversion.h"
-#include "zcmusic.h"
 #include "zdefs.h"
+#include "zcmusic.h"
 #include "zelda.h"
 #include "tiles.h"
 #include "pal.h"
