@@ -3255,8 +3255,7 @@ void animate_selectors()
    sel_b->animate(0);
 }
 
-void show_custom_subscreen(BITMAP *dest, miscQdata *misc, subscreen_group *css, int xofs, int yofs, bool showtime,
-                           int pos2)
+void show_custom_subscreen(BITMAP *dest, miscQdata *misc, subscreen_group *css, int xofs, int yofs, bool showtime, int pos2)
 {
    color_map = &trans_table;
 
@@ -4404,12 +4403,10 @@ extern int directItem;
 extern int directItemA;
 extern int directItemB;
 
-void put_active_subscr(miscQdata *misc, int y, int pos)
+void put_active_subscr(miscQdata *misc, int y, int pos, bool showtime)
 {
-   //Don't call Sitems.animate() - that gets called somewhere else, somehow. -L
    animate_selectors();
-   bool showtime = game->get_timevalid() && get_bit(quest_rules, qr_TIME);
-   show_custom_subscreen(framebuf, misc, current_subscreen_active, 0, 6 - y, showtime, pos);
+   show_custom_subscreen(framebuf, misc, current_subscreen_active, 0, -y, showtime, pos);
 }
 
 void dosubscr(miscQdata *misc)
@@ -4426,7 +4423,6 @@ void dosubscr(miscQdata *misc)
       zc_sync_pal = true;
    }
 
-   int miny;
    bool showtime = game->get_timevalid() && get_bit(quest_rules, qr_TIME);
    load_Sitems(misc);
 
@@ -4444,13 +4440,12 @@ void dosubscr(miscQdata *misc)
    set_clip_rect(scrollbuf, 0, 0, scrollbuf->w, scrollbuf->h);
    set_clip_rect(framebuf, 0, 0, framebuf->w, framebuf->h);
 
-   //make a copy of the blank playing field on the right side of scrollbuf
+   /* make a copy of the blank playing field on the right side of scrollbuf */
    blit(scrollbuf, scrollbuf, 0, PLAYFIELD_OFFSET, 256, 0, 256, 168);
-   //make a copy of the complete playing field on the bottom of scrollbuf
+   /* make a copy of the complete playing field on the bottom of scrollbuf */
    blit(framebuf, scrollbuf, 0, PLAYFIELD_OFFSET, 0, 168, 256, 168);
-   miny = 6;
 
-   //Set the selector to the correct position before bringing up the subscreen -DD
+   /* Set the selector to the correct position before bringing up the subscreen */
    if (get_bit(quest_rules, qr_SELECTAWPN))
    {
       if (Bwpn == 0 && Awpn != 0)
@@ -4461,11 +4456,11 @@ void dosubscr(miscQdata *misc)
    else
       Bpos = zc_max(game->bwpn, 0);
 
-   for (int y = 168; y >= 6; y -= 3)
+   for (int y = 168; y >= 0; y -= 3)
    {
       do_dcounters();
       Link.refill();
-      //fill in the screen with black to prevent the hall of mirrors effect
+      /* fill in the screen with black to prevent the hall of mirrors effect */
       rectfill(framebuf, 0, 0, 255, 223, 0);
 
       /* copy the playing field back onto the screen */
@@ -4474,10 +4469,10 @@ void dosubscr(miscQdata *misc)
       else
          blit(scrollbuf, framebuf, 256, 0, 0, 168 - y + SUBSCREEN_HEIGHT, 256, y);
 
-      //throw the passive subscreen onto the screen
+      /* throw the passive subscreen onto the screen */
       put_passive_subscr(framebuf, misc, 0, 168 - y, showtime, sspSCROLLING);
-      //put the active subscreen above the passive subscreen
-      put_active_subscr(misc, y, sspSCROLLING);
+      /* put the active subscreen above the passive subscreen */
+      put_active_subscr(misc, y, sspSCROLLING, showtime);
       advanceframe(false);
 
       if (zc_state)
@@ -4543,17 +4538,17 @@ void dosubscr(miscQdata *misc)
       do_dcounters();
       Link.refill();
 
-      //fill in the screen with black to prevent the hall of mirrors effect
+      /* fill in the screen with black to prevent the hall of mirrors effect */
       rectfill(framebuf, 0, 0, 255, 223, 0);
 
       /* copy the playing field back onto the screen */
       if (COOLSCROLL)
          blit(scrollbuf, framebuf, 0, 168, 0, SUBSCREEN_HEIGHT, 256, 168);
 
-      //throw the passive subscreen onto the screen
-      put_passive_subscr(framebuf, misc, 0, 168 - miny, showtime, sspDOWN);
-      //put the active subscreen above the passive subscreen
-      put_active_subscr(misc, miny, sspDOWN);
+      /* throw the passive subscreen onto the screen */
+      put_passive_subscr(framebuf, misc, 0, 168, showtime, sspDOWN);
+      /* put the active subscreen above the passive subscreen */
+      put_active_subscr(misc, 0, sspDOWN, showtime);
 
       advanceframe(false);
 
@@ -4571,11 +4566,11 @@ void dosubscr(miscQdata *misc)
    }
    while (!done);
 
-   for (int y = 6; y <= 168; y += 3)
+   for (int y = 0; y <= 168; y += 3)
    {
       do_dcounters();
       Link.refill();
-      //fill in the screen with black to prevent the hall of mirrors effect
+      /* fill in the screen with black to prevent the hall of mirrors effect */
       rectfill(framebuf, 0, 0, 255, 223, 0);
 
       /* copy the playing field back onto the screen */
@@ -4584,10 +4579,10 @@ void dosubscr(miscQdata *misc)
       else
          blit(scrollbuf, framebuf, 256, 0, 0, 168 - y + SUBSCREEN_HEIGHT, 256, y);
 
-      //throw the passive subscreen onto the screen
+      /* throw the passive subscreen onto the screen */
       put_passive_subscr(framebuf, misc, 0, 168 - y, showtime, sspSCROLLING);
-      //put the active subscreen above the passive subscreen
-      put_active_subscr(misc, y, sspSCROLLING);
+      /* put the active subscreen above the passive subscreen */
+      put_active_subscr(misc, y, sspSCROLLING, showtime);
       advanceframe(false);
 
       if (zc_state)
