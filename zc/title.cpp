@@ -496,7 +496,7 @@ newdata:
 
 cantopen:
    zc_message("Can't Open Saved Game File: %s, exiting...", spath);
-   exit(1);
+   return 2;
 
 reset:
    if (f)
@@ -1200,6 +1200,9 @@ static void select_game()
 
    int pos = zc_max(zc_min(currgame - listpos, 3), 0);
    int mode = 0;
+
+   /* Use zelda title music in the selection screen */
+   try_zcmusic((char *)"zelda.nsf", 0, MID_TITLE);
 
    selectscreen();
 
