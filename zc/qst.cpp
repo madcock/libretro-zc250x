@@ -772,7 +772,7 @@ int readheader(PACKFILE *f, zquestheader *Header, bool keepdata)
 
       if ((tempheader.zelda_version < 0x192) ||
             ((tempheader.zelda_version == 0x192) && (tempheader.build < 145)))
-         memset(tempheader.templatepath, 0, 2048);
+         memset(tempheader.templatepath, 0, MAX_STRLEN);
       else
       {
          if (!pfread(tempheader.templatepath, 280, f, true))           // read templatepath
@@ -9699,7 +9699,7 @@ int loadquest(const char *filename, zquestheader *Header, miscQdata *Misc, zctun
    memset(&tempheader, 0, sizeof(zquestheader));
 
    int open_error = 0;
-   char deletefilename[1024];
+   char deletefilename[MAX_STRLEN];
    PACKFILE *f = open_quest_file(&open_error, filename, deletefilename, true, true);
 
    if (!f)

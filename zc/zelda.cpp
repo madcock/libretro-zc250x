@@ -468,7 +468,7 @@ void Z_eventlog(const char *format, ...)
 {
    if (get_bit(quest_rules, qr_LOG))
    {
-      char buf[2048];
+      char buf[MAX_STRLEN];
 
       va_list ap;
       va_start(ap, format);
@@ -482,7 +482,7 @@ void Z_scripterrlog(const char *const format, ...)
 {
    if (get_bit(quest_rules, qr_SCRIPTERRLOG))
    {
-      char buf[2048];
+      char buf[MAX_STRLEN];
 
       va_list ap;
       va_start(ap, format);

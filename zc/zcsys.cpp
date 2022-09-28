@@ -2721,7 +2721,7 @@ bool try_zcmusic(char *filename, int track, int midi)
    ZCMUSIC *newzcmusic = NULL;
 
    // try the quest directory
-   char musicpath[2048];
+   char musicpath[MAX_STRLEN];
    replace_filename(musicpath, qst_path, filename);
    newzcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
 
@@ -2791,7 +2791,7 @@ void play_DmapMusic()
          /* Look for the music at the quest directory */
          if (zcmusic == NULL)
          {
-            char musicpath[2048];
+            char musicpath[MAX_STRLEN];
             replace_filename(musicpath, qst_path, DMaps[currdmap].tmusic);
             zcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
          }

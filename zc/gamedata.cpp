@@ -36,7 +36,7 @@ void gamedata::Clear()
    std::fill(bmaps, bmaps + MAXDMAPS * 64, 0);
    std::fill(maps, maps + MAXMAPS2 * MAPSCRSNORMAL, 0);
    std::fill(guys, guys + MAXMAPS2 * MAPSCRSNORMAL, 0);
-   std::fill(qstpath, qstpath + 2048, 0);
+   std::fill(qstpath, qstpath + MAX_STRLEN, 0);
    std::fill(icon, icon + 128, 0);
    std::fill(pal, pal + 48, 0);
 
@@ -105,7 +105,7 @@ void gamedata::Copy(const gamedata &g)
       guys[i] = g.guys[i];
    }
 
-   for (uint16_t i = 0; i < 2048; i++)
+   for (uint16_t i = 0; i < MAX_STRLEN; i++)
       qstpath[i] = g.qstpath[i];
 
    for (uint8_t i = 0; i < 128; i++)

@@ -1528,7 +1528,7 @@ struct zquestheader
    uint8_t  old_midi_flags[MIDIFLAGS_SIZE];
    //304
    uint8_t  old_foo2[18];
-   char  templatepath[2048];
+   char  templatepath[MAX_STRLEN];
    //602
 };
 
@@ -2056,7 +2056,7 @@ struct gamedata
    //82556 (65280)
    uint8_t  guys[MAXMAPS2 * MAPSCRSNORMAL];                     // guy counts (though dungeon guys are reset on entry)
    //115196 (32640)
-   char  qstpath[2048];
+   char  qstpath[MAX_STRLEN];
    uint8_t  icon[128];
    uint8_t  pal[48];
    int32_t  screen_d[MAXDMAPS * MAPSCRSNORMAL][8];              // script-controlled screen variables
