@@ -1971,7 +1971,11 @@ bool zc_init(const char *qpath)
    for (int i = 0; i < eMAXGUYS; i++)
       guy_string[i] = new char[64];
 
-   // Script initialization
+   /* Init sounds system */
+   if (!zc_initsound())
+      RETURN_ERROR;
+
+   /* Script initialization */
    init_scripts();
    zscriptDrawingRenderTarget = new ZScriptDrawingRenderTarget();
 
@@ -1983,9 +1987,6 @@ bool zc_init(const char *qpath)
       RETURN_ERROR;
    }
    packfile_password(NULL);
-
-   if (!zc_initsound())
-      RETURN_ERROR;
 
    /* keep the qst path to use it during the gameplay */
    strcpy(qst_path, qpath);
