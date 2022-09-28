@@ -142,6 +142,7 @@ void retro_set_environment(retro_environment_t cb)
       { "zc_pan_style", "Sound Pan Style; 1/2|3/4|Full|Mono" },
       { "zc_heart_beep", "Enable Low Health Beep; true|false" },
       { "zc_trans_layers", "Show Transparent Layers; true|false" },
+      { "zc_nes_quit", "Press Up + A + B to Quit menu in subscreen; true|false" },
       { "zc_allow_cheats", "Allow cheats (press 'Cheat' and L, R, Map, Select, or Start); false|true" },
       { "zc_soundfont", "SF2 soundfont To Use (See GitHub readme - Requires Restart); default|custom0|custom1|custom2|custom3|custom4|custom5|custom6|custom7|custom8|custom9" },
       { NULL, NULL },
@@ -348,6 +349,10 @@ static void check_variables(bool startup = false)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       trans_layers = !strcmp(var.value, "true") ? true : false;
 
+   var.key = "zc_nes_quit";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+      nes_quit = !strcmp(var.value, "true") ? true : false;
+
    var.key = "zc_allow_cheats";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       allow_cheats = !strcmp(var.value, "true") ? true : false;
@@ -382,11 +387,11 @@ static void check_variables(bool startup = false)
          mixer_set_volume(master_vol);
 
       /* Apply music volume if updated. */
-      if (music_vol != old_musicv)
+      if (music_vol != old_musicv || master_vol != old_masterv)
          update_music_volume();
 
       /* Apply sound volume if updated. */
-      if (sfx_vol != old_sfxv)
+      if (sfx_vol != old_sfxv || master_vol != old_masterv)
          update_sfx_volume();
    }
 }
