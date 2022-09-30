@@ -2411,7 +2411,7 @@ void update_video_frame(bool allow_gfx)
    /* Use tempbuf as buffer when we want to display panorama screen */
    if (nosubscr)
    {
-      rectfill(tempbuf, 0, 0, 255, SUBSCREEN_HEIGHT / 2, 0);
+      rectfill(tempbuf, 0, 0, 255, (SUBSCREEN_HEIGHT / 2) - 1, 0);
       rectfill(tempbuf, 0, 168 + SUBSCREEN_HEIGHT / 2, 255, 168 + SUBSCREEN_HEIGHT - 1, 0);
       blit(framebuf, tempbuf, 0, PLAYFIELD_OFFSET, 0, SUBSCREEN_HEIGHT / 2, 256, 224 - SUBSCREEN_HEIGHT);
    }

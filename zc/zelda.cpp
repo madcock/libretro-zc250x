@@ -1867,7 +1867,7 @@ int alloc_bitmap_buffers(void)
    if(!(scrollbuf = create_bitmap(512, 406)))
       RETURN_ERROR;
 
-   if(!(tempbuf = create_bitmap(320, 224)))
+   if(!(tempbuf = create_bitmap(256, 224)))
       RETURN_ERROR;
 
    if(!(prim_bmp = create_bitmap(512, 512)))
