@@ -41,7 +41,7 @@ ZCMUSIC *zcmusic_load_file(char *filename)
 
    if (strlen(filename) > 255)
    {
-      zc_message("Music file '%s' not loaded: filename too long\n", filename);
+      zc_message("Music file '%s' not loaded: filename too long", filename);
       return NULL;
    }
 
@@ -52,7 +52,7 @@ ZCMUSIC *zcmusic_load_file(char *filename)
       VORBIS *p = vorbis_load(filename);
       if (!p)
       {
-         zc_message("OGG file '%s' not found.\n", filename);
+         zc_message("OGG file '%s' not found.", filename);
          goto error;
       }
 
@@ -70,7 +70,7 @@ ZCMUSIC *zcmusic_load_file(char *filename)
 
       if (!p)
       {
-         zc_message("MP3 file '%s' not found.\n", filename);
+         zc_message("MP3 file '%s' not found.", filename);
          goto error;
       }
 
@@ -89,7 +89,7 @@ ZCMUSIC *zcmusic_load_file(char *filename)
       GME *p = gme_load(filename);
       if (!p)
       {
-         zc_message("GME file '%s' not found.\n", filename);
+         zc_message("GME file '%s' not found.", filename);
          goto error;
       }
 

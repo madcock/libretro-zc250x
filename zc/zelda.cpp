@@ -1903,7 +1903,7 @@ bool zc_init(const char *qpath)
    int res;
    char temp[MAX_STRLEN];
 
-   zc_message("Zelda Classic %s (Build %d)\n", VerStr(ZELDA_VERSION), VERSION_BUILD);
+   zc_message("Zelda Classic %s (Build %d)", VerStr(ZELDA_VERSION), VERSION_BUILD);
    zc_message("Armageddon Games web site: http://www.armageddongames.com");
    zc_message("Zelda Classic web site: http://www.zeldaclassic.com");
 

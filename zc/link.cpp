@@ -10637,32 +10637,22 @@ bool LinkClass::dowarp(int type, int index)
                      || (get_bit(quest_rules, qr_WARPSIGNOREARRIVALPOINT)))))
          {
             if (!(wtype == wtSCROLL) || !(get_bit(quest_rules, qr_NOSCROLLCONTINUE)))
-            {
                game->set_continue_scrn(homescr);
-               //zc_message("continue_scrn = %02X e/e\n",game->get_continue_scrn());
-            }
             else if (currdmap != game->get_continue_dmap())
                game->set_continue_scrn(DMaps[currdmap].cont + DMaps[currdmap].xoff);
          }
          else
          {
             if (currdmap != game->get_continue_dmap())
-            {
                game->set_continue_scrn(DMaps[currdmap].cont + DMaps[currdmap].xoff);
-               //zc_message("continue_scrn = %02X dlevel\n",game->get_continue_scrn());
-            }
          }
       }
       else
-      {
          game->set_continue_scrn(DMaps[currdmap].cont + DMaps[currdmap].xoff);
-         //zc_message("continue_scrn = %02X\n !dlevel\n",game->get_continue_scrn());
-      }
 
       game->set_continue_dmap(currdmap);
       lastentrance_dmap = currdmap;
       lastentrance = game->get_continue_scrn();
-      //zc_message("continue_map = %d\n",game->get_continue_dmap());
    }
 
    if (tmpscr->flags4 & fAUTOSAVE)
@@ -10680,12 +10670,12 @@ bool LinkClass::dowarp(int type, int index)
    if (wtype == wtCAVE)
    {
       if (DMaps[currdmap].flags & dmfGUYCAVES)
-         Z_eventlog("Entered %s containing %s.\n", DMaps[currdmap].flags & dmfCAVES ? "Cave" : "Item Cellar",
+         Z_eventlog("Entered %s containing %s.", DMaps[currdmap].flags & dmfCAVES ? "Cave" : "Item Cellar",
                     roomtype_string[tmpscr[1].room]);
       else
          Z_eventlog("Entered %s.", DMaps[currdmap].flags & dmfCAVES ? "Cave" : "Item Cellar");
    }
-   else Z_eventlog("Warped to DMap %d: %s, screen %d, via %s.\n", currdmap, DMaps[currdmap].name, currscr,
+   else Z_eventlog("Warped to DMap %d: %s, screen %d, via %s.", currdmap, DMaps[currdmap].name, currscr,
                       wtype == wtPASS ? "Passageway" :
                       wtype == wtEXIT ? "Entrance/Exit" :
                       wtype == wtSCROLL ? "Scrolling Warp" :

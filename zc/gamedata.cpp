@@ -575,14 +575,14 @@ uint8_t gamedata::get_continue_scrn()
 }
 void gamedata::set_continue_scrn(uint8_t s)
 {
-   if (!isclearing && _continue_scrn != s) Z_eventlog("Continue screen set to %x\n", s);
+   if (!isclearing && _continue_scrn != s) Z_eventlog("Continue screen set to %x", s);
 
    _continue_scrn = s;
    return;
 }
 void gamedata::change_continue_scrn(short s)
 {
-   if (!isclearing && s != 0) Z_eventlog("Continue screen set to %x\n", _continue_scrn + s);
+   if (!isclearing && s != 0) Z_eventlog("Continue screen set to %x", _continue_scrn + s);
 
    _continue_scrn += s;
    return;
@@ -594,14 +594,14 @@ uint16_t gamedata::get_continue_dmap()
 }
 void gamedata::set_continue_dmap(uint16_t d)
 {
-   if (!isclearing && _continue_dmap != d) Z_eventlog("Continue DMap set to %d\n", d);
+   if (!isclearing && _continue_dmap != d) Z_eventlog("Continue DMap set to %d", d);
 
    _continue_dmap = d;
    return;
 }
 void gamedata::change_continue_dmap(short d)
 {
-   if (!isclearing && d != 0) Z_eventlog("Continue DMap set to %d\n", _continue_dmap + d);
+   if (!isclearing && d != 0) Z_eventlog("Continue DMap set to %d", _continue_dmap + d);
 
    _continue_dmap += d;
    return;
@@ -731,7 +731,7 @@ void gamedata::set_item(int id, bool value)
 void gamedata::set_item_no_flush(int id, bool value)
 {
    if (!isclearing && !(value == item[id]))
-      Z_eventlog("%sed item %i: %s\n", value ? "Gain" : "Remov", id, item_string[id]);
+      Z_eventlog("%sed item %i: %s", value ? "Gain" : "Remov", id, item_string[id]);
 
    item[id] = value;
 }

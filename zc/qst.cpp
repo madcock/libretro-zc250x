@@ -620,7 +620,7 @@ int readheader(PACKFILE *f, zquestheader *Header, bool keepdata)
 
    if (!pfread(tempheader.id_str, sizeof(tempheader.id_str), f, true))  // first read old header
    {
-      zc_message("Unable to read header string\n");
+      zc_message("Unable to read header string");
       return qe_invalid;
    }
 
@@ -629,7 +629,7 @@ int readheader(PACKFILE *f, zquestheader *Header, bool keepdata)
    {
       if (strcmp(tempheader.id_str, QH_IDSTR))
       {
-         zc_message("Invalid header string:  '%s' (was expecting '%s' or '%s')\n", tempheader.id_str, QH_IDSTR, QH_NEWIDSTR);
+         zc_message("Invalid header string:  '%s' (was expecting '%s' or '%s')", tempheader.id_str, QH_IDSTR, QH_NEWIDSTR);
          return qe_invalid;
       }
    }
@@ -1140,8 +1140,6 @@ int readstrings(PACKFILE *f, zquestheader *Header, bool keepdata)
       }
 
       /* Allocate the exact memory needed for the strings */
-      zc_message("Reallocating string buffer...\n");
-
       msg_strings_size = strings_to_read;
       if ((MsgStrings = (MsgStr *)malloc(sizeof(MsgStr) * msg_strings_size)) == NULL)
          return qe_nomem;
@@ -1225,8 +1223,6 @@ int readstrings(PACKFILE *f, zquestheader *Header, bool keepdata)
          return qe_invalid;
 
       /* Allocate the exact memory needed for the strings */
-      zc_message("Reallocating string buffer...\n");
-
       msg_strings_size = temp_msg_count;
       if ((MsgStrings = (MsgStr *)malloc(sizeof(MsgStr) * msg_strings_size)) == NULL)
          return qe_nomem;
@@ -5586,7 +5582,7 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
          if (s_version < 3)
          {
             cpylen = (temp_sample.bits == 8 ? 1 : 2) * temp_sample.len;
-            zc_message("WARNING: Quest SFX %d is in stereo, and may be corrupt.\n", i);
+            zc_message("WARNING: Quest SFX %d is in stereo, and may be corrupt.", i);
          }
 
          memcpy(customsfxdata[i].data, temp_sample.data, cpylen);
@@ -6184,8 +6180,6 @@ int readguys(PACKFILE *f, zquestheader *Header, bool keepdata)
 
          if (guyversion < 16) // November 2009 - Super Enemy Editor part 1
          {
-            if (i == 0) zc_message("Updating guys to version 16...\n");
-
             update_guy_1(&tempguy);
 
             if (i == eMPOLSV)
@@ -8258,7 +8252,7 @@ int readtiles(PACKFILE *f, tiledata *buf, zquestheader *Header, uint16_t version
 
    if (Header != NULL && !Header->data_flags[ZQ_TILES])    //keep for old quests
    {
-      zc_message("Quest does not use tiles.\n");
+      zc_message("Quest does not use tiles.");
       delete[] temp_tile;
       temp_tile = NULL;
       return 0;
@@ -9711,7 +9705,7 @@ int loadquest(const char *filename, zquestheader *Header, miscQdata *Misc, zctun
    /*Reading Header...*/
    ret = readheader(f, &tempheader, true);
    checkstatus(ret);
-   zc_message("Made in ZQuest %x Beta %d\n", tempheader.zelda_version, tempheader.build);
+   zc_message("Made in ZQuest %x Beta %d", tempheader.zelda_version, tempheader.build);
 
    if (tempheader.zelda_version >= 0x193)
    {

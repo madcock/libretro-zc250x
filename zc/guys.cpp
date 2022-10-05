@@ -10808,7 +10808,7 @@ int addenemy(int x, int y, int z, int id, int clk)
 
             if (!guys.add(new esMoldorm((fix)x, (fix)y, id + 0x1000, segclk)))
             {
-               zc_message("Moldorm segment %d could not be created!\n", i + 1);
+               zc_message("Moldorm segment %d could not be created!", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10832,7 +10832,7 @@ int addenemy(int x, int y, int z, int id, int clk)
 
          if (!guys.add(new esLanmola((fix)x, (fix)y, id + 0x1000, 0)))
          {
-            zc_message("Lanmola segment 1 could not be created!\n");
+            zc_message("Lanmola segment 1 could not be created!");
             guys.del(guys.Count() - 1);
             return 0;
          }
@@ -10843,7 +10843,7 @@ int addenemy(int x, int y, int z, int id, int clk)
          {
             if (!guys.add(new esLanmola((fix)x, (fix)y, id + 0x2000, -(i << shft))))
             {
-               zc_message("Lanmola segment %d could not be created!\n", i + 1);
+               zc_message("Lanmola segment %d could not be created!", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10863,7 +10863,7 @@ int addenemy(int x, int y, int z, int id, int clk)
          {
             if (!guys.add(new esManhandla((fix)x, (fix)y, id + 0x1000, i)))
             {
-               zc_message("Manhandla head %d could not be created!\n", i + 1);
+               zc_message("Manhandla head %d could not be created!", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10884,7 +10884,7 @@ int addenemy(int x, int y, int z, int id, int clk)
          {
             if (!guys.add(new esGleeok((fix)x, (fix)y, id + 0x1000, c, e)))
             {
-               zc_message("Gleeok head %d could not be created!\n", i + 1);
+               zc_message("Gleeok head %d could not be created!", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10908,7 +10908,7 @@ int addenemy(int x, int y, int z, int id, int clk)
             if (!(guysbuf[id].misc10 ? guys.add(new esPatraBS((fix)x, (fix)y, id + 0x1000, i)) : guys.add(new esPatra((fix)x,
                   (fix)y, id + 0x1000, i))))
             {
-               zc_message("Patra outer eye %d could not be created!\n", i + 1);
+               zc_message("Patra outer eye %d could not be created!", i + 1);
                for (int j = 0; j < i + 1; j++)
                   guys.del(guys.Count() - 1);
 
@@ -10924,7 +10924,7 @@ int addenemy(int x, int y, int z, int id, int clk)
          {
             if (!guys.add(new esPatra((fix)x, (fix)y, id + 0x1000, i)))
             {
-               zc_message("Patra inner eye %d could not be created!\n", i + 1);
+               zc_message("Patra inner eye %d could not be created!", i + 1);
                for (int j = 0; j < i + 1 + zc_min(254, outeyes); j++)
                   guys.del(guys.Count() - 1);
 

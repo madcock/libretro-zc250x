@@ -254,7 +254,7 @@ void eventlog_mapflags()
    eventlog_mapflag_line(&g, mDOOR_RIGHT, 3);
    eventlog_mapflag_line(&g, mNEVERRET, 6);
    eventlog_mapflag_line(&g, mTMPNORET, 7);
-   Z_eventlog("%s\n", g2 != 0 ? "]" : "");
+   Z_eventlog("%s", g2 != 0 ? "]" : "");
 }
 
 // set specific flag
@@ -266,7 +266,7 @@ void setmapflag(int mi2, int flag)
    sprintf(buf, "Screen (%d, %02X)", cmap + 1, cscr);
 
    game->maps[mi2] |= flag;
-   Z_eventlog("%s's State was set: %s\n",
+   Z_eventlog("%s's State was set: %s",
               mi2 != (currmap * MAPSCRSNORMAL) + homescr ? buf : "Current screen",
               flag > 0 ? screenstate_string[(int)log2((float)flag)] : "<Unknown>");
 
@@ -283,7 +283,7 @@ void setmapflag(int mi2, int flag)
       {
          if ((tmpscr->nocarry & flag) != flag)
          {
-            Z_eventlog("State change carried over to (%d, %02X)\n", nmap, nscr);
+            Z_eventlog("State change carried over to (%d, %02X)", nmap, nscr);
             game->maps[((nmap - 1) << 7) + nscr] |= flag;
          }
 
@@ -324,7 +324,7 @@ void unsetmapflag(int mi2, int flag, bool anyflag)
    char buf[20];
    sprintf(buf, "Screen (%d, %02X)", cmap + 1, cscr);
 
-   Z_eventlog("%s's State was unset: %s\n",
+   Z_eventlog("%s's State was unset: %s",
               mi2 != (currmap * MAPSCRSNORMAL) + homescr ? buf : "Current screen",
               flag > 0 ? screenstate_string[(int)log2((float)flag)] : "<Unknown>");
 
@@ -341,7 +341,7 @@ void unsetmapflag(int mi2, int flag, bool anyflag)
       {
          if ((tmpscr->nocarry & flag) != flag)
          {
-            Z_eventlog("State change carried over to (%d, %02X)\n", nmap, nscr);
+            Z_eventlog("State change carried over to (%d, %02X)", nmap, nscr);
             game->maps[((nmap - 1) << 7) + nscr] &= ~flag;
          }
 
@@ -878,7 +878,7 @@ int findtrigger(int scombo, bool ff)
 void hidden_entrance(int tmp, bool, bool high16only, int single) //Perhaps better known as 'Trigger Secrets'
 {
    //There are no calls to 'hidden_entrance' in the code where tmp != 0
-   Z_eventlog("%sScreen Secrets triggered%s.\n",
+   Z_eventlog("%sScreen Secrets triggered%s.",
               single > -1 ? "Restricted " : "",
               single == -2 ? " by the 'Enemies->Secret' screen flag" :
               single == -3 ? " by the 'Secrets' screen state" :
@@ -1353,7 +1353,7 @@ void hidden_entrance(int tmp, bool, bool high16only, int single) //Perhaps bette
 
          if (tr)
          {
-            Z_eventlog("Hit All Triggers->16-31 not fulfilled (%d trigger flag%s remain).\n", tr, tr > 1 ? "s" : "");
+            Z_eventlog("Hit All Triggers->16-31 not fulfilled (%d trigger flag%s remain).", tr, tr > 1 ? "s" : "");
             goto endhe;
          }
 
@@ -1361,7 +1361,7 @@ void hidden_entrance(int tmp, bool, bool high16only, int single) //Perhaps bette
 
          if (ftr)
          {
-            Z_eventlog("Hit All Triggers->16-31 not fulfilled (%d trigger FFC%s remain).\n", ftr, ftr > 1 ? "s" : "");
+            Z_eventlog("Hit All Triggers->16-31 not fulfilled (%d trigger FFC%s remain).", ftr, ftr > 1 ? "s" : "");
             goto endhe;
          }
       }
@@ -1582,7 +1582,7 @@ bool findentrance(int x, int y, int flag, bool setflag)
 
       if (tr)
       {
-         Z_eventlog("Hit All Triggers->Perm Secret not fulfilled (%d trigger flag%s remain).\n", tr, tr > 1 ? "s" : "");
+         Z_eventlog("Hit All Triggers->Perm Secret not fulfilled (%d trigger flag%s remain).", tr, tr > 1 ? "s" : "");
          setflag = false;
       }
 
@@ -1590,7 +1590,7 @@ bool findentrance(int x, int y, int flag, bool setflag)
 
       if (ftr)
       {
-         Z_eventlog("Hit All Triggers->Perm Secret not fulfilled (%d trigger FFC%s remain).\n", ftr, ftr > 1 ? "s" : "");
+         Z_eventlog("Hit All Triggers->Perm Secret not fulfilled (%d trigger FFC%s remain).", ftr, ftr > 1 ? "s" : "");
          setflag = false;
       }
    }

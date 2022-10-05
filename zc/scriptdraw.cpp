@@ -1301,7 +1301,7 @@ void do_drawstringr(BITMAP *bmp, int i, int *sdci, int xoffset, int yoffset)
 
    if (!str)
    {
-      zc_message("String pointer is null! Internal error. \n");
+      zc_message("String pointer is null! Internal error. ");
       return;
    }
 
@@ -1582,8 +1582,8 @@ void do_drawbitmapr(BITMAP *bmp, int *sdci, int xoffset, int yoffset)
 
    if (!sourceBitmap)
    {
-      zc_message("Warning: Screen->DrawBitmap(%d) contains invalid data or is not initialized.\n", bitmapIndex);
-      zc_message("[Note* Deferred drawing or layering order possibly not set right.]\n");
+      zc_message("Warning: Screen->DrawBitmap(%d) contains invalid data or is not initialized.", bitmapIndex);
+      zc_message("[Note* Deferred drawing or layering order possibly not set right.]");
       return;
    }
 
@@ -1670,7 +1670,7 @@ void do_drawquad3dr(BITMAP *bmp, int i, int *sdci, int xoffset, int yoffset)
 
    if (!v_ptr)
    {
-      zc_message("Quad3d: Vector pointer is null! Internal error. \n");
+      zc_message("Quad3d: Vector pointer is null! Internal error. ");
       return;
    }
 
@@ -1747,7 +1747,7 @@ void do_drawtriangle3dr(BITMAP *bmp, int i, int *sdci, int xoffset, int yoffset)
 
    if (!v_ptr)
    {
-      zc_message("Quad3d: Vector pointer is null! Internal error. \n");
+      zc_message("Quad3d: Vector pointer is null! Internal error. ");
       return;
    }
 
@@ -1885,7 +1885,7 @@ void do_drawlayerr(BITMAP *bmp, int *sdci, int xoffset, int yoffset, bool isOffS
 
    if (index >= TheMaps.size())
    {
-      zc_message("DrawLayer: invalid map index \"%i\". Map count is %ld.\n", index, TheMaps.size());
+      zc_message("DrawLayer: invalid map index \"%i\". Map count is %ld.", index, TheMaps.size());
       return;
    }
 
@@ -1954,7 +1954,7 @@ void do_drawscreenr(BITMAP *bmp, int *sdci, int xoffset, int yoffset, bool isOff
 
    if (index >= TheMaps.size())
    {
-      zc_message("DrawScreen: invalid map or screen index. \n");
+      zc_message("DrawScreen: invalid map or screen index. ");
       return;
    }
 

@@ -451,7 +451,7 @@ protected:
 
       if (size == 0)
       {
-         zc_message("Tried to allocate zero sized array\n");
+         zc_message("Tried to allocate zero sized array");
          size = 1;
       }
 
@@ -515,7 +515,7 @@ protected:
    {
       if (_X >= _size)
       {
-         zc_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.");
          throw ("Array indices out of range.");
       }
    }
@@ -524,7 +524,7 @@ protected:
    {
       if (Offset(_Y, _X) >= _size)
       {
-         zc_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.");
          throw ("Array indices out of range.");
       }
    }
@@ -533,7 +533,7 @@ protected:
    {
       if (Offset(_Z, _Y, _X) >= _size)
       {
-         zc_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.");
          throw ("Array indices out of range.");
       }
    }
@@ -542,7 +542,7 @@ protected:
    {
       if (_X >= _size)
       {
-         zc_message("Array index (%i) out of range (%i).\n", _X, _size);
+         zc_message("Array index (%i) out of range (%i).", _X, _size);
          return false;
       }
 
@@ -553,7 +553,7 @@ protected:
    {
       if (Offset(_Y, _X) >= _size)
       {
-         zc_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.");
          return false;
       }
 
@@ -564,7 +564,7 @@ protected:
    {
       if (Offset(_Z, _Y, _X) >= _size)
       {
-         zc_message("Array indices out of range.\n");
+         zc_message("Array indices out of range.");
          return false;
       }
 

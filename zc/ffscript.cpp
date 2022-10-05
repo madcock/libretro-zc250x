@@ -77,7 +77,7 @@ public:
    //only if the player is messing with their pointers...
    static ZScriptArray &InvalidError(const int32_t ptr)
    {
-      Z_scripterrlog("Invalid pointer (%i) passed to array (don't change the values of your array pointers)\n", ptr);
+      Z_scripterrlog("Invalid pointer (%i) passed to array (don't change the values of your array pointers)", ptr);
       return INVALIDARRAY;
    }
 
@@ -85,7 +85,7 @@ public:
    {
       if (stackoffset == 0)
       {
-         Z_scripterrlog("Stack over or underflow, stack pointer = %ld\n", stackoffset);
+         Z_scripterrlog("Stack over or underflow, stack pointer = %ld", stackoffset);
          return;
       }
 
@@ -96,7 +96,7 @@ public:
    {
       if (stackoffset == 0)
       {
-         Z_scripterrlog("Stack over or underflow, stack pointer = %ld\n", stackoffset);
+         Z_scripterrlog("Stack over or underflow, stack pointer = %ld", stackoffset);
          return -10000;
       }
 
@@ -226,7 +226,7 @@ public:
       //return checkBounds(ID, 0, map_count-1, str);
       if (ID < 0 || ID > map_count - 1)
       {
-         Z_scripterrlog("Invalid value (%i) passed to '%s'\n", ID + 1, str);
+         Z_scripterrlog("Invalid value (%i) passed to '%s'", ID + 1, str);
          return _OutOfBounds;
       }
 
@@ -322,7 +322,7 @@ public:
    {
       if (n < boundlow || n > boundup)
       {
-         Z_scripterrlog("Invalid value (%i) passed to '%s'\n", n, funcvar);
+         Z_scripterrlog("Invalid value (%i) passed to '%s'", n, funcvar);
          return _OutOfBounds;
       }
 
@@ -333,7 +333,7 @@ public:
    {
       if (index < 0 || index >= int32_t(size))
       {
-         Z_scripterrlog("Invalid index (%ld) to local array of size %ld\n", index, size);
+         Z_scripterrlog("Invalid index (%ld) to local array of size %ld", index, size);
          return _OutOfBounds;
       }
 
@@ -362,7 +362,6 @@ public:
          for (uint16_t i = 0; i < guys.Count(); i++)
             Z_scripterrlog("%ld ", guys.spr(i)->getUID());
 
-         Z_scripterrlog("\n");
          return _InvalidSpriteUID;
       }
 
@@ -486,7 +485,6 @@ public:
          for (uint16_t i = 0; i < items.Count(); i++)
             Z_scripterrlog("%ld ", items.spr(i)->getUID());
 
-         Z_scripterrlog("\n");
          return _InvalidSpriteUID;
       }
 
@@ -526,7 +524,6 @@ public:
          for (uint16_t i = 0; i < Lwpns.Count(); i++)
             Z_scripterrlog("%ld ", Lwpns.spr(i)->getUID());
 
-         Z_scripterrlog("\n");
          return _InvalidSpriteUID;
       }
 
@@ -566,7 +563,6 @@ public:
          for (uint16_t i = 0; i < Ewpns.Count(); i++)
             Z_scripterrlog("%ld ", Ewpns.spr(i)->getUID());
 
-         Z_scripterrlog("\n");
          return _InvalidSpriteUID;
       }
 
@@ -834,13 +830,13 @@ public:
 void deallocateArray(const int32_t ptrval)
 {
    if (ptrval <= 0 || ptrval >= MAX_ZCARRAY_SIZE)
-      Z_scripterrlog("Script tried to deallocate memory at invalid address %ld\n", ptrval);
+      Z_scripterrlog("Script tried to deallocate memory at invalid address %ld", ptrval);
    else
    {
       arrayOwner[ptrval] = 255;
 
       if (localRAM[ptrval].Size() == 0)
-         Z_scripterrlog("Script tried to deallocate memory that was not allocated at address %ld\n", ptrval);
+         Z_scripterrlog("Script tried to deallocate memory that was not allocated at address %ld", ptrval);
       else
          localRAM[ptrval].Clear();
    }
@@ -852,13 +848,12 @@ item *checkItem(int32_t iid)
 
    if (s == NULL)
    {
-      Z_eventlog("Script attempted to reference a nonexistent item!\n");
+      Z_eventlog("Script attempted to reference a nonexistent item!");
       Z_eventlog("You were trying to reference an item with UID = %ld; Items on screen are UIDs ", iid);
 
       for (int i = 0; i < items.Count(); i++)
          Z_eventlog("%ld ", items.spr(i)->getUID());
 
-      Z_eventlog("\n");
       return NULL;
    }
 
@@ -872,13 +867,12 @@ weapon *checkLWpn(int32_t eid, const char *what)
    if (s == NULL)
    {
 
-      Z_eventlog("Script attempted to reference a nonexistent LWeapon!\n");
+      Z_eventlog("Script attempted to reference a nonexistent LWeapon!");
       Z_eventlog("You were trying to reference the %s of an LWeapon with UID = %ld; LWeapons on screen are UIDs ", what, eid);
 
       for (int i = 0; i < Lwpns.Count(); i++)
          Z_eventlog("%ld ", Lwpns.spr(i)->getUID());
 
-      Z_eventlog("\n");
       return NULL;
    }
 
@@ -892,13 +886,12 @@ weapon *checkEWpn(int32_t eid, const char *what)
    if (s == NULL)
    {
 
-      Z_eventlog("Script attempted to reference a nonexistent EWeapon!\n");
+      Z_eventlog("Script attempted to reference a nonexistent EWeapon!");
       Z_eventlog("You were trying to reference the %s of an EWeapon with UID = %ld; EWeapons on screen are UIDs ", what, eid);
 
       for (int i = 0; i < Ewpns.Count(); i++)
          Z_eventlog("%ld ", Ewpns.spr(i)->getUID());
 
-      Z_eventlog("\n");
       return NULL;
    }
 
@@ -910,7 +903,7 @@ int get_screen_d(int32_t index1, int32_t index2)
 {
    if (index2 < 0 || index2 > 7)
    {
-      Z_scripterrlog("You were trying to reference an out-of-bounds array index for a screen's D[] array (%ld); valid indices are from 0 to 7.\n",
+      Z_scripterrlog("You were trying to reference an out-of-bounds array index for a screen's D[] array (%ld); valid indices are from 0 to 7.",
                      index1);
       return 0;
    }
@@ -922,7 +915,7 @@ void set_screen_d(int32_t index1, int32_t index2, int val)
 {
    if (index2 < 0 || index2 > 7)
    {
-      Z_scripterrlog("You were trying to reference an out-of-bounds array index for a screen's D[] array (%ld); valid indices are from 0 to 7.\n",
+      Z_scripterrlog("You were trying to reference an out-of-bounds array index for a screen's D[] array (%ld); valid indices are from 0 to 7.",
                      index1);
       return;
    }
@@ -4724,7 +4717,7 @@ void do_allocatemem(const bool v, const bool local, const uint8_t i)
 
    if (size <= 0)
    {
-      Z_scripterrlog("Array initialized to invalid size of %d\n", size);
+      Z_scripterrlog("Array initialized to invalid size of %d", size);
       set_register(sarg1, 0); //Pass back NULL
       return;
    }
@@ -4736,7 +4729,7 @@ void do_allocatemem(const bool v, const bool local, const uint8_t i)
 
       if (ptrval >= MAX_ZCARRAY_SIZE)
       {
-         Z_scripterrlog("%d local arrays already in use, no more can be allocated\n", MAX_ZCARRAY_SIZE - 1);
+         Z_scripterrlog("%d local arrays already in use, no more can be allocated", MAX_ZCARRAY_SIZE - 1);
          ptrval = 0;
       }
       else
@@ -4759,7 +4752,7 @@ void do_allocatemem(const bool v, const bool local, const uint8_t i)
 
       if (ptrval >= game->globalRAM.size())
       {
-         zc_message("Invalid pointer value of %d passed to global allocate\n", ptrval);
+         zc_message("Invalid pointer value of %d passed to global allocate", ptrval);
          //this shouldn't happen, unless people are putting ALLOCATEGMEM in their ZASM scripts where they shouldn't be
       }
 
@@ -4788,7 +4781,7 @@ void do_loada(const uint8_t a)
 {
    if (ri->a[a] == 0)
    {
-      Z_eventlog("Global scripts currently have no A registers\n");
+      Z_eventlog("Global scripts currently have no A registers");
       return;
    }
 
@@ -4813,7 +4806,7 @@ void do_seta(const uint8_t a)
 {
    if (ri->a[a] == 0)
    {
-      Z_eventlog("Global scripts currently have no A registers\n");
+      Z_eventlog("Global scripts currently have no A registers");
       return;
    }
 
@@ -4866,7 +4859,7 @@ void do_div(const bool v)
 
    if (temp == 0)
    {
-      Z_scripterrlog("Script attempted to divide %ld by zero!\n", temp2);
+      Z_scripterrlog("Script attempted to divide %ld by zero!", temp2);
       set_register(sarg1, int32_t(sign(temp2) * INT_MAX));
    }
    else
@@ -4880,7 +4873,7 @@ void do_mod(const bool v)
 
    if (temp == 0)
    {
-      Z_scripterrlog("Script attempted to modulo %ld by zero!\n", temp2);
+      Z_scripterrlog("Script attempted to modulo %ld by zero!", temp2);
       temp = 1;
    }
 
@@ -4915,7 +4908,7 @@ void do_asin(const bool v)
       set_register(sarg1, int32_t(asin(temp) * 10000.0));
    else
    {
-      Z_scripterrlog("Script attempted to pass %ld into ArcSin!\n", temp);
+      Z_scripterrlog("Script attempted to pass %ld into ArcSin!", temp);
       set_register(sarg1, -10000);
    }
 }
@@ -4928,7 +4921,7 @@ void do_acos(const bool v)
       set_register(sarg1, int32_t(acos(temp) * 10000.0));
    else
    {
-      Z_scripterrlog("Script attempted to pass %ld into ArcCos!\n", temp);
+      Z_scripterrlog("Script attempted to pass %ld into ArcCos!", temp);
       set_register(sarg1, -10000);
    }
 }
@@ -4955,12 +4948,12 @@ void do_log10(const bool v)
       set_register(sarg1, int32_t(log10(temp) * 10000.0));
    else if (temp == 0)
    {
-      Z_eventlog("Script tried to calculate log of 0\n");
+      Z_eventlog("Script tried to calculate log of 0");
       set_register(sarg1, -INT_MAX);
    }
    else
    {
-      Z_eventlog("Script tried to calculate log of %f\n", temp / 10000.0);
+      Z_eventlog("Script tried to calculate log of %f", temp / 10000.0);
       set_register(sarg1, 0);
    }
 }
@@ -4973,12 +4966,12 @@ void do_naturallog(const bool v)
       set_register(sarg1, int32_t(log(temp) * 10000.0));
    else if (temp == 0)
    {
-      Z_eventlog("Script tried to calculate ln of 0\n");
+      Z_eventlog("Script tried to calculate ln of 0");
       set_register(sarg1, -INT_MAX);
    }
    else
    {
-      Z_eventlog("Script tried to calculate ln of %f\n", temp / 10000.0);
+      Z_eventlog("Script tried to calculate ln of %f", temp / 10000.0);
       set_register(sarg1, 0);
    }
 }
@@ -5043,7 +5036,7 @@ void do_power(const bool v)
 
    if (temp == 0 && temp2 == 0)
    {
-      Z_scripterrlog("Script attempted to calculate 0 to the power 0!\n");
+      Z_scripterrlog("Script attempted to calculate 0 to the power 0!");
       set_register(sarg1, 1);
       return;
    }
@@ -5058,7 +5051,7 @@ void do_ipower(const bool v)
 
    if (temp == 0 && temp2 == 0)
    {
-      Z_scripterrlog("Script attempted to calculate 0 to the power 0!\n");
+      Z_scripterrlog("Script attempted to calculate 0 to the power 0!");
       set_register(sarg1, 1);
       return;
    }
@@ -5072,7 +5065,7 @@ void do_sqroot(const bool v)
 
    if (temp < 0)
    {
-      Z_scripterrlog("Script attempted to calculate square root of %ld!\n", temp);
+      Z_scripterrlog("Script attempted to calculate square root of %ld!", temp);
       set_register(sarg1, -10000);
       return;
    }
@@ -5608,12 +5601,12 @@ void do_createlweapon(const bool v)
    if (Lwpns.Count() < 1)
    {
       ri->lwpn = INT_MAX;
-      Z_scripterrlog("Couldn't create lweapon %ld, screen lweapon limit reached\n", ID);
+      Z_scripterrlog("Couldn't create lweapon %ld, screen lweapon limit reached", ID);
    }
    else
    {
       ri->lwpn = Lwpns.spr(Lwpns.Count() - 1)->getUID();
-      Z_eventlog("Script created lweapon %ld with UID = %ld\n", ID, ri->lwpn);
+      Z_eventlog("Script created lweapon %ld with UID = %ld", ID, ri->lwpn);
    }
 }
 
@@ -5629,12 +5622,12 @@ void do_createeweapon(const bool v)
    if (Ewpns.Count() < 1)
    {
       ri->ewpn = INT_MAX;
-      Z_scripterrlog("Couldn't create eweapon %ld, screen eweapon limit reached\n", ID);
+      Z_scripterrlog("Couldn't create eweapon %ld, screen eweapon limit reached", ID);
    }
    else
    {
       ri->ewpn = Ewpns.spr(Ewpns.Count() - 1)->getUID();
-      Z_eventlog("Script created eweapon %ld with UID = %ld\n", ID, ri->ewpn);
+      Z_eventlog("Script created eweapon %ld with UID = %ld", ID, ri->ewpn);
    }
 }
 
@@ -5650,12 +5643,12 @@ void do_createitem(const bool v)
    if (items.Count() < 1)
    {
       ri->itemref = INT_MAX;
-      Z_scripterrlog("Couldn't create item \"%s\", screen item limit reached\n", item_string[ID]);
+      Z_scripterrlog("Couldn't create item \"%s\", screen item limit reached", item_string[ID]);
    }
    else
    {
       ri->itemref = items.spr(items.Count() - 1)->getUID();
-      Z_eventlog("Script created item \"%s\" with UID = %ld\n", item_string[ID], ri->itemref);
+      Z_eventlog("Script created item \"%s\" with UID = %ld", item_string[ID], ri->itemref);
    }
 }
 
@@ -5672,7 +5665,7 @@ void do_createnpc(const bool v)
    if (numcreated == 0)
    {
       ri->guyref = INT_MAX;
-      Z_scripterrlog("Couldn't create NPC \"%s\", screen NPC limit reached\n", guy_string[ID]);
+      Z_scripterrlog("Couldn't create NPC \"%s\", screen NPC limit reached", guy_string[ID]);
    }
    else
    {
@@ -5682,7 +5675,7 @@ void do_createnpc(const bool v)
       for (; index < guys.Count(); index++)
          ((enemy *)guys.spr(index))->script_spawned = true;
 
-      Z_eventlog("Script created NPC \"%s\" with UID = %ld\n", guy_string[ID], ri->guyref);
+      Z_eventlog("Script created NPC \"%s\" with UID = %ld", guy_string[ID], ri->guyref);
    }
 }
 
@@ -5719,7 +5712,7 @@ void do_drawing_command(const int script_command)
 
    if (j == -1) //out of drawing command space
    {
-      Z_scripterrlog("Max draw primitive limit reached\n");
+      Z_scripterrlog("Max draw primitive limit reached");
       return;
    }
 
@@ -5909,7 +5902,7 @@ void do_get_enh_music_filename(const bool v)
       return;
 
    if (ArrayH::setArray(arrayptr, string(DMaps[ID].tmusic)) == SH::_Overflow)
-      Z_scripterrlog("Array supplied to 'Game->GetDMapMusicFilename' not large enough\n");
+      Z_scripterrlog("Array supplied to 'Game->GetDMapMusicFilename' not large enough");
 }
 
 void do_get_enh_music_track(const bool v)
@@ -5950,14 +5943,14 @@ void do_trace(bool v)
    sprintf(tmp, (temp < 0 ? "%06d" : "%05d"), temp);
    string s2(tmp);
    s2 = s2.substr(0, s2.size() - 4) + "." + s2.substr(s2.size() - 4, 4);
-   zc_message("%s\n", s2.c_str());
+   zc_message("%s", s2.c_str());
 }
 
 void do_tracebool(const bool v)
 {
    int32_t temp = SH::get_arg(sarg1, v);
 
-   zc_message("%s\n", temp ? "true" : "false");
+   zc_message("%s", temp ? "true" : "false");
 }
 
 void do_tracestring()
@@ -5970,7 +5963,7 @@ void do_tracestring()
 
 void do_tracenl()
 {
-   zc_message("\n");
+   zc_message("");
 }
 
 void do_cleartrace()
@@ -6030,7 +6023,7 @@ void do_tracetobase()
          break;
    }
 
-   zc_message("%s\n", s2.c_str());
+   zc_message("%s", s2.c_str());
 }
 
 ///----------------------------------------------------------------------------------------------------//
@@ -6047,7 +6040,7 @@ void do_getsavename()
    int32_t arrayptr = get_register(sarg1) / 10000;
 
    if (ArrayH::setArray(arrayptr, string(game->get_name())) == SH::_Overflow)
-      Z_scripterrlog("Array supplied to 'Game->GetSaveName' not large enough\n");
+      Z_scripterrlog("Array supplied to 'Game->GetSaveName' not large enough");
 }
 
 void do_setsavename()
@@ -6062,7 +6055,7 @@ void do_setsavename()
    {
       if (j >= 8)
       {
-         Z_scripterrlog("String supplied to 'Game->GetSaveName' too large\n");
+         Z_scripterrlog("String supplied to 'Game->GetSaveName' too large");
          break;
       }
 
@@ -6081,7 +6074,7 @@ void do_getmessage(const bool v)
       return;
 
    if (ArrayH::setArray(arrayptr, string(MsgStrings[ID].s)) == SH::_Overflow)
-      Z_scripterrlog("Array supplied to 'Game->GetMessage' not large enough\n");
+      Z_scripterrlog("Array supplied to 'Game->GetMessage' not large enough");
 }
 
 void do_getdmapname(const bool v)
@@ -6093,7 +6086,7 @@ void do_getdmapname(const bool v)
       return;
 
    if (ArrayH::setArray(arrayptr, string(DMaps[ID].name)) == SH::_Overflow)
-      Z_scripterrlog("Array supplied to 'Game->GetDMapName' not large enough\n");
+      Z_scripterrlog("Array supplied to 'Game->GetDMapName' not large enough");
 }
 
 void do_getdmaptitle(const bool v)
@@ -6105,7 +6098,7 @@ void do_getdmaptitle(const bool v)
       return;
 
    if (ArrayH::setArray(arrayptr, string(DMaps[ID].title)) == SH::_Overflow)
-      Z_scripterrlog("Array supplied to 'Game->GetDMapTitle' not large enough\n");
+      Z_scripterrlog("Array supplied to 'Game->GetDMapTitle' not large enough");
 }
 
 void do_getdmapintro(const bool v)
@@ -6117,7 +6110,7 @@ void do_getdmapintro(const bool v)
       return;
 
    if (ArrayH::setArray(arrayptr, string(DMaps[ID].intro)) == SH::_Overflow)
-      Z_scripterrlog("Array supplied to 'Game->GetDMapIntro' not large enough\n");
+      Z_scripterrlog("Array supplied to 'Game->GetDMapIntro' not large enough");
 }
 
 void do_getitemname()
@@ -6125,7 +6118,7 @@ void do_getitemname()
    int32_t arrayptr = get_register(sarg1) / 10000;
 
    if (ArrayH::setArray(arrayptr, item_string[ri->idata]) == SH::_Overflow)
-      Z_scripterrlog("Array supplied to 'itemdata->GetName' not large enough\n");
+      Z_scripterrlog("Array supplied to 'itemdata->GetName' not large enough");
 }
 
 void do_getnpcname()
@@ -6138,7 +6131,7 @@ void do_getnpcname()
    uint16_t ID = (GuyH::getNPC()->id & 0xFFF);
 
    if (ArrayH::setArray(arrayptr, guy_string[ID]) == SH::_Overflow)
-      Z_scripterrlog("Array supplied to 'npc->GetName' not large enough\n");
+      Z_scripterrlog("Array supplied to 'npc->GetName' not large enough");
 }
 
 void do_getffcscript()
@@ -6310,7 +6303,7 @@ int run_script(const uint8_t type, const uint16_t script, const uint8_t i)
       break;
 
       default:
-         zc_message("No other scripts are currently supported\n");
+         zc_message("No other scripts are currently supported");
          return 1;
          break;
    }
@@ -7192,7 +7185,7 @@ int run_script(const uint8_t type, const uint16_t script, const uint8_t i)
             break;
 
          default:
-            Z_scripterrlog("Invalid ZASM command %ld reached\n", scommand);
+            Z_scripterrlog("Invalid ZASM command %ld reached", scommand);
             break;
       }
 
@@ -7219,7 +7212,7 @@ int run_script(const uint8_t type, const uint16_t script, const uint8_t i)
             break;
 
          default:
-            Z_scripterrlog("Waitdraw can only be used in the active global script\n");
+            Z_scripterrlog("Waitdraw can only be used in the active global script");
             break;
       }
    }
