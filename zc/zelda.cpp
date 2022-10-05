@@ -107,7 +107,8 @@ bool usebombpal;
 combo_alias combo_aliases[MAXCOMBOALIASES];
 
 SAMPLE customsfxdata[SFX_COUNT];
-bool use_sfxdat = true;
+bool use_qst_sfx;
+bool qst_has_sfx = false;
 
 int homescr, currscr, frame = 0, currmap = 0, dlevel, warpscr, worldscr;
 int newscr_clk = 0, opendoors = 0, currdmap = 0, fadeclk = -1, currgame = 0, listpos = 0;
@@ -2111,10 +2112,14 @@ void zc_deinit(void)
       }
    }
 
-   for (int i = 0; i < SFX_COUNT; i++)
+   if (qst_has_sfx)
    {
-      if (customsfxdata[i].data != NULL)
-         free(customsfxdata[i].data);
+      for (int i = 0; i < SFX_COUNT; i++)
+      {
+         if (customsfxdata[i].data != NULL)
+            free(customsfxdata[i].data);
+      }
+      qst_has_sfx = false;
    }
 
    for (int i = 0; i < ITEMCNT; i++)

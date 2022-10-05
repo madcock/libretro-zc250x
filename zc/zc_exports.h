@@ -34,7 +34,7 @@ extern bool trans_layers;
 extern bool allow_cheats;
 extern bool heart_beep;
 extern bool nes_quit;
-extern bool use_sfxdat;
+extern bool use_qst_sfx;
 extern char sf2_file[16];
 
 /* input keys */

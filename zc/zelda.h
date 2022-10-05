@@ -193,6 +193,7 @@ extern ffscript *wpnscripts[256];
 extern ffscript *linkscripts[3];
 extern ffscript *screenscripts[256];
 extern SAMPLE customsfxdata[SFX_COUNT];
+extern bool qst_has_sfx;
 
 #define MAX_ZCARRAY_SIZE   4096
 typedef ZCArray<int32_t> ZScriptArray;

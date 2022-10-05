@@ -5597,7 +5597,8 @@ int readsfx(PACKFILE *f, zquestheader *Header, bool keepdata)
       free(temp_sample.data);
    }
 
-   use_sfxdat = false;
+   qst_has_sfx = true; /* Let the engine know the qst contains embedded sounds */
+
    return 0;
 }
 

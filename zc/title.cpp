@@ -1220,7 +1220,6 @@ static void select_game()
    do
    {
       load_control_state();
-      use_sfxdat = true;
       blit(scrollbuf, framebuf, 0, 0, 0, 0, 256, 224);
       list_saves();
       draw_cursor(pos);

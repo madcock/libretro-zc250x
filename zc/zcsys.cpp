@@ -2975,15 +2975,10 @@ bool sfx_init(int index)
 
    if (sfx_voice[index] == -1)
    {
-      if (use_sfxdat)
-      {
-         if (index < SFX_Z35)
-            sfx_voice[index] = allocate_voice((SAMPLE *)sfxdata[index].dat);
-         else
-            sfx_voice[index] = allocate_voice((SAMPLE *)sfxdata[SFX_Z35].dat);
-      }
-      else
+      if (use_qst_sfx && qst_has_sfx)
          sfx_voice[index] = allocate_voice(&customsfxdata[index]);
+      else
+         sfx_voice[index] = allocate_voice((SAMPLE *)sfxdata[(index < SFX_Z35) ? index : SFX_Z35].dat);
 
       voice_set_volume(sfx_voice[index], sfx_vol);
    }
