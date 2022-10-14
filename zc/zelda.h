@@ -19,8 +19,8 @@
 #define MAXSAVES      6 // It's constant enough... :p
 
 // game.maps[] flags
-#define mSECRET             8192                                 // only overworld and caves use this
-#define mVISITED            16384                                // only overworld uses this
+#define mSECRET             8192                              // only overworld and caves use this
+#define mVISITED            16384                             // only overworld uses this
 
 #define mDOOR_UP            1                                 // only dungeons use this
 #define mDOOR_DOWN          2                                 //        ''
@@ -67,7 +67,7 @@ void Z_scripterrlog(const char *const format, ...);
 
 void ALLOFF(bool messagesToo = true, bool decorationsToo = true);
 void StunGuy(int j, int stun);
-bool  GuySuperman(int j);
+bool GuySuperman(int j);
 void add_grenade(int wx, int wy, int wz, int size, int parentid);
 fix distance(int x1, int y1, int x2, int y2);
 
@@ -164,8 +164,6 @@ extern bool blockmoving;
 extern bool playing, trans_layers;
 extern bool blockpath, loaded_guys, freeze_guys;
 extern bool loaded_enemies, drawguys, watch;
-extern bool Udown, Ddown, Ldown, Rdown, Adown, Bdown, Sdown, Mdown, LBdown, RBdown, Pdown, Ex1down, Ex2down, Ex3down,
-       Ex4down, AUdown, ADdown, ALdown, ARdown;
 extern bool boughtsomething;
 extern bool fixed_door, darkroom, naturaldark, BSZ;
 extern bool hookshot_used, hookshot_frozen, pull_link, add_chainlink;
@@ -209,9 +207,9 @@ extern gamedata *game;
 
 // quest file data
 extern zquestheader QHeader;
-extern uint8_t                quest_rules[QUESTRULES_SIZE];
-extern uint8_t                midi_flags[MIDIFLAGS_SIZE];
-extern uint16_t                map_count;
+extern uint8_t             quest_rules[QUESTRULES_SIZE];
+extern uint8_t             midi_flags[MIDIFLAGS_SIZE];
+extern uint16_t            map_count;
 extern MsgStr              *MsgStrings;
 extern int                 msg_strings_size;
 extern DoorComboSet        *DoorComboSets;

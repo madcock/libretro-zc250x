@@ -4483,19 +4483,18 @@ void dosubscr(miscQdata *misc)
 
    do
    {
-      load_control_state();
       int pos = Bpos;
 
-      if (rUp())         Bpos = selectWpn_new(SEL_UP, pos);
-      else if (rDown())  Bpos = selectWpn_new(SEL_DOWN, pos);
-      else if (rLeft())  Bpos = selectWpn_new(SEL_LEFT, pos);
-      else if (rRight()) Bpos = selectWpn_new(SEL_RIGHT, pos);
-      else if (rLbtn())  Bpos = selectWpn_new(SEL_LEFT, pos);
-      else if (rRbtn())  Bpos = selectWpn_new(SEL_RIGHT, pos);
+      if (UpKeyPress)         Bpos = selectWpn_new(SEL_UP, pos);
+      else if (DownKeyPress)  Bpos = selectWpn_new(SEL_DOWN, pos);
+      else if (LeftKeyPress)  Bpos = selectWpn_new(SEL_LEFT, pos);
+      else if (RightKeyPress) Bpos = selectWpn_new(SEL_RIGHT, pos);
+      else if (LKeyPress)  Bpos = selectWpn_new(SEL_LEFT, pos);
+      else if (RKeyPress)  Bpos = selectWpn_new(SEL_RIGHT, pos);
 
       if (get_bit(quest_rules, qr_SELECTAWPN))
       {
-         if (rBbtn())
+         if (BKeyPress)
          {
             if (Awpn == Bweapon(Bpos))
             {
@@ -4510,7 +4509,7 @@ void dosubscr(miscQdata *misc)
             game->bwpn = Bpos;
             directItemB = directItem;
          }
-         else if (rAbtn())
+         else if (AKeyPress)
          {
             if (Bwpn == Bweapon(Bpos))
             {
@@ -4552,16 +4551,16 @@ void dosubscr(miscQdata *misc)
 
       advanceframe(false);
 
-      if (nes_quit && Up() && cAbtn() && cBbtn())
+      if (nes_quit && UpKey && AKey && BKey)
       {
-         Udown = true;
+         eat_buttons();
          zc_state = ZC_QUIT;
       }
 
       if (zc_state)
          return;
 
-      if (rSbtn())
+      if (StartKeyPress)
          done = true;
    }
    while (!done);

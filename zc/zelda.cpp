@@ -114,8 +114,14 @@ int homescr, currscr, frame = 0, currmap = 0, dlevel, warpscr, worldscr;
 int newscr_clk = 0, opendoors = 0, currdmap = 0, fadeclk = -1, currgame = 0, listpos = 0;
 int lastentrance = 0, lastentrance_dmap = 0, prices[3], loadside, Bwpn, Awpn;
 int master_vol, music_vol, sfx_vol, mix_quality, sel_music, hasitem, whistleclk, pan_style;
-int AKey, BKey, SelectKey, StartKey, Lkey, Rkey, MapKey, ModKey, Ex1key, Ex2key, Ex3key, Ex4key, zc_state = ZC_RUN;
+int zc_state = ZC_RUN;
+int AKey, BKey, SelectKey, StartKey, LKey, RKey,
+    MapKey, ModKey, Ex1Key, Ex2Key, Ex3Key, Ex4Key;
 int UpKey, DownKey, LeftKey, RightKey, MouseX, MouseY, MouseZ, MouseB;
+int AKeyPress, BKeyPress, SelectKeyPress, StartKeyPress,
+    LKeyPress, RKeyPress, MapKeyPress, ModKeyPress,
+    Ex1KeyPress, Ex2KeyPress, Ex3KeyPress, Ex4KeyPress;
+int UpKeyPress, DownKeyPress, LeftKeyPress, RightKeyPress;
 int hs_startx, hs_starty, hs_xdist, hs_ydist, clockclk, clock_zoras[eMAXGUYS];
 int cheat_goto_dmap = 0, cheat_goto_screen = 0, currcset;
 int gfc, gfc2, pitx, pity, refill_what, refill_why, heart_beep_timer = 0, new_enemy_tile_start = 1580;
@@ -129,14 +135,12 @@ bool playing, trans_layers, heart_beep, allow_cheats;
 bool zc_sync_pal, blockpath, loaded_guys, freeze_guys,
      loaded_enemies, drawguys, watch;
 bool darkroom = false, naturaldark = false, BSZ;
-bool Udown, Ddown, Ldown, Rdown, Adown, Bdown, Sdown, Mdown, LBdown, RBdown, Pdown, Ex1down, Ex2down, Ex3down, Ex4down,
-     AUdown, ADdown, ALdown, ARdown,
-     nes_quit, boughtsomething = false,
-              fixed_door = false, hookshot_used = false, hookshot_frozen = false,
-              pull_link = false, add_chainlink = false, del_chainlink = false, hs_fix = false,
-              cheat_superman = false, checklink = true, didpit = false,
-              castnext = false, add_df1asparkle, add_df1bsparkle, add_nl1asparkle, add_nl1bsparkle, add_nl2asparkle, add_nl2bsparkle,
-              is_on_conveyor, activated_timed_warp = false;
+bool nes_quit, boughtsomething = false,
+     fixed_door = false, hookshot_used = false, hookshot_frozen = false,
+     pull_link = false, add_chainlink = false, del_chainlink = false, hs_fix = false,
+     cheat_superman = false, checklink = true, didpit = false,
+     castnext = false, add_df1asparkle, add_df1bsparkle, add_nl1asparkle, add_nl1bsparkle, add_nl2asparkle, add_nl2bsparkle,
+     is_on_conveyor, activated_timed_warp = false;
 
 uint8_t COOLSCROLL;
 
@@ -540,7 +544,7 @@ void ALLOFF(bool messagesToo, bool decorationsToo)
 
    lensclk = 0;
    lensid = -1;
-   drawguys = Udown = Ddown = Ldown = Rdown = Adown = Bdown = Sdown = true;
+   drawguys = true;
 
    if (watch && !cheat_superman)
       Link.setClock(false);
@@ -1091,7 +1095,7 @@ void putintro()
       return;
    }
 
-   if ((cBbtn()) && (get_bit(quest_rules, qr_ALLOWMSGBYPASS)))
+   if ((BKey) && (get_bit(quest_rules, qr_ALLOWMSGBYPASS)))
    {
       //finish writing out the string
       for (; intropos < 72; ++intropos)
@@ -1109,7 +1113,7 @@ void putintro()
       return;
    }
 
-   if (((introclk++) % 6 < 5) && ((!cAbtn()) || (!get_bit(quest_rules, qr_ALLOWFASTMSG))))
+   if (((introclk++) % 6 < 5) && ((!AKey) || (!get_bit(quest_rules, qr_ALLOWFASTMSG))))
       return;
 
    dmapmsgclk = 51;
@@ -1634,7 +1638,6 @@ void game_loop()
    }
 
    animate_combos();
-   load_control_state();
 
    if (!freezemsg)
       script_drawing_commands.Clear();

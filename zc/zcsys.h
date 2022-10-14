@@ -12,43 +12,16 @@ void advanceframe(bool allow_gfx);
 void update_video_frame(bool allow_gfx);
 void eat_buttons();
 
-extern bool control_state[18];
-extern bool button_press[18];
-
-void load_control_state();
-
-bool Up();
-bool Down();
-bool Left();
-bool Right();
 bool DrunkUp();
 bool DrunkDown();
 bool DrunkLeft();
 bool DrunkRight();
 
-bool rUp();
-bool rDown();
-bool rLeft();
-bool rRight();
 bool DrunkrUp();
 bool DrunkrDown();
 bool DrunkrLeft();
 bool DrunkrRight();
 
-bool cAbtn();
-bool cBbtn();
-bool cSbtn();
-bool cLbtn();
-bool cRbtn();
-bool cPbtn();
-bool cEx1btn();
-bool cEx2btn();
-bool cEx3btn();
-bool cEx4btn();
-bool AxisUp();
-bool AxisDown();
-bool AxisLeft();
-bool AxisRight();
 bool DrunkcAbtn();
 bool DrunkcBbtn();
 bool DrunkcSbtn();
@@ -56,20 +29,6 @@ bool DrunkcLbtn();
 bool DrunkcRbtn();
 bool DrunkcPbtn();
 
-bool rAbtn();
-bool rBbtn();
-bool rSbtn();
-bool rLbtn();
-bool rRbtn();
-bool rPbtn();
-bool rEx1btn();
-bool rEx2btn();
-bool rEx3btn();
-bool rEx4btn();
-bool rAxisUp();
-bool rAxisDown();
-bool rAxisLeft();
-bool rAxisRight();
 bool DrunkrAbtn();
 bool DrunkrBbtn();
 bool DrunkrSbtn();

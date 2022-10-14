@@ -930,9 +930,8 @@ static bool register_name()
    do
    {
       spos = grid_y * letter_grid_width + grid_x;
-      load_control_state();
 
-      if (rLeft())
+      if (LeftKeyPress)
       {
          --grid_x;
 
@@ -947,7 +946,7 @@ static bool register_name()
 
          sfx(SFX_CHIME);
       }
-      else if (rRight())
+      else if (RightKeyPress)
       {
          ++grid_x;
 
@@ -962,7 +961,7 @@ static bool register_name()
 
          sfx(SFX_CHIME);
       }
-      else if (rUp())
+      else if (UpKeyPress)
       {
          --grid_y;
 
@@ -971,7 +970,7 @@ static bool register_name()
 
          sfx(SFX_CHIME);
       }
-      else if (rDown())
+      else if (DownKeyPress)
       {
          ++grid_y;
 
@@ -980,14 +979,14 @@ static bool register_name()
 
          sfx(SFX_CHIME);
       }
-      else if (rBbtn())
+      else if (BKeyPress)
       {
          ++x;
 
          if (x >= 8)
             x = 0;
       }
-      else if (rAbtn())
+      else if (AKeyPress)
       {
          name[zc_min(x, 7)] = complete_grid[spos];
          ++x;
@@ -997,7 +996,7 @@ static bool register_name()
 
          sfx(SFX_PLACE);
       }
-      else if (rSbtn())
+      else if (StartKeyPress)
       {
          done = true;
          int ltrs = 0;
@@ -1175,15 +1174,14 @@ static int game_details(int file)
    while (!zc_state)
    {
       advanceframe(true);
-      load_control_state();
 
-      if (rBbtn())
+      if (BKeyPress)
       {
          blit(scrollbuf, framebuf, 0, 0, 0, 0, 256, 224);
          return 0;
       }
 
-      if (rSbtn())
+      if (StartKeyPress)
       {
          blit(framebuf, scrollbuf, 0, 0, 0, 0, 256, 224);
          return 1;
@@ -1219,14 +1217,13 @@ static void select_game()
 
    do
    {
-      load_control_state();
       blit(scrollbuf, framebuf, 0, 0, 0, 0, 256, 224);
       list_saves();
       draw_cursor(pos);
       advanceframe(true);
       saveslot = pos + listpos;
 
-      if (rSbtn())
+      if (StartKeyPress)
          switch (pos)
          {
             case 3:
@@ -1292,7 +1289,7 @@ static void select_game()
                }
          }
 
-      if (rUp())
+      if (UpKeyPress)
       {
          --pos;
 
@@ -1302,7 +1299,7 @@ static void select_game()
          sfx(SFX_CHIME);
       }
 
-      if (rDown())
+      if (DownKeyPress)
       {
          ++pos;
 
@@ -1312,21 +1309,21 @@ static void select_game()
          sfx(SFX_CHIME);
       }
 
-      if (rLeft() && listpos > 2)
+      if (LeftKeyPress && listpos > 2)
       {
          listpos -= 3;
          sfx(SFX_CHIME);
          zc_sync_pal = true;
       }
 
-      if (rRight() && listpos + 3 < savecnt)
+      if (RightKeyPress && listpos + 3 < savecnt)
       {
          listpos += 3;
          sfx(SFX_CHIME);
          zc_sync_pal = true;
       }
 
-      if (rBbtn() && mode)
+      if (BKeyPress && mode)
       {
          if (mode == 2) pos = 4;
 
@@ -1336,7 +1333,7 @@ static void select_game()
          select_mode();
       }
 
-      if (rAbtn() && !mode && pos < 3)
+      if (AKeyPress && !mode && pos < 3)
       {
          if (game_details(saveslot))
          {
@@ -1412,17 +1409,11 @@ void game_over(int type)
    int htile = 2;
    bool done = false;
 
-   do load_control_state();
-
-   while (rSbtn());
-
    do
    {
-      load_control_state();
-
       if (f == -1)
       {
-         if (rUp())
+         if (UpKeyPress)
          {
             sfx(SFX_CHINK);
             pos = (pos == 0) ? 2 : pos - 1;
@@ -1433,7 +1424,7 @@ void game_over(int type)
             }
          }
 
-         if (rDown())
+         if (DownKeyPress)
          {
             sfx(SFX_CHINK);
             pos = (pos + 1) % 3;
@@ -1444,7 +1435,7 @@ void game_over(int type)
             }
          }
 
-         if (rSbtn()) ++f;
+         if (StartKeyPress) ++f;
       }
 
       if (f >= 0)
@@ -1542,23 +1533,21 @@ bool save_game(bool savepoint, int type)
 
       do
       {
-         load_control_state();
-
          if (f == -1)
          {
-            if (rUp())
+            if (UpKeyPress)
             {
                sfx(SFX_CHINK);
                pos = (pos == 0) ? 2 : pos - 1;
             }
 
-            if (rDown())
+            if (DownKeyPress)
             {
                sfx(SFX_CHINK);
                pos = (pos + 1) % 3;
             }
 
-            if (rSbtn()) ++f;
+            if (StartKeyPress) ++f;
          }
 
          if (f >= 0)
@@ -1638,23 +1627,21 @@ bool save_game(bool savepoint, int type)
 
             do
             {
-               load_control_state();
-
                if (g == -1)
                {
-                  if (rUp())
+                  if (UpKeyPress)
                   {
                      sfx(SFX_CHINK);
                      pos2 = (pos2 == 0) ? 1 : pos2 - 1;
                   }
 
-                  if (rDown())
+                  if (DownKeyPress)
                   {
                      sfx(SFX_CHINK);
                      pos2 = (pos2 + 1) % 2;
                   }
 
-                  if (rSbtn()) ++g;
+                  if (StartKeyPress) ++g;
                }
 
                if (g >= 0)

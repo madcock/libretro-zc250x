@@ -231,16 +231,42 @@ static void update_input(void)
    BKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B);
    MapKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X);
    ModKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y);
-   Lkey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
-   Rkey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
+   LKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
+   RKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
 
-   Ex1key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
-   Ex2key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
-   Ex3key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
-   Ex4key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
+   Ex1Key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
+   Ex2Key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
+   Ex3Key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
+   Ex4Key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
 
    SelectKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
    StartKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
+
+   /* Calculate the press button flags */
+   static int AKeyDown = FALSE, BKeyDown = FALSE, SelectKeyDown = FALSE, StartKeyDown = FALSE;
+   static int LKeyDown = FALSE, RKeyDown = FALSE, MapKeyDown = FALSE, ModKeyDown = FALSE;
+   static int Ex1KeyDown = FALSE, Ex2KeyDown = FALSE, Ex3KeyDown = FALSE, Ex4KeyDown = FALSE;
+   static int UpKeyDown = FALSE, DownKeyDown = FALSE, LeftKeyDown = FALSE, RightKeyDown = FALSE;
+
+   UpKeyPress = rButton(UpKey, UpKeyDown);
+   DownKeyPress = rButton(DownKey, DownKeyDown);
+   LeftKeyPress = rButton(LeftKey, LeftKeyDown);
+   RightKeyPress = rButton(RightKey, RightKeyDown);
+
+   AKeyPress = rButton(AKey, AKeyDown);
+   BKeyPress = rButton(BKey, BKeyDown);
+   MapKeyPress = rButton(MapKey, MapKeyDown);
+   ModKeyPress = rButton(ModKey, ModKeyDown);
+   LKeyPress = rButton(LKey, LKeyDown);
+   RKeyPress = rButton(RKey, RKeyDown);
+
+   Ex1KeyPress = rButton(Ex1Key, Ex1KeyDown);
+   Ex2KeyPress = rButton(Ex2Key, Ex2KeyDown);
+   Ex3KeyPress = rButton(Ex3Key, Ex3KeyDown);
+   Ex4KeyPress = rButton(Ex4Key, Ex4KeyDown);
+
+   SelectKeyPress = rButton(SelectKey, SelectKeyDown);
+   StartKeyPress = rButton(StartKey, StartKeyDown);
 }
 
 void update_palette(RGB *p)

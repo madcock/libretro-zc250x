@@ -12325,7 +12325,7 @@ bool parsemsgcode()
 
       /*
           case MSGC_NAME:
-            if (!((cBbtn()&&get_bit(quest_rules,qr_ALLOWMSGBYPASS)) || msgspeed==0))
+            if (!((BKey&&get_bit(quest_rules,qr_ALLOWMSGBYPASS)) || msgspeed==0))
               sfx(MsgStrings[msgstr].sfx);
             textprintf_ex(msgdisplaybuf,msgfont,((msgpos%24)<<3)+32,((msgpos/24)<<3)+zc_min(MsgStrings[msgstr].y,136)+8,msgcolour,-1,
                           "%s",game->get_name());
@@ -12477,7 +12477,7 @@ void putmsg()
    {
       if (linkedmsgclk == 1)
       {
-         if (cAbtn() || cBbtn())
+         if (AKey || BKey)
          {
             msgstr = MsgStrings[msgstr].nextstring;
 
@@ -12515,12 +12515,12 @@ void putmsg()
    int tlength;
 
    // Bypass the string with the B button!
-   if (((cBbtn()) && (get_bit(quest_rules, qr_ALLOWMSGBYPASS))) || msgspeed == 0)
+   if (((BKey) && (get_bit(quest_rules, qr_ALLOWMSGBYPASS))) || msgspeed == 0)
    {
       //finish writing out the string
       while (msgptr < MSGSIZE && !atend(MsgStrings[msgstr].s + msgptr))
       {
-         if (msgspeed && !(cBbtn() && get_bit(quest_rules, qr_ALLOWMSGBYPASS)))
+         if (msgspeed && !(BKey && get_bit(quest_rules, qr_ALLOWMSGBYPASS)))
             goto breakout; // break out if message speed was changed to non-zero
          else if (!parsemsgcode())
          {
@@ -12588,7 +12588,7 @@ void putmsg()
    {
 breakout:
 
-      if (((msgclk++) % (msgspeed + 1) < msgspeed) && ((!cAbtn()) || (!get_bit(quest_rules, qr_ALLOWFASTMSG))))
+      if (((msgclk++) % (msgspeed + 1) < msgspeed) && ((!AKey) || (!get_bit(quest_rules, qr_ALLOWFASTMSG))))
          return;
    }
 

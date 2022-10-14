@@ -138,8 +138,7 @@ void LinkClass::finishedmsg()
    //these are to cancel out any keys that Link may
    //be pressing so he doesn't attack at the end of
    //a message if he was scrolling through it quickly.
-   rAbtn();
-   rBbtn();
+   eat_buttons();
    unfreeze();
 
    if (action == landhold1 ||
@@ -3398,7 +3397,7 @@ bool LinkClass::animate(int)
    if (tmpscr->flags7 & fSIDEVIEW) // Sideview gravity
    {
       // Fall, unless on a ladder, rafting, using the hookshot, drowning or cheating.
-      if (!Up() && !drownclk && action != rafting && !pull_link && !((ladderx || laddery) && fall > 0))
+      if (!UpKey && !drownclk && action != rafting && !pull_link && !((ladderx || laddery) && fall > 0))
       {
          int ydiff = fall / (spins && fall < 0 ? 200 : 100);
          falling_oldy = y; // Stomp Boots-related variable
@@ -3685,7 +3684,7 @@ bool LinkClass::animate(int)
    else if (DrunkrRbtn() && !get_bit(quest_rules, qr_SELECTAWPN))
       selectNextBWpn(SEL_RIGHT);
 
-   if (rPbtn())
+   if (MapKeyPress)
       onViewMap();
 
    for (int i = 0; i < Lwpns.Count(); i++)
@@ -4205,7 +4204,7 @@ bool LinkClass::animate(int)
       stop_sfx(SFX_ER);
    }
 
-   if (rSbtn())
+   if (StartKeyPress)
    {
       int tmp_subscr_clk = frame;
 
@@ -5991,25 +5990,25 @@ void LinkClass::movelink()
       switch (holddir)
       {
          case up:
-            if (!Up())
+            if (!UpKey)
                holddir = -1;
 
             break;
 
          case down:
-            if (!Down())
+            if (!DownKey)
                holddir = -1;
 
             break;
 
          case left:
-            if (!Left())
+            if (!LeftKey)
                holddir = -1;
 
             break;
 
          case right:
-            if (!Right())
+            if (!RightKey)
                holddir = -1;
 
             break;
@@ -8152,7 +8151,7 @@ void LinkClass::checklocked()
       if (y <= 32 && x >= 112 && x <= 128)
       {
          if (
-            dir == up || dir == l_up || dir == r_up //|| Up() || ( Up()&&Left()) || ( Up()&&Right())
+            dir == up || dir == l_up || dir == r_up
 
          )
          {
@@ -8194,7 +8193,7 @@ void LinkClass::checklocked()
       //Down
       if (y >= 128 && x >= 112 && x <= 128)
       {
-         if (dir == down || dir == l_down || dir == r_down)   //|| Down() || ( Down()&&Left()) || ( Down()&&Right()))
+         if (dir == down || dir == l_down || dir == r_down)   //|| DownKey || ( DownKey&&LeftKey) || ( DownKey&&RightKey))
          {
             di = nextscr(down);
             if (tmpscr->door[1] == dLOCKED)
@@ -8232,7 +8231,7 @@ void LinkClass::checklocked()
       //left
       if (y > 72 && y < 88 && x <= 32)
       {
-         if (dir == left || dir == l_up || dir == l_down)  //|| Left()  || ( Up()&&Left()) || ( Down()&&Left() ) )
+         if (dir == left || dir == l_up || dir == l_down)
          {
             di = nextscr(left);
             if (tmpscr->door[2] == dLOCKED)
@@ -8274,7 +8273,7 @@ void LinkClass::checklocked()
          //!( (y<=72||y>=88) && x<206 ) )
          //y<=72||y>=88):y!=80) || x<208)
       {
-         if (dir == right || dir == r_up || dir == r_down)   //|| Right()  || ( Down()&&Right() ) || ( Up()&&Right()))
+         if (dir == right || dir == r_up || dir == r_down)
          {
             di  = nextscr(right);
             if (tmpscr->door[right] == dLOCKED)
@@ -8530,27 +8529,27 @@ void LinkClass::checkswordtap()
    switch (dir)
    {
       case up:
-         if (!Up()) return;
+         if (!UpKey) return;
 
          by -= 16;
          break;
 
       case down:
-         if (!Down()) return;
+         if (!DownKey) return;
 
          by += 16;
          bx += 8;
          break;
 
       case left:
-         if (!Left()) return;
+         if (!LeftKey) return;
 
          bx -= 16;
          by += 8;
          break;
 
       case right:
-         if (!Right()) return;
+         if (!RightKey) return;
 
          bx += 16;
          by += 8;
@@ -8678,16 +8677,16 @@ void LinkClass::checktouchblk()
 
    if (charging > 0 || spins > 0) //if not I probably will at some point...
    {
-      if (Up() && Left())tdir = (charging % 2) * 2;
-      else if (Up() && Right())tdir = (charging % 2) * 3;
-      else if (Down() && Left())tdir = 1 + (charging % 2) * 1;
-      else if (Down() && Right())tdir = 1 + (charging % 2) * 2;
+      if (UpKey && LeftKey)tdir = (charging % 2) * 2;
+      else if (UpKey && RightKey)tdir = (charging % 2) * 3;
+      else if (DownKey && LeftKey)tdir = 1 + (charging % 2) * 1;
+      else if (DownKey && RightKey)tdir = 1 + (charging % 2) * 2;
       else
       {
-         if (Up())tdir = 0;
-         else if (Down())tdir = 1;
-         else if (Left())tdir = 2;
-         else if (Right())tdir = 3;
+         if (UpKey)tdir = 0;
+         else if (DownKey)tdir = 1;
+         else if (LeftKey)tdir = 2;
+         else if (RightKey)tdir = 3;
       }
    }
 
@@ -14430,7 +14429,7 @@ void LinkClass::ganon_intro()
       draw_screen(tmpscr);
       advanceframe(true);
 
-      if (rSbtn())
+      if (StartKeyPress)
       {
          conveyclk = 3;
          int tmp_subscr_clk = frame;

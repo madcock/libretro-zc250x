@@ -2083,25 +2083,25 @@ bool weapon::animate(int)
 
          if (clk == 1)                                         // then check directional input
          {
-            if (Up())
+            if (UpKey)
             {
                dir = up;
 
-               if (Left())  dir = l_up;
+               if (LeftKey)  dir = l_up;
 
-               if (Right()) dir = r_up;
+               if (RightKey) dir = r_up;
             }
-            else if (Down())
+            else if (DownKey)
             {
                dir = down;
 
-               if (Left())  dir = l_down;
+               if (LeftKey)  dir = l_down;
 
-               if (Right()) dir = r_down;
+               if (RightKey) dir = r_down;
             }
-            else if (Left())
+            else if (LeftKey)
                dir = left;
-            else if (Right())
+            else if (RightKey)
                dir = right;
          }
 

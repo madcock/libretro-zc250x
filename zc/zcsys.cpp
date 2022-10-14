@@ -2426,7 +2426,6 @@ void zc_action(int state)
    music_pause();
    pause_all_sfx();
    zc_state = state;
-   eat_buttons();
 }
 
 // 99*360 + 59*60
@@ -3121,213 +3120,17 @@ int pan(int x)
 /******* Input Handlers ********/
 /*******************************/
 
-static bool rButton(bool(proc)(), bool &flag)
+int rButton(int button, int &flag)
 {
-   if (!proc())
-      flag = false;
+   if (!button)
+      flag = FALSE;
    else if (!flag)
    {
-      flag = true;
-      return true;
+      flag = TRUE;
+      return TRUE;
    }
 
-   return false;
-}
-
-bool control_state[18] =
-{
-   false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
-};
-
-bool button_press[18] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-bool button_hold[18] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-
-void load_control_state()
-{
-   control_state[0] = UpKey;
-   control_state[1] = DownKey;
-   control_state[2] = LeftKey;
-   control_state[3] = RightKey;
-   control_state[4] = AKey;
-   control_state[5] = BKey;
-   control_state[6] = StartKey;
-   control_state[7] = Lkey;
-   control_state[8] = Rkey;
-   control_state[9] = MapKey;
-   control_state[10] = Ex1key;
-   control_state[11] = Ex2key;
-   control_state[12] = Ex3key;
-   control_state[13] = Ex4key;
-   control_state[14] = UpKey;
-   control_state[15] = DownKey;
-   control_state[16] = LeftKey;
-   control_state[17] = RightKey;
-
-   button_press[0] = rButton(Up, button_hold[0]);
-   button_press[1] = rButton(Down, button_hold[1]);
-   button_press[2] = rButton(Left, button_hold[2]);
-   button_press[3] = rButton(Right, button_hold[3]);
-   button_press[4] = rButton(cAbtn, button_hold[4]);
-   button_press[5] = rButton(cBbtn, button_hold[5]);
-   button_press[6] = rButton(cSbtn, button_hold[6]);
-   button_press[7] = rButton(cLbtn, button_hold[7]);
-   button_press[8] = rButton(cRbtn, button_hold[8]);
-   button_press[9] = rButton(cPbtn, button_hold[9]);
-   button_press[10] = rButton(cEx1btn, button_hold[10]);
-   button_press[11] = rButton(cEx2btn, button_hold[11]);
-   button_press[12] = rButton(cEx3btn, button_hold[12]);
-   button_press[13] = rButton(cEx4btn, button_hold[13]);
-   button_press[14] = rButton(AxisUp, button_hold[14]);
-   button_press[15] = rButton(AxisDown, button_hold[15]);
-   button_press[16] = rButton(AxisLeft, button_hold[16]);
-   button_press[17] = rButton(AxisRight, button_hold[17]);
-
-}
-
-bool Up()
-{
-   return control_state[0];
-}
-bool Down()
-{
-   return control_state[1];
-}
-bool Left()
-{
-   return control_state[2];
-}
-bool Right()
-{
-   return control_state[3];
-}
-bool cAbtn()
-{
-   return control_state[4];
-}
-bool cBbtn()
-{
-   return control_state[5];
-}
-bool cSbtn()
-{
-   return control_state[6];
-}
-bool cLbtn()
-{
-   return control_state[7];
-}
-bool cRbtn()
-{
-   return control_state[8];
-}
-bool cPbtn()
-{
-   return control_state[9];
-}
-bool cEx1btn()
-{
-   return control_state[10];
-}
-bool cEx2btn()
-{
-   return control_state[11];
-}
-bool cEx3btn()
-{
-   return control_state[12];
-}
-bool cEx4btn()
-{
-   return control_state[13];
-}
-bool AxisUp()
-{
-   return control_state[14];
-}
-bool AxisDown()
-{
-   return control_state[15];
-}
-bool AxisLeft()
-{
-   return control_state[16];
-}
-bool AxisRight()
-{
-   return control_state[17];
-}
-
-bool rUp()
-{
-   return rButton(Up, Udown);
-}
-bool rDown()
-{
-   return rButton(Down, Ddown);
-}
-bool rLeft()
-{
-   return rButton(Left, Ldown);
-}
-bool rRight()
-{
-   return rButton(Right, Rdown);
-}
-bool rAbtn()
-{
-   return rButton(cAbtn, Adown);
-}
-bool rBbtn()
-{
-   return rButton(cBbtn, Bdown);
-}
-bool rSbtn()
-{
-   return rButton(cSbtn, Sdown);
-}
-bool rLbtn()
-{
-   return rButton(cLbtn, LBdown);
-}
-bool rRbtn()
-{
-   return rButton(cRbtn, RBdown);
-}
-bool rPbtn()
-{
-   return rButton(cPbtn, Pdown);
-}
-bool rEx1btn()
-{
-   return rButton(cEx1btn, Ex1down);
-}
-bool rEx2btn()
-{
-   return rButton(cEx2btn, Ex2down);
-}
-bool rEx3btn()
-{
-   return rButton(cEx3btn, Ex3down);
-}
-bool rEx4btn()
-{
-   return rButton(cEx4btn, Ex4down);
-}
-bool rAxisUp()
-{
-   return rButton(AxisUp, AUdown);
-}
-bool rAxisDown()
-{
-   return rButton(AxisDown, ADdown);
-}
-bool rAxisLeft()
-{
-   return rButton(AxisLeft, ALdown);
-}
-bool rAxisRight()
-{
-   return rButton(AxisRight, ARdown);
+   return FALSE;
 }
 
 bool drunk()
@@ -3337,98 +3140,110 @@ bool drunk()
 
 bool DrunkUp()
 {
-   return drunk() ? (rand() % 2) ? 0 : !Up() : Up();
+   return drunk() ? (rand() % 2) ? 0 : !UpKey : UpKey;
 }
 bool DrunkDown()
 {
-   return drunk() ? (rand() % 2) ? 0 : !Down() : Down();
+   return drunk() ? (rand() % 2) ? 0 : !DownKey : DownKey;
 }
 bool DrunkLeft()
 {
-   return drunk() ? (rand() % 2) ? 0 : !Left() : Left();
+   return drunk() ? (rand() % 2) ? 0 : !LeftKey : LeftKey;
 }
 bool DrunkRight()
 {
-   return drunk() ? (rand() % 2) ? 0 : !Right() : Right();
+   return drunk() ? (rand() % 2) ? 0 : !RightKey : RightKey;
 }
 bool DrunkcAbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !cAbtn() : cAbtn();
+   return drunk() ? (rand() % 2) ? 0 : !AKey : AKey;
 }
 bool DrunkcBbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !cBbtn() : cBbtn();
+   return drunk() ? (rand() % 2) ? 0 : !BKey : BKey;
 }
 bool DrunkcSbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !cSbtn() : cSbtn();
+   return drunk() ? (rand() % 2) ? 0 : !StartKey : StartKey;
 }
 bool DrunkcLbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !cLbtn() : cLbtn();
+   return drunk() ? (rand() % 2) ? 0 : !LKey : LKey;
 }
 bool DrunkcRbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !cRbtn() : cRbtn();
+   return drunk() ? (rand() % 2) ? 0 : !RKey : RKey;
 }
 bool DrunkcPbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !cPbtn() : cPbtn();
+   return drunk() ? (rand() % 2) ? 0 : !MapKey : MapKey;
 }
 
 bool DrunkrUp()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rUp() : rUp();
+   return drunk() ? (rand() % 2) ? 0 : !UpKeyPress : UpKeyPress;
 }
 bool DrunkrDown()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rDown() : rDown();
+   return drunk() ? (rand() % 2) ? 0 : !DownKeyPress : DownKeyPress;
 }
 bool DrunkrLeft()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rLeft() : rLeft();
+   return drunk() ? (rand() % 2) ? 0 : !LeftKeyPress : LeftKeyPress;
 }
 bool DrunkrRight()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rRight() : rRight();
+   return drunk() ? (rand() % 2) ? 0 : !RightKeyPress : RightKeyPress;
 }
 bool DrunkrAbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rAbtn() : rAbtn();
+   return drunk() ? (rand() % 2) ? 0 : !AKeyPress : AKeyPress;
 }
 bool DrunkrBbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rBbtn() : rBbtn();
+   return drunk() ? (rand() % 2) ? 0 : !BKeyPress : BKeyPress;
 }
 bool DrunkrSbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rSbtn() : rSbtn();
+   return drunk() ? (rand() % 2) ? 0 : !StartKeyPress : StartKeyPress;
 }
 bool DrunkrLbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rLbtn() : rLbtn();
+   return drunk() ? (rand() % 2) ? 0 : !LKeyPress : LKeyPress;
 }
 bool DrunkrRbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rRbtn() : rRbtn();
+   return drunk() ? (rand() % 2) ? 0 : !RKeyPress : RKeyPress;
 }
 bool DrunkrPbtn()
 {
-   return drunk() ? (rand() % 2) ? 0 : !rPbtn() : rPbtn();
+   return drunk() ? (rand() % 2) ? 0 : !MapKeyPress : MapKeyPress;
 }
 
+/* Here set all buttons to FALSE to avoid reacting to button
+   pressed in the rest of the frame iteration until a button is released
+   and pressed again. */
 void eat_buttons()
 {
-   rAbtn();
-   rBbtn();
-   rSbtn();
-   rLbtn();
-   rRbtn();
-   rPbtn();
-   rEx1btn();
-   rEx2btn();
-   rEx3btn();
-   rEx4btn();
+   UpKeyPress = FALSE;
+   DownKeyPress = FALSE;
+   LeftKeyPress = FALSE;
+   RightKeyPress = FALSE;
+
+   AKeyPress = FALSE;
+   BKeyPress = FALSE;
+   MapKeyPress = FALSE;
+   ModKeyPress = FALSE;
+   LKeyPress = FALSE;
+   RKeyPress = FALSE;
+
+   Ex1KeyPress = FALSE;
+   Ex2KeyPress = FALSE;
+   Ex3KeyPress = FALSE;
+   Ex4KeyPress = FALSE;
+
+   SelectKeyPress = FALSE;
+   StartKeyPress = FALSE;
 }
 
 char *time_str_med(uint32_t time)

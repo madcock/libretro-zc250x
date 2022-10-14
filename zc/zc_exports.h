@@ -38,10 +38,17 @@ extern bool use_qst_sfx;
 extern char sf2_file[16];
 
 /* input keys */
-extern int AKey, BKey, SelectKey, StartKey, Lkey, Rkey, MapKey, ModKey;
-extern int Ex1key, Ex2key, Ex3key, Ex4key;
-extern int MouseX, MouseY, MouseZ, MouseB; /* Mouse buttons */
+extern int AKey, BKey, SelectKey, StartKey;
+extern int LKey, RKey, MapKey, ModKey;
+extern int Ex1Key, Ex2Key, Ex3Key, Ex4Key;
 extern int UpKey, DownKey, LeftKey, RightKey;
+
+extern int AKeyPress, BKeyPress, SelectKeyPress, StartKeyPress;
+extern int LKeyPress, RKeyPress, MapKeyPress, ModKeyPress;
+extern int Ex1KeyPress, Ex2KeyPress, Ex3KeyPress, Ex4KeyPress;
+extern int UpKeyPress, DownKeyPress, LeftKeyPress, RightKeyPress;
+
+extern int MouseX, MouseY, MouseZ, MouseB; /* Mouse buttons */
 
 /* thread stuff */
 extern slock_t *mutex;
@@ -55,6 +62,7 @@ void zc_gameloop(void *arg);
 void zc_action(int state);
 void update_music_volume(void);
 void update_sfx_volume(void);
+int rButton(int button, int &flag);
 
 /* Libretro methods */
 void zc_log(bool err, const char *format, ...);

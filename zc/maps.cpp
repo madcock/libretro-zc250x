@@ -4056,12 +4056,11 @@ void ViewMap()
 
    do
    {
-      load_control_state();
       int step = int(16.0 / scales[sc]);
       step = (step >> 1) + (step & 1);
-      bool r = cRbtn();
+      bool r = RKey;
 
-      if (cLbtn())
+      if (LKey)
       {
          step <<= 2;
          delay = 0;
@@ -4069,25 +4068,25 @@ void ViewMap()
 
       if (r)
       {
-         if (rUp())
+         if (UpKeyPress)
          {
             py += step;
             redraw = true;
          }
 
-         if (rDown())
+         if (DownKeyPress)
          {
             py -= step;
             redraw = true;
          }
 
-         if (rLeft())
+         if (LeftKeyPress)
          {
             px += step;
             redraw = true;
          }
 
-         if (rRight())
+         if (RightKeyPress)
          {
             px -= step;
             redraw = true;
@@ -4095,25 +4094,25 @@ void ViewMap()
       }
       else
       {
-         if (Up())
+         if (UpKey)
          {
             py += step;
             redraw = true;
          }
 
-         if (Down())
+         if (DownKey)
          {
             py -= step;
             redraw = true;
          }
 
-         if (Left())
+         if (LeftKey)
          {
             px += step;
             redraw = true;
          }
 
-         if (Right())
+         if (RightKey)
          {
             px -= step;
             redraw = true;
@@ -4124,8 +4123,8 @@ void ViewMap()
          --delay;
       else
       {
-         bool a = cAbtn();
-         bool b = cBbtn();
+         bool a = AKey;
+         bool b = BKey;
 
          if (a && !b)
          {
@@ -4142,7 +4141,7 @@ void ViewMap()
          }
       }
 
-      if (rPbtn())
+      if (MapKeyPress)
          --show;
 
       px = vbound(px, -4096, 4096);
@@ -4185,7 +4184,7 @@ void ViewMap()
       advanceframe(false);
 
 
-      if (rSbtn())
+      if (StartKeyPress)
          done = true;
 
    }

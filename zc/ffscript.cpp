@@ -1175,75 +1175,75 @@ int32_t get_register(const int32_t arg)
       ///----------------------------------------------------------------------------------------------------//
       //Input States
       case INPUTSTART:
-         ret = control_state[6] ? 10000 : 0;
+         ret = StartKey ? 10000 : 0;
          break;
 
       case INPUTMAP:
-         ret = control_state[9] ? 10000 : 0;
+         ret = MapKey ? 10000 : 0;
          break;
 
       case INPUTUP:
-         ret = control_state[0] ? 10000 : 0;
+         ret = UpKey ? 10000 : 0;
          break;
 
       case INPUTDOWN:
-         ret = control_state[1] ? 10000 : 0;
+         ret = DownKey ? 10000 : 0;
          break;
 
       case INPUTLEFT:
-         ret = control_state[2] ? 10000 : 0;
+         ret = LeftKey ? 10000 : 0;
          break;
 
       case INPUTRIGHT:
-         ret = control_state[3] ? 10000 : 0;
+         ret = RightKey ? 10000 : 0;
          break;
 
       case INPUTA:
-         ret = control_state[4] ? 10000 : 0;
+         ret = AKey ? 10000 : 0;
          break;
 
       case INPUTB:
-         ret = control_state[5] ? 10000 : 0;
+         ret = BKey ? 10000 : 0;
          break;
 
       case INPUTL:
-         ret = control_state[7] ? 10000 : 0;
+         ret = LKey ? 10000 : 0;
          break;
 
       case INPUTR:
-         ret = control_state[8] ? 10000 : 0;
+         ret = RKey ? 10000 : 0;
          break;
 
       case INPUTEX1:
-         ret = control_state[10] ? 10000 : 0;
+         ret = Ex1Key ? 10000 : 0;
          break;
 
       case INPUTEX2:
-         ret = control_state[11] ? 10000 : 0;
+         ret = Ex2Key ? 10000 : 0;
          break;
 
       case INPUTEX3:
-         ret = control_state[12] ? 10000 : 0;
+         ret = Ex3Key ? 10000 : 0;
          break;
 
       case INPUTEX4:
-         ret = control_state[13] ? 10000 : 0;
+         ret = Ex4Key ? 10000 : 0;
          break;
 
       case INPUTAXISUP:
-         ret = control_state[14] ? 10000 : 0;
+         ret = UpKey ? 10000 : 0;
          break;
 
       case INPUTAXISDOWN:
-         ret = control_state[15] ? 10000 : 0;
+         ret = DownKey ? 10000 : 0;
          break;
 
       case INPUTAXISLEFT:
-         ret = control_state[16] ? 10000 : 0;
+         ret = LeftKey ? 10000 : 0;
          break;
 
       case INPUTAXISRIGHT:
-         ret = control_state[17] ? 10000 : 0;
+         ret = RightKey ? 10000 : 0;
          break;
 
       case INPUTMOUSEX:
@@ -1269,75 +1269,75 @@ int32_t get_register(const int32_t arg)
          break;
 
       case INPUTPRESSSTART:
-         ret = button_press[6] ? 10000 : 0;
+         ret = StartKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSMAP:
-         ret = button_press[9] ? 10000 : 0;
+         ret = SelectKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSUP:
-         ret = button_press[0] ? 10000 : 0;
+         ret = UpKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSDOWN:
-         ret = button_press[1] ? 10000 : 0;
+         ret = DownKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSLEFT:
-         ret = button_press[2] ? 10000 : 0;
+         ret = LeftKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSRIGHT:
-         ret = button_press[3] ? 10000 : 0;
+         ret = RightKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSA:
-         ret = button_press[4] ? 10000 : 0;
+         ret = AKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSB:
-         ret = button_press[5] ? 10000 : 0;
+         ret = BKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSL:
-         ret = button_press[7] ? 10000 : 0;
+         ret = LKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSR:
-         ret = button_press[8] ? 10000 : 0;
+         ret = RKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSEX1:
-         ret = button_press[10] ? 10000 : 0;
+         ret = Ex1KeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSEX2:
-         ret = button_press[11] ? 10000 : 0;
+         ret = Ex2KeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSEX3:
-         ret = button_press[12] ? 10000 : 0;
+         ret = Ex3KeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSEX4:
-         ret = button_press[13] ? 10000 : 0;
+         ret = Ex4KeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSAXISUP:
-         ret = button_press[14] ? 10000 : 0;
+         ret = UpKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSAXISDOWN:
-         ret = button_press[15] ? 10000 : 0;
+         ret = DownKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSAXISLEFT:
-         ret = button_press[16] ? 10000 : 0;
+         ret = LeftKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSAXISRIGHT:
-         ret = button_press[17] ? 10000 : 0;
+         ret = RightKeyPress ? 10000 : 0;
          break;
 
 
@@ -3009,147 +3009,147 @@ void set_register(const int32_t arg, const int32_t value)
       ///----------------------------------------------------------------------------------------------------//
       //Input States
       case INPUTSTART:
-         control_state[6] = ((value / 10000) != 0) ? true : false;
+         StartKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTMAP:
-         control_state[9] = ((value / 10000) != 0) ? true : false;
+         MapKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTUP:
-         control_state[0] = ((value / 10000) != 0) ? true : false;
+         UpKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTDOWN:
-         control_state[1] = ((value / 10000) != 0) ? true : false;
+         DownKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTLEFT:
-         control_state[2] = ((value / 10000) != 0) ? true : false;
+         LeftKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTRIGHT:
-         control_state[3] = ((value / 10000) != 0) ? true : false;
+         RightKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTA:
-         control_state[4] = ((value / 10000) != 0) ? true : false;
+         AKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTB:
-         control_state[5] = ((value / 10000) != 0) ? true : false;
+         BKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTL:
-         control_state[7] = ((value / 10000) != 0) ? true : false;
+         LKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTR:
-         control_state[8] = ((value / 10000) != 0) ? true : false;
+         RKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTEX1:
-         control_state[10] = ((value / 10000) != 0) ? true : false;
+         Ex1Key = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTEX2:
-         control_state[11] = ((value / 10000) != 0) ? true : false;
+         Ex2Key = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTEX3:
-         control_state[12] = ((value / 10000) != 0) ? true : false;
+         Ex3Key = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTEX4:
-         control_state[13] = ((value / 10000) != 0) ? true : false;
+         Ex4Key = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTAXISUP:
-         control_state[14] = ((value / 10000) != 0) ? true : false;
+         UpKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTAXISDOWN:
-         control_state[15] = ((value / 10000) != 0) ? true : false;
+         DownKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTAXISLEFT:
-         control_state[16] = ((value / 10000) != 0) ? true : false;
+         LeftKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTAXISRIGHT:
-         control_state[17] = ((value / 10000) != 0) ? true : false;
+         RightKey = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSSTART:
-         button_press[6] = ((value / 10000) != 0) ? true : false;
+         StartKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSMAP:
-         button_press[9] = ((value / 10000) != 0) ? true : false;
+         MapKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSUP:
-         button_press[0] = ((value / 10000) != 0) ? true : false;
+         UpKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSDOWN:
-         button_press[1] = ((value / 10000) != 0) ? true : false;
+         DownKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSLEFT:
-         button_press[2] = ((value / 10000) != 0) ? true : false;
+         LeftKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSRIGHT:
-         button_press[3] = ((value / 10000) != 0) ? true : false;
+         RightKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSA:
-         button_press[4] = ((value / 10000) != 0) ? true : false;
+         AKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSB:
-         button_press[5] = ((value / 10000) != 0) ? true : false;
+         BKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSL:
-         button_press[7] = ((value / 10000) != 0) ? true : false;
+         LKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSR:
-         button_press[8] = ((value / 10000) != 0) ? true : false;
+         RKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSEX1:
-         button_press[10] = ((value / 10000) != 0) ? true : false;
+         Ex1KeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSEX2:
-         button_press[11] = ((value / 10000) != 0) ? true : false;
+         Ex2KeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSEX3:
-         button_press[12] = ((value / 10000) != 0) ? true : false;
+         Ex3KeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSEX4:
-         button_press[13] = ((value / 10000) != 0) ? true : false;
+         Ex4KeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSAXISUP:
-         button_press[14] = ((value / 10000) != 0) ? true : false;
+         UpKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSAXISDOWN:
-         button_press[15] = ((value / 10000) != 0) ? true : false;
+         DownKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSAXISLEFT:
-         button_press[16] = ((value / 10000) != 0) ? true : false;
+         LeftKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTPRESSAXISRIGHT:
-         button_press[17] = ((value / 10000) != 0) ? true : false;
+         RightKeyPress = ((value / 10000) != 0) ? TRUE : FALSE;
          break;
 
       case INPUTMOUSEX:

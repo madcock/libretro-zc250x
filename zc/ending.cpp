@@ -193,11 +193,8 @@ void ending()
 
       if (f >= 288 && ((f - 288) % 5 == 0))
       {
-         //288  begin WIPE (8px per side per step, each 5 frames)
-         //TODO::
          draw_screen_clip_rect_x1 += 8;
          draw_screen_clip_rect_x2 -= 8;
-         //draw_screen_clip_rect_show_guys=true;
       }
 
       draw_screen(tmpscr);
@@ -212,7 +209,6 @@ void ending()
 
    draw_screen_clip_rect_x1 = 0;
    draw_screen_clip_rect_x2 = 255;
-   //draw_screen_clip_rect_show_guys=false;
 
    char tmpmsg[6][25];
 
@@ -430,10 +426,9 @@ void ending()
 
       if (zc_state)
          return;
-
-      load_control_state();
-      rSbtn();
    }
+
+   eat_buttons();
 
    do
    {
@@ -449,10 +444,8 @@ void ending()
 
       if (zc_state)
          return;
-
-      load_control_state();
    }
-   while (!rSbtn());
+   while (!StartKeyPress);
 
    music_stop();
 
