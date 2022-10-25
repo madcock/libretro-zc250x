@@ -108,6 +108,7 @@ combo_alias combo_aliases[MAXCOMBOALIASES];
 
 SAMPLE customsfxdata[SFX_COUNT];
 bool use_qst_sfx;
+bool use_nsf_dat;
 bool qst_has_sfx = false;
 
 int homescr, currscr, frame = 0, currmap = 0, dlevel, warpscr, worldscr;
@@ -910,7 +911,7 @@ int init_game()
       Link.stepforward(get_bit(quest_rules, qr_LTTPWALK) ? 11 : 12, false);
 
    if (!zc_state)
-      playLevelMusic();
+      play_levelmusic();
 
    if (firstplay)
    {
@@ -1011,7 +1012,7 @@ int cont_game()
 
    if (!zc_state)
    {
-      playLevelMusic();
+      play_levelmusic();
 
       if (isdungeon())
          Link.stepforward(get_bit(quest_rules, qr_LTTPWALK) ? 11 : 12, false);
@@ -1076,7 +1077,7 @@ void restart_level()
 
    if (!zc_state)
    {
-      playLevelMusic();
+      play_levelmusic();
 
       if (isdungeon())
          Link.stepforward(get_bit(quest_rules, qr_LTTPWALK) ? 11 : 12, false);

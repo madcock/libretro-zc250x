@@ -63,10 +63,11 @@ int current_item_power(int item_type);
 int current_item_id(int item_type, bool checkmagic = true);
 int item_tile_mod(bool);
 
-bool try_zcmusic(char *filename, int track, int midi);
+bool play_zcmusic(const char *filename, int track);
+void play_zeldamusic(int track, int midi);
 void jukebox(int index);
-void playLevelMusic();
-void play_DmapMusic();
+void play_levelmusic();
+void play_dmapmusic();
 void music_pause();
 void music_resume();
 void music_stop();

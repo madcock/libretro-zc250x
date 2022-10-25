@@ -2407,7 +2407,6 @@ int32_t get_register(const int32_t arg)
 
          if (BC::checkDMapID(ID, "Game->DMapMIDI") == SH::_NoError)
          {
-            // Based on play_DmapMusic
             switch (DMaps[ID].midi)
             {
                case 2:
@@ -4292,7 +4291,6 @@ void set_register(const int32_t arg, const int32_t value)
 
          if (BC::checkDMapID(ID, "Game->DMapMIDI") == SH::_NoError)
          {
-            // Based on play_DmapMusic
             switch (value / 10000)
             {
                case -6:
@@ -5888,7 +5886,7 @@ void do_enh_music(bool v)
       ArrayH::getString(arrayptr, filename_str, 256);
       strncpy(filename_char, filename_str.c_str(), 255);
       filename_char[255] = '\0';
-      ret = try_zcmusic(filename_char, track, -1000);
+      ret = play_zcmusic(filename_char, track);
       set_register(sarg2, ret ? 10000 : 0);
    }
 }

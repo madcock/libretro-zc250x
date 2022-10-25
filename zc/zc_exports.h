@@ -35,6 +35,7 @@ extern bool allow_cheats;
 extern bool heart_beep;
 extern bool nes_quit;
 extern bool use_qst_sfx;
+extern bool use_nsf_dat;
 extern char sf2_file[16];
 
 /* input keys */

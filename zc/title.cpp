@@ -1200,7 +1200,7 @@ static void select_game()
    int mode = 0;
 
    /* Use zelda title music in the selection screen */
-   try_zcmusic((char *)"zelda.nsf", 0, MID_TITLE);
+   play_zeldamusic(0, MID_TITLE);
 
    selectscreen();
 

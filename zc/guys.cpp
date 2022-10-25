@@ -24,7 +24,7 @@ int guycarryingitem = 0;
 char *guy_string[eMAXGUYS];
 
 void never_return(int index);
-void playLevelMusic();
+void play_levelmusic();
 
 // If an enemy is this far out of the playing field, just remove it.
 #define OUTOFBOUNDS ((int)y>((tmpscr->flags7&fSIDEVIEW && canfall(id))?192:352) || y<-176 || x<-256 || x > 512)
@@ -8115,7 +8115,7 @@ bool eGanon::animate(int index)
             if (getmapflag())
             {
                game->lvlitems[dlevel] |= liBOSS;
-               playLevelMusic();
+               play_levelmusic();
                return true;
             }
 
@@ -8290,7 +8290,7 @@ void getBigTri(int id2)
       advanceframe(true);
    }
 
-   playLevelMusic();
+   play_levelmusic();
 
    if (itemsbuf[id2].flags & ITEM_FLAG1 && currscr < 128)
    {

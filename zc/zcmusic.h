@@ -14,6 +14,7 @@ bool zcmusic_init(float delta);
 bool zcmusic_poll(void);
 void zcmusic_exit(void);
 ZCMUSIC *zcmusic_load_file(char *filename);
+ZCMUSIC *zcmusic_load_zeldansf_df(DATAFILE *df);
 bool zcmusic_play(ZCMUSIC *zcm);
 void zcmusic_pause(int pause);
 void zcmusic_stop(void);

@@ -35,7 +35,7 @@ int directWpn = -1;
 int whistleitem = -1;
 extern uint16_t g_doscript;
 
-void playLevelMusic();
+void play_levelmusic();
 
 const uint8_t lsteps[8] = { 1, 1, 2, 1, 1, 2, 1, 1 };
 
@@ -3824,7 +3824,7 @@ bool LinkClass::animate(int)
          {
             //restart music
             if (get_bit(quest_rules, qr_HOLDNOSTOPMUSIC) == 0 && (specialcave < GUYCAVE))
-               playLevelMusic();
+               play_levelmusic();
 
             action = none;
          }
@@ -3841,7 +3841,7 @@ bool LinkClass::animate(int)
          {
             //restart music
             if (get_bit(quest_rules, qr_HOLDNOSTOPMUSIC) == 0  && (specialcave < GUYCAVE))
-               playLevelMusic();
+               play_levelmusic();
 
             action = swimming;
          }
@@ -10297,7 +10297,7 @@ bool LinkClass::dowarp(int type, int index)
 
          show_subscreen_life = true;
          show_subscreen_numbers = true;
-         playLevelMusic();
+         play_levelmusic();
          currcset = DMaps[currdmap].color;
          dointro();
          setEntryPoints(x, y);
@@ -10370,7 +10370,7 @@ bool LinkClass::dowarp(int type, int index)
          if (DMaps[currdmap].color != c)
             lighting(false, true);
 
-         playLevelMusic();
+         play_levelmusic();
          currcset = DMaps[currdmap].color;
          dointro();
       }
@@ -10386,7 +10386,7 @@ bool LinkClass::dowarp(int type, int index)
          lighting(false, true);
          init_dmap();
 
-         playLevelMusic();
+         play_levelmusic();
          currcset = DMaps[currdmap].color;
          dointro();
          action = inwind;
@@ -10537,7 +10537,7 @@ bool LinkClass::dowarp(int type, int index)
 
          show_subscreen_life = true;
          show_subscreen_numbers = true;
-         playLevelMusic();
+         play_levelmusic();
          currcset = DMaps[currdmap].color;
          dointro();
          setEntryPoints(x, y);
@@ -10730,7 +10730,7 @@ void LinkClass::exitcave()
 
    show_subscreen_life = true;
    show_subscreen_numbers = true;
-   playLevelMusic();
+   play_levelmusic();
    currcset = DMaps[currdmap].color;
    dointro();
    newscr_clk = frame;
@@ -11151,7 +11151,7 @@ void LinkClass::stepout() // Step out of item cellars and passageways
    if (get_bit(quest_rules, qr_CAVEEXITNOSTOPMUSIC) == 0)
    {
       music_stop();
-      playLevelMusic();
+      play_levelmusic();
    }
 
    loadside = dir ^ 1;
@@ -12467,7 +12467,7 @@ void LinkClass::scrollscr(int scrolldir, int destscr, int destdmap)
    if (newscr->flags2 & fSECRET)
       sfx(newscr->secretsfx);
 
-   playLevelMusic();
+   play_levelmusic();
 
    newscr_clk = frame;
    activated_timed_warp = false;
@@ -13794,7 +13794,7 @@ void LinkClass::getTriforce(int id2)
    if (itemsbuf[id2].misc1)
       jukebox(itemsbuf[id2].misc1 + MID_COUNT - 1);
    else
-      try_zcmusic((char *)"zelda.nsf", 5, MID_TRIFORCE);
+      play_zeldamusic(5, MID_TRIFORCE);
 
    if (itemsbuf[id2].flags & ITEM_GAMEDATA)
       game->lvlitems[dlevel] |= liTRIFORCE;
@@ -13925,7 +13925,7 @@ void LinkClass::getTriforce(int id2)
       dowarp(1, 0); //side warp
    }
    else
-      playLevelMusic();
+      play_levelmusic();
 }
 
 void red_shift()
@@ -14445,7 +14445,7 @@ void LinkClass::ganon_intro()
    if (!getmapflag() && (tunes[MAXMIDIS - 1].data))
       jukebox(MAXMIDIS - 1);
    else
-      playLevelMusic();
+      play_levelmusic();
 
    currcset = DMaps[currdmap].color;
    dointro();

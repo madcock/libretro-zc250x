@@ -106,6 +106,25 @@ error:
    return NULL;
 }
 
+ZCMUSIC *zcmusic_load_zeldansf_df(DATAFILE *df)
+{
+
+   GME *p = gme_create(df->dat, df->size, GME_TYPE::GME_NSF);
+   if (!p)
+   {
+      zc_message("Error loading GME from DATAFILE");
+      return NULL;
+   }
+
+   ZCMUSIC *music = (ZCMUSIC *)malloc(sizeof(ZCMUSIC));
+   music->type = STREAM_GME;
+   music->stream = p;
+   strncpy(music->filename, ZELDA_NSF_FILE, sizeof(music->filename) - 1);
+   music->track = 0;
+
+   return music;
+}
+
 bool zcmusic_play(ZCMUSIC *zcm)
 {
 

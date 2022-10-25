@@ -2714,17 +2714,19 @@ inline int mixvol(int v1, int v2)
    return (zc_min(v1, 255) * zc_min(v2, 255)) >> 8;
 }
 
-// Run an NSF, or a MIDI if the NSF is missing somehow.
-bool try_zcmusic(char *filename, int track, int midi)
+bool play_zcmusic(const char *filename, int track)
 {
    ZCMUSIC *newzcmusic = NULL;
 
-   // try the quest directory
-   char musicpath[MAX_STRLEN];
-   replace_filename(musicpath, qst_path, filename);
-   newzcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
+   if (use_nsf_dat && strcmp(filename, ZELDA_NSF_FILE) == 0)
+      newzcmusic = (ZCMUSIC *)zcmusic_load_zeldansf_df(&data[ZELDA_NSF]);
+   else
+   {
+      char musicpath[MAX_STRLEN];
+      replace_filename(musicpath, qst_path, filename);
+      newzcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
+   }
 
-   // Found it
    if (newzcmusic != NULL)
    {
       zcmusic_stop();
@@ -2741,11 +2743,16 @@ bool try_zcmusic(char *filename, int track, int midi)
       return true;
    }
 
-   // Not found, play MIDI - unless this was called by a script (yay, magic numbers)
-   else if (midi > -1000)
-      jukebox(midi);
-
    return false;
+}
+
+// Run an NSF, or a MIDI if the NSF fails.
+void play_zeldamusic(int track, int midi)
+{
+   if (play_zcmusic(ZELDA_NSF_FILE, track))
+      return;
+
+   jukebox(midi);
 }
 
 void jukebox(int index)
@@ -2770,89 +2777,10 @@ void jukebox(int index)
    midi_loopstart(tunes[sel_music].loop_start);
 }
 
-void play_DmapMusic()
+void play_midimusic(int m)
 {
-   bool domidi = false;
-
-   if (DMaps[currdmap].tmusic[0] != 0)
-   {
-      if (zcmusic == NULL ||
-            strcmp(zcmusic->filename, DMaps[currdmap].tmusic) != 0 ||
-            (zcmusic->type == STREAM_GME && zcmusic->track != DMaps[currdmap].tmusictrack))
-      {
-         if (zcmusic != NULL)
-         {
-            zcmusic_stop();
-            zcmusic_unload_file(zcmusic);
-            zcmusic = NULL;
-         }
-
-         /* Look for the music at the quest directory */
-         if (zcmusic == NULL)
-         {
-            char musicpath[MAX_STRLEN];
-            replace_filename(musicpath, qst_path, DMaps[currdmap].tmusic);
-            zcmusic = (ZCMUSIC *)zcmusic_load_file(musicpath);
-         }
-
-         if (zcmusic != NULL)
-         {
-            midi_stop();
-            zcmusic_play(zcmusic);
-            update_music_volume();
-
-            int temptracks = zcmusic_get_tracks(zcmusic);
-            int ttrack = vbound(DMaps[currdmap].tmusictrack, 0, temptracks - 1);
-            zcmusic_change_track(ttrack);
-         }
-         else
-            domidi = true;
-      }
-   }
-   else
-      domidi = true;
-
-   if (domidi)
-   {
-      int m = DMaps[currdmap].midi;
-
-      switch (m)
-      {
-         case 1:
-            jukebox(MID_OVERWORLD);
-            break;
-
-         case 2:
-            jukebox(MID_DUNGEON);
-            break;
-
-         case 3:
-            jukebox(MID_LEVEL9);
-            break;
-
-         default:
-            if (m >= 4 && m < 4 + MAXCUSTOMMIDIS)
-               jukebox(m - 4 + MID_COUNT);
-            else
-               music_stop();
-      }
-   }
-}
-
-void playLevelMusic()
-{
-   int m = tmpscr->screen_midi;
-
    switch (m)
    {
-      case -2:
-         music_stop();
-         break;
-
-      case -1:
-         play_DmapMusic();
-         break;
-
       case 1:
          jukebox(MID_OVERWORLD);
          break;
@@ -2870,6 +2798,43 @@ void playLevelMusic()
             jukebox(m - 4 + MID_COUNT);
          else
             music_stop();
+   }
+}
+
+void play_dmapmusic()
+{
+   if (DMaps[currdmap].tmusic[0] != 0)
+   {
+      if (zcmusic == NULL || strcmp(zcmusic->filename, DMaps[currdmap].tmusic) != 0 ||
+            (zcmusic->type == STREAM_GME && zcmusic->track != DMaps[currdmap].tmusictrack))
+      {
+         if (play_zcmusic(DMaps[currdmap].tmusic, DMaps[currdmap].tmusictrack))
+            return;
+      }
+      else
+         return; /* No need to change current song */
+   }
+
+   /* If couldn't play ZCMUSIC, try MIDI */
+   play_midimusic(DMaps[currdmap].midi);
+}
+
+void play_levelmusic()
+{
+   int m = tmpscr->screen_midi;
+
+   switch (m)
+   {
+      case -2:
+         music_stop();
+         break;
+
+      case -1:
+         play_dmapmusic();
+         break;
+
+      default:
+         play_midimusic(m);
    }
 }
 

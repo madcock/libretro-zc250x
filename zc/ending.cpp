@@ -284,7 +284,7 @@ void ending()
       if (f == 861)
       {
          blit(scrollbuf, framebuf, 0, 0, 0, PLAYFIELD_OFFSET != 0 ? 168 : 0, 256, SUBSCREEN_HEIGHT);
-         try_zcmusic((char *)"zelda.nsf", 1, MID_ENDING);
+         play_zeldamusic(1, MID_ENDING);
 
          for (int y = 0; y < 224; y++)
          {

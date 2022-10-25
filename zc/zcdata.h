@@ -1,6 +1,6 @@
 /* Allegro datafile object indexes, produced by grabber v4.4.3, Unix */
 /* Datafile: /home/joe/Dev/Libretro/libretro-zc250x/datfile/zcdata.dat */
-/* Date: Mon Sep 12 21:30:52 2022 */
+/* Date: Mon Oct 17 12:52:54 2022 */
 /* Do not hand edit! */
 
 #define _SIGNATURE                       0        /* DATA */
@@ -117,4 +117,5 @@
 #define MID_TRIFORCE                     6        /* MIDI */
 #define MID_COUNT                        7
 
+#define ZELDA_NSF                        5        /* NSF  */
 
