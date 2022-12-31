@@ -118,7 +118,7 @@ int master_vol, music_vol, sfx_vol, mix_quality, sel_music, hasitem, whistleclk,
 int zc_state = ZC_RUN;
 int AKey, BKey, SelectKey, StartKey, LKey, RKey,
     MapKey, ModKey, Ex1Key, Ex2Key, Ex3Key, Ex4Key;
-int UpKey, DownKey, LeftKey, RightKey, MouseX, MouseY, MouseZ, MouseB;
+int UpKey, DownKey, LeftKey, RightKey, MouseX = 128, MouseY = 112, MouseZ, MouseB;
 int AKeyPress, BKeyPress, SelectKeyPress, StartKeyPress,
     LKeyPress, RKeyPress, MapKeyPress, ModKeyPress,
     Ex1KeyPress, Ex2KeyPress, Ex3KeyPress, Ex4KeyPress;

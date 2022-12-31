@@ -12,6 +12,8 @@
 #define SCR_WIDTH    256
 #define SCR_HEIGHT   224
 
+#define ANALOG_DEADZONE    16384
+
 //#define WANT_BPP32
 #ifdef WANT_BPP32
 typedef uint32_t bpp_t;
@@ -32,6 +34,7 @@ static retro_environment_t environ_cb;
 static retro_input_poll_t input_poll_cb;
 static retro_input_state_t input_state_cb;
 static retro_log_printf_t log_cb;
+static void (*update_mouse_input)(void);
 
 float sampling_rate;
 char default_path[] = ".";
@@ -47,6 +50,7 @@ scond_t *cond;
 static bpp_t lr_palette[PAL_SIZE];
 static bpp_t *framebuf;
 static short *soundbuf;
+static char  analog_index;
 
 void zc_log(bool err, const char *format, ...)
 {
@@ -142,11 +146,12 @@ void retro_set_environment(retro_environment_t cb)
       { "zc_pan_style", "Sound Pan Style; 1/2|3/4|Full|Mono" },
       { "zc_heart_beep", "Enable Low Health Beep; true|false" },
       { "zc_trans_layers", "Show Transparent Layers; true|false" },
-      { "zc_nes_quit", "Press Up + A + B to Quit menu in subscreen; true|false" },
-      { "zc_use_qstsfx", "Use quest's embedded sounds (if available); true|false" },
-      { "zc_use_nsfdat", "Use internal zelda.nsf for Zelda music; true|false" },
-      { "zc_allow_cheats", "Allow cheats (press 'Cheat' and L, R, Map, Select, or Start); false|true" },
-      { "zc_soundfont", "SF2 soundfont To Use (See GitHub readme - Requires Restart); default|custom0|custom1|custom2|custom3|custom4|custom5|custom6|custom7|custom8|custom9" },
+      { "zc_nes_quit", "Press Up + A + B to Quit Menu In Subscreen; true|false" },
+      { "zc_use_qstsfx", "Use Quest's Embedded Sounds (If Available); true|false" },
+      { "zc_use_nsfdat", "Use Internal 'zelda.nsf' For Zelda Music; true|false" },
+      { "zc_allow_cheats", "Allow Cheats (press 'Mod' Key and L, R, Map, Select, or Start); false|true" },
+      { "zc_mouse_device", "Device To Handle The Mouse Input; None|Right Joystick|Left Joystick|Mouse" },
+      { "zc_soundfont", "SF2 Soundfont To Use (See GitHub Readme - Requires Restart); default|custom0|custom1|custom2|custom3|custom4|custom5|custom6|custom7|custom8|custom9" },
       { NULL, NULL },
    };
 
@@ -174,7 +179,7 @@ void retro_set_environment(retro_environment_t cb)
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,      "B"      },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,      "A"      },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,      "Map"    },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Cheat"  },
+      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y,      "Mod"    },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,      "L"      },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,      "R"      },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,     "EX1"    },
@@ -219,6 +224,41 @@ void retro_reset(void)
    zc_action(ZC_RESET);
 }
 
+static void update_mi_mouse(void)
+{
+   if (input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT))  MouseB = MouseB | 0x01;
+   if (input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT)) MouseB = MouseB | 0x02;
+
+   MouseX += input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
+   MouseY += input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
+}
+
+static void update_mi_joystick(void)
+{
+   /* Only update it if the mod key is being pressed */
+   if (ModKey)
+   {
+      /* Take the values from the already polled Ex keys */
+      if (Ex1Key) MouseB = MouseB | 0x01;
+      if (Ex2Key) MouseB = MouseB | 0x02;
+      /* Since we are using the mouse input we reset the Ex keys */
+      Ex1Key = Ex2Key = 0x00;
+   }
+
+   int aX = input_state_cb(0, RETRO_DEVICE_ANALOG, analog_index, RETRO_DEVICE_ID_ANALOG_X);
+   int aY = input_state_cb(0, RETRO_DEVICE_ANALOG, analog_index, RETRO_DEVICE_ID_ANALOG_Y);
+
+   if (aX > ANALOG_DEADZONE)
+      MouseX++;
+   else if (aX < -ANALOG_DEADZONE)
+      MouseX--;
+
+   if (aY > ANALOG_DEADZONE)
+      MouseY++;
+   else if (aY < -ANALOG_DEADZONE)
+      MouseY--;
+}
+
 static void update_input(void)
 {
    input_poll_cb();
@@ -235,13 +275,22 @@ static void update_input(void)
    LKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
    RKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
 
+   SelectKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
+   StartKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
+
    Ex1Key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
    Ex2Key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
    Ex3Key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
    Ex4Key = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3);
 
-   SelectKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT);
-   StartKey = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START);
+   /* Get mouse data */
+   MouseB = 0x00; /* reset it */
+   if (update_mouse_input)
+   {
+      update_mouse_input();
+      MouseX = CLAMP(0, MouseX, SCR_WIDTH - 1);
+      MouseY = CLAMP(0, MouseY, SCR_HEIGHT - 1);
+   }
 
    /* Calculate the press button flags */
    static int AKeyDown = FALSE, BKeyDown = FALSE, SelectKeyDown = FALSE, StartKeyDown = FALSE;
@@ -392,6 +441,25 @@ static void check_variables(bool startup = false)
    var.key = "zc_allow_cheats";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
       allow_cheats = !strcmp(var.value, "true") ? true : false;
+
+   var.key = "zc_mouse_device";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      if (!strcmp(var.value, "Mouse"))
+         update_mouse_input = update_mi_mouse;
+      else if (!strcmp(var.value, "Left Joystick"))
+      {
+         update_mouse_input = update_mi_joystick;
+         analog_index = RETRO_DEVICE_INDEX_ANALOG_LEFT;
+      }
+      else if (!strcmp(var.value, "Right Joystick"))
+      {
+         update_mouse_input = update_mi_joystick;
+         analog_index = RETRO_DEVICE_INDEX_ANALOG_RIGHT;
+      }
+      else
+         update_mouse_input = NULL;
+   }
 
    if (startup)
    {

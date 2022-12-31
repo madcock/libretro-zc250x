@@ -1248,15 +1248,13 @@ int32_t get_register(const int32_t arg)
 
       case INPUTMOUSEX:
       {
-         int leftOffset = 32;
-         ret = ((MouseX - leftOffset)) * 10000;
+         ret = MouseX * 10000;
          break;
       }
 
       case INPUTMOUSEY:
       {
-         int topOffset = 8;
-         ret = ((MouseY - topOffset)) * 10000;
+         ret = (MouseY - PLAYFIELD_OFFSET) * 10000;
          break;
       }
 
@@ -3153,15 +3151,13 @@ void set_register(const int32_t arg, const int32_t value)
 
       case INPUTMOUSEX:
       {
-         int leftOffset = 32;
-         MouseX = (value / 10000) + leftOffset;
+         MouseX = value / 10000;
          break;
       }
 
       case INPUTMOUSEY:
       {
-         int topOffset = 8;
-         MouseY = (value / 10000) + topOffset;
+         MouseY = (value / 10000) + PLAYFIELD_OFFSET;
          break;
       }
 
