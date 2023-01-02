@@ -3679,14 +3679,6 @@ bool LinkClass::animate(int)
 
    }
 
-   if (DrunkrLbtn() && !get_bit(quest_rules, qr_SELECTAWPN))
-      selectNextBWpn(SEL_LEFT);
-   else if (DrunkrRbtn() && !get_bit(quest_rules, qr_SELECTAWPN))
-      selectNextBWpn(SEL_RIGHT);
-
-   if (MapKeyPress)
-      onViewMap();
-
    for (int i = 0; i < Lwpns.Count(); i++)
    {
       weapon *w = ((weapon *)Lwpns.spr(i));
@@ -4204,26 +4196,36 @@ bool LinkClass::animate(int)
       stop_sfx(SFX_ER);
    }
 
-   if (StartKeyPress)
+   if (ModKey)            /* process cheat if cheat button pressed */
+      checkCheat();
+   else
    {
-      int tmp_subscr_clk = frame;
-
-      switch (lsave)
+      if (StartKeyPress)
       {
-         case 0:
-            conveyclk = 3;
-            dosubscr(&QMisc);
-            newscr_clk += frame - tmp_subscr_clk;
-            break;
+         int tmp_subscr_clk = frame;
 
-         case 1:
-            save_game((tmpscr->flags4 & fSAVEROOM) != 0, 0);
-            break;
+         switch (lsave)
+         {
+            case 0:
+               conveyclk = 3;
+               dosubscr(&QMisc);
+               newscr_clk += frame - tmp_subscr_clk;
+               break;
 
-         case 2:
-            save_game((tmpscr->flags4 & fSAVEROOM) != 0, 1);
-            break;
-      }
+            case 1:
+               save_game((tmpscr->flags4 & fSAVEROOM) != 0, 0);
+               break;
+
+            case 2:
+               save_game((tmpscr->flags4 & fSAVEROOM) != 0, 1);
+               break;
+         }
+      } else if (LKeyPress && !get_bit(quest_rules, qr_SELECTAWPN))
+         selectNextBWpn(SEL_LEFT);
+      else if (RKeyPress && !get_bit(quest_rules, qr_SELECTAWPN))
+         selectNextBWpn(SEL_RIGHT);
+      else if (MapKeyPress)
+         onViewMap();
    }
 
    checkstab();
@@ -14071,6 +14073,44 @@ void slide_in_color(int color)
    zc_sync_pal = true;
 }
 
+void checkCheat(void)
+{
+   bool c_applied = false;
+   
+   if (!allow_cheats)
+      return;
+
+   if (RKeyPress)
+   {
+      getitem(iHeart);
+      c_applied = true;
+   }
+   else if (LKeyPress)
+   {
+      getitem(iBombs);
+      c_applied = true;
+   }
+   else if (MapKeyPress)
+   {
+      getitem(i5Rupies);
+      c_applied = true;
+   }
+   else if (StartKeyPress)
+   {
+      getitem(iClock);
+      c_applied = true;
+   }
+   else if (SelectKeyPress)
+   {
+      getitem(iFairyMoving);
+      c_applied = true;
+   }
+   
+   /* Mark the save file as a cheat quest */
+   if (c_applied)
+      game->set_cheat(1);
+}
+
 void LinkClass::gameover()
 {
    int f = 0;
@@ -14491,7 +14531,6 @@ void LinkClass::reset_hookshot()
    hs_xdist = 0;
    hs_ydist = 0;
 }
-
 
 bool LinkClass::can_deploy_ladder()
 {

@@ -409,4 +409,5 @@ void getitem(int id, bool nosound = false);
 void takeitem(int id);
 void red_shift();
 void slide_in_color(int color);
+void checkCheat(void);
 #endif
