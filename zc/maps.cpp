@@ -3970,7 +3970,7 @@ void ViewMap()
    int ly = ((currscr >> 4) * 176) + Link.getY() + 8;
    int sc = 6;
 
-   bool done = false, redraw = true;
+   bool redraw = true;
 
    mappic = create_bitmap((256 * 16) >> mapres, (176 * 8) >> mapres);
 
@@ -4058,9 +4058,9 @@ void ViewMap()
    {
       int step = int(16.0 / scales[sc]);
       step = (step >> 1) + (step & 1);
-      bool r = RKey;
+      bool r = AKey;
 
-      if (LKey)
+      if (BKey)
       {
          step <<= 2;
          delay = 0;
@@ -4123,8 +4123,8 @@ void ViewMap()
          --delay;
       else
       {
-         bool a = AKey;
-         bool b = BKey;
+         bool a = RKey;
+         bool b = LKey;
 
          if (a && !b)
          {
@@ -4141,7 +4141,7 @@ void ViewMap()
          }
       }
 
-      if (MapKeyPress)
+      if (SelectKeyPress)
          --show;
 
       px = vbound(px, -4096, 4096);
@@ -4180,15 +4180,9 @@ void ViewMap()
          textprintf_ex(framebuf, nfont, 0, 216, WHITE, BLACK, "x: %d %d", x, y);
       }
 
-      //since stuff in here accesses tmpscr and tmpscr2... -DD
       advanceframe(false);
-
-
-      if (StartKeyPress)
-         done = true;
-
    }
-   while (!done && !zc_state);
+   while (!(StartKeyPress || MapKeyPress) || zc_state);
 
    destroy_bitmap(mappic);
 
