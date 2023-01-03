@@ -3127,39 +3127,7 @@ bool DrunkcBbtn()
 {
    return drunk() ? (rand() % 2) ? 0 : !BKey : BKey;
 }
-bool DrunkcSbtn()
-{
-   return drunk() ? (rand() % 2) ? 0 : !StartKey : StartKey;
-}
-bool DrunkcLbtn()
-{
-   return drunk() ? (rand() % 2) ? 0 : !LKey : LKey;
-}
-bool DrunkcRbtn()
-{
-   return drunk() ? (rand() % 2) ? 0 : !RKey : RKey;
-}
-bool DrunkcPbtn()
-{
-   return drunk() ? (rand() % 2) ? 0 : !MapKey : MapKey;
-}
 
-bool DrunkrUp()
-{
-   return drunk() ? (rand() % 2) ? 0 : !UpKeyPress : UpKeyPress;
-}
-bool DrunkrDown()
-{
-   return drunk() ? (rand() % 2) ? 0 : !DownKeyPress : DownKeyPress;
-}
-bool DrunkrLeft()
-{
-   return drunk() ? (rand() % 2) ? 0 : !LeftKeyPress : LeftKeyPress;
-}
-bool DrunkrRight()
-{
-   return drunk() ? (rand() % 2) ? 0 : !RightKeyPress : RightKeyPress;
-}
 bool DrunkrAbtn()
 {
    return drunk() ? (rand() % 2) ? 0 : !AKeyPress : AKeyPress;
@@ -3167,22 +3135,6 @@ bool DrunkrAbtn()
 bool DrunkrBbtn()
 {
    return drunk() ? (rand() % 2) ? 0 : !BKeyPress : BKeyPress;
-}
-bool DrunkrSbtn()
-{
-   return drunk() ? (rand() % 2) ? 0 : !StartKeyPress : StartKeyPress;
-}
-bool DrunkrLbtn()
-{
-   return drunk() ? (rand() % 2) ? 0 : !LKeyPress : LKeyPress;
-}
-bool DrunkrRbtn()
-{
-   return drunk() ? (rand() % 2) ? 0 : !RKeyPress : RKeyPress;
-}
-bool DrunkrPbtn()
-{
-   return drunk() ? (rand() % 2) ? 0 : !MapKeyPress : MapKeyPress;
 }
 
 /* Here set all buttons to FALSE to avoid reacting to button

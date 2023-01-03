@@ -2158,8 +2158,7 @@ struct gamedata
 
    uint8_t get_cheat();
    void set_cheat(uint8_t c);
-   void change_cheat(short c);
-
+   
    uint8_t get_hasplayed();
    void set_hasplayed(uint8_t p);
    void change_hasplayed(short p);

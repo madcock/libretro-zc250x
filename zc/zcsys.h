@@ -17,24 +17,11 @@ bool DrunkDown();
 bool DrunkLeft();
 bool DrunkRight();
 
-bool DrunkrUp();
-bool DrunkrDown();
-bool DrunkrLeft();
-bool DrunkrRight();
-
 bool DrunkcAbtn();
 bool DrunkcBbtn();
-bool DrunkcSbtn();
-bool DrunkcLbtn();
-bool DrunkcRbtn();
-bool DrunkcPbtn();
 
 bool DrunkrAbtn();
 bool DrunkrBbtn();
-bool DrunkrSbtn();
-bool DrunkrLbtn();
-bool DrunkrRbtn();
-bool DrunkrPbtn();
 
 enum {bosCIRCLE = 0, bosOVAL, bosTRIANGLE, bosSMAS, bosMAX};
 

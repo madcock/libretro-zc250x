@@ -503,11 +503,6 @@ void gamedata::set_cheat(uint8_t c)
    _cheat = c;
    return;
 }
-void gamedata::change_cheat(short c)
-{
-   _cheat += c;
-   return;
-}
 
 uint8_t gamedata::get_hasplayed()
 {
@@ -687,11 +682,6 @@ uint8_t gamedata::get_lkeys()
 {
    return lvlkeys[dlevel];
 }
-
-/*bool gamedata::get_item(int id)
-{
-return item[id];
-}*/
 
 uint8_t gamedata::get_hcp_per_hc()
 {
