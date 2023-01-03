@@ -1151,24 +1151,31 @@ static int game_details(int file)
 
    destroy_bitmap(info);
 
-   textout_ex(framebuf, zfont, "GAME TYPE", 40, 104, 2, -1);
-   textout_ex(framebuf, zfont, "QUEST", 40, 112, 2, -1);
-   textout_ex(framebuf, zfont, "STATUS", 40, 120, 2, -1);
+   char temp[23];
+   strncpy(temp, saves[file].title, 23);
+   temp[22] = '\0';
+   textout_ex(framebuf, zfont, temp, 40, 104, 1, -1);
 
-   textout_ex(framebuf, zfont, "Custom Quest", 120, 104, 1, -1);
-   textprintf_ex(framebuf, zfont, 120, 112, 1, -1, "%s", saves[file].qstpath);
+   textout_ex(framebuf, zfont, "CREATOR", 40, 112, 2, -1);
+   textout_ex(framebuf, zfont, "ZELDA VER", 40, 120, 2, -1);
+   textout_ex(framebuf, zfont, "PLAY TIME", 40, 128, 2, -1);
+
+   strncpy(temp, QHeader.author, 14);
+   temp[13] = '\0';
+   textout_ex(framebuf, zfont, temp, 120, 112, 1, -1);
+   textout_ex(framebuf, zfont, VerStr(QHeader.zelda_version), 120, 120, 1, -1);
 
    if (!saves[file].get_hasplayed())
-      textout_ex(framebuf, zfont, "Empty Game", 120, 120, 1, -1);
+      textout_ex(framebuf, zfont, "Empty Game", 120, 128, 1, -1);
    else if (!saves[file].get_timevalid())
-      textout_ex(framebuf, zfont, "Time Unknown", 120, 120, 1, -1);
+      textout_ex(framebuf, zfont, "Time Unknown", 120, 128, 1, -1);
    else
-      textout_ex(framebuf, zfont, time_str_med(saves[file].get_time()), 120, 120, 1, -1);
-
+      textout_ex(framebuf, zfont, time_str_med(saves[file].get_time()), 120, 128, 1, -1);
+   
    if (saves[file].get_cheat())
-      textout_ex(framebuf, zfont, "Uses Cheats", 120, 128, 1, -1);
+      textout_ex(framebuf, zfont, "*Cheats*", 120, 136, 1, -1);
 
-   textout_ex(framebuf, zfont, "START: PLAY GAME", 56, 152, 1, -1);
+   textout_ex(framebuf, zfont, "START: PLAY QUEST", 56, 152, 1, -1);
    textout_ex(framebuf, zfont, "    B: CANCEL", 56, 168, 1, -1);
 
    while (!zc_state)
