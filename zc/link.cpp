@@ -4337,7 +4337,7 @@ bool LinkClass::startwpn(int itemid)
             potion_life = game->get_life();
             potion_magic = game->get_magic();
 
-            while (refill())
+            while (refill() && !zc_state)
             {
                put_passive_subscr(framebuf, &QMisc, 0, 0, false, sspUP);
                advanceframe(true);
@@ -9741,14 +9741,6 @@ void LinkClass::checkspecial2(int *ls)
 
    if ((type == cCAVE || type == cCAVE2) && (tmpscr[t].tilewarptype[index] == wtNOWARP)) return;
 
-   //don't do this for canceled warps -DD
-   //I have no idea why we do this skip, but I'll dutifully propagate it to all cases below...
-   /*if(tmpscr[t].tilewarptype[index] != wtNOWARP)
-   {
-     draw_screen(tmpscr);
-     advanceframe(true);
-   }*/
-
    bool skippedaframe = false;
 
    if (type == cCAVE || type == cCAVE2 || type == cSTAIR)
@@ -13909,9 +13901,8 @@ void LinkClass::getTriforce(int id2)
       draw_screen(tmpscr);
       advanceframe(true);
       ++f;
-   }
-   while (f < 408 || midi_isplaying() || (zcmusic != NULL
-                                      && zcmusic->position < 800)); // 800 may not be just right, but it works
+   }                                                   /* 800 may not be just right, but it works */
+   while (!zc_state && (f < 408 || midi_isplaying() || (zcmusic != NULL && zcmusic->position < 800)));
 
    action = none;
    holdclk = 0;

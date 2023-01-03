@@ -200,7 +200,8 @@ void ending()
       draw_screen(tmpscr);
       advanceframe(true);
 
-      if (zc_state) return;
+      if (zc_state)
+         return;
    }
 
    clear_bitmap(msgdisplaybuf);
