@@ -1247,16 +1247,12 @@ int32_t get_register(const int32_t arg)
          break;
 
       case INPUTMOUSEX:
-      {
          ret = MouseX * 10000;
          break;
-      }
 
       case INPUTMOUSEY:
-      {
          ret = (MouseY - PLAYFIELD_OFFSET) * 10000;
          break;
-      }
 
       case INPUTMOUSEZ:
          ret = MouseZ * 10000;
@@ -1271,7 +1267,7 @@ int32_t get_register(const int32_t arg)
          break;
 
       case INPUTPRESSMAP:
-         ret = SelectKeyPress ? 10000 : 0;
+         ret = MapKeyPress ? 10000 : 0;
          break;
 
       case INPUTPRESSUP:
@@ -3150,16 +3146,12 @@ void set_register(const int32_t arg, const int32_t value)
          break;
 
       case INPUTMOUSEX:
-      {
          MouseX = value / 10000;
          break;
-      }
 
       case INPUTMOUSEY:
-      {
          MouseY = (value / 10000) + PLAYFIELD_OFFSET;
          break;
-      }
 
       case INPUTMOUSEZ:
          MouseZ = value / 10000;
