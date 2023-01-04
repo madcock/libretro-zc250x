@@ -39,6 +39,7 @@ void close_black_opening(int x, int y, bool wait);
 void open_black_opening(int x, int y, bool wait);
 void openscreen();
 int  TriforceCount();
+void pauseGame();
 
 bool item_disabled(int item);
 bool can_use_item(int item_type, int item);

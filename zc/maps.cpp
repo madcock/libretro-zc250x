@@ -4194,7 +4194,7 @@ void onViewMap()
    if (playing && currscr < 128 && DMaps[currdmap].flags & dmfVIEWMAP)
    {
       clear_to_color(framebuf, BLACK);
-      textout_centre_ex(framebuf, nfont, "Drawing map...", 128, 108, WHITE, BLACK);
+      textout_centre_ex(framebuf, nfont, "Drawing map...", 128, 136, WHITE, BLACK);
       advanceframe(true);
       ViewMap();
    }

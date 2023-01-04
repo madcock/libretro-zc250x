@@ -2457,6 +2457,23 @@ void advanceframe(bool allow_gfx)
    sfx_cleanup();
 }
 
+void pauseGame()
+{
+   music_pause();
+   pause_all_sfx();
+
+   textout_centre_ex(framebuf, nfont, "PAUSED", 128, 136, WHITE, BLACK);
+
+   do
+   {
+      advanceframe(false);
+   }
+   while (!SelectKeyPress && !zc_state);
+   
+   music_resume();
+   resume_all_sfx();
+}
+
 void zapout()
 {
    set_clip_rect(scrollbuf, 0, 0, scrollbuf->w, scrollbuf->h);

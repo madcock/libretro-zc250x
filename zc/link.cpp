@@ -4226,6 +4226,8 @@ bool LinkClass::animate(int)
          selectNextBWpn(SEL_RIGHT);
       else if (MapKeyPress)
          onViewMap();
+      else if (SelectKeyPress)
+         pauseGame();
    }
 
    checkstab();
