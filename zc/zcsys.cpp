@@ -2461,7 +2461,9 @@ void pauseGame()
 {
    music_pause();
    pause_all_sfx();
+   playing = false; /* need this to stop the game time running */
 
+   /* put message in the middle of the screen */
    textout_centre_ex(framebuf, nfont, "PAUSED", 128, 136, WHITE, BLACK);
 
    do
@@ -2472,6 +2474,7 @@ void pauseGame()
    
    music_resume();
    resume_all_sfx();
+   playing = true;
 }
 
 void zapout()
