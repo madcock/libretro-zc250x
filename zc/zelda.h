@@ -118,7 +118,7 @@ extern BITMAP     *framebuf, *scrollbuf, *tempbuf, *msgbmpbuf, *msgdisplaybuf, *
        *prim_bmp, *lens_scr;
 extern DATAFILE *data, *sfxdata, *fontsdata, *mididata;
 extern FONT  *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *pfont, *ztfont, *sfont,
-       *sfont2, *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont,
+       *sfont2, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont,
        *goronfont, *zoranfont, *hylian1font, *hylian2font, *hylian3font, *hylian4font, *gboraclefont, *gboraclepfont,
        *dsphantomfont, *dsphantompfont;
 extern PALETTE  RAMpal;

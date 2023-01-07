@@ -1,6 +1,6 @@
 /* Allegro datafile object indexes, produced by grabber v4.4.3, Unix */
 /* Datafile: /home/joe/Dev/Libretro/libretro-zc250x/datfile/zcdata.dat */
-/* Date: Mon Oct 17 12:52:54 2022 */
+/* Date: Sat Jan  7 10:35:23 2023 */
 /* Do not hand edit! */
 
 #define _SIGNATURE                       0        /* DATA */
@@ -8,37 +8,34 @@
 #define FON                              2        /* FILE */
 
 #define FON_SIGNATURE                    0        /* DATA */
-#define FON_12x8                         1        /* FONT */
-#define FON_6x4                          2        /* FONT */
-#define FON_6x6                          3        /* FONT */
-#define FON_6xPROP                       4        /* FONT */
-#define FON_8xPROP_THIN                  5        /* FONT */
-#define FON_ALLEGRO                      6        /* FONT */
-#define FON_DS_PHANTOM                   7        /* FONT */
-#define FON_DS_PHANTOM_P                 8        /* FONT */
-#define FON_GB_LA                        9        /* FONT */
-#define FON_GB_ORACLE                    10       /* FONT */
-#define FON_GB_ORACLE_P                  11       /* FONT */
-#define FON_GORON                        12       /* FONT */
-#define FON_GUI_MONO                     13       /* FONT */
-#define FON_GUI_PROP                     14       /* FONT */
-#define FON_HYLIAN1                      15       /* FONT */
-#define FON_HYLIAN2                      16       /* FONT */
-#define FON_HYLIAN3                      17       /* FONT */
-#define FON_HYLIAN4                      18       /* FONT */
-#define FON_LARGEFIXED                   19       /* FONT */
-#define FON_LARGEPROP                    20       /* FONT */
-#define FON_LARGEPROP_L                  21       /* FONT */
-#define FON_NES                          22       /* FONT */
-#define FON_SUBSCREEN1                   23       /* FONT */
-#define FON_SUBSCREEN2                   24       /* FONT */
-#define FON_SUBSCREEN3                   25       /* FONT */
-#define FON_SUBSCREEN4                   26       /* FONT */
-#define FON_Z3                           27       /* FONT */
-#define FON_Z3SMALL                      28       /* FONT */
-#define FON_ZORAN                        29       /* FONT */
-#define FON_ZTIME                        30       /* FONT */
-#define FON_COUNT                        31
+#define FON_6x4                          1        /* FONT */
+#define FON_6x6                          2        /* FONT */
+#define FON_6xPROP                       3        /* FONT */
+#define FON_8xPROP_THIN                  4        /* FONT */
+#define FON_ALLEGRO                      5        /* FONT */
+#define FON_DS_PHANTOM                   6        /* FONT */
+#define FON_DS_PHANTOM_P                 7        /* FONT */
+#define FON_GB_LA                        8        /* FONT */
+#define FON_GB_ORACLE                    9        /* FONT */
+#define FON_GB_ORACLE_P                  10       /* FONT */
+#define FON_GORON                        11       /* FONT */
+#define FON_GUI_PROP                     12       /* FONT */
+#define FON_HYLIAN1                      13       /* FONT */
+#define FON_HYLIAN2                      14       /* FONT */
+#define FON_HYLIAN3                      15       /* FONT */
+#define FON_HYLIAN4                      16       /* FONT */
+#define FON_LARGEPROP                    17       /* FONT */
+#define FON_LARGEPROP_L                  18       /* FONT */
+#define FON_NES                          19       /* FONT */
+#define FON_SUBSCREEN1                   20       /* FONT */
+#define FON_SUBSCREEN2                   21       /* FONT */
+#define FON_SUBSCREEN3                   22       /* FONT */
+#define FON_SUBSCREEN4                   23       /* FONT */
+#define FON_Z3                           24       /* FONT */
+#define FON_Z3SMALL                      25       /* FONT */
+#define FON_ZORAN                        26       /* FONT */
+#define FON_ZTIME                        27       /* FONT */
+#define FON_COUNT                        28
 
 #define SFX                              3        /* FILE */
 

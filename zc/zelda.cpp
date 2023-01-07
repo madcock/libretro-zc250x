@@ -64,7 +64,7 @@ BITMAP     *framebuf, *scrollbuf, *tempbuf, *msgdisplaybuf, *pricesdisplaybuf, *
            *lens_scr = NULL;
 DATAFILE   *data, *sfxdata, *fontsdata, *mididata;
 FONT       *nfont, *zfont, *z3font, *z3smallfont, *deffont, *lfont, *lfont_l, *pfont, *ztfont, *sfont, *sfont2,
-           *sfont3, *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont,
+           *spfont, *ssfont1, *ssfont2, *ssfont3, *ssfont4, *gblafont,
            *goronfont, *zoranfont, *hylian1font, *hylian2font, *hylian3font, *hylian4font, *gboraclefont, *gboraclepfont,
            *dsphantomfont, *dsphantompfont;
 PALETTE    RAMpal;
@@ -1943,7 +1943,6 @@ bool zc_init(const char *qpath)
    ztfont = (FONT *)fontsdata[FON_ZTIME].dat;
    sfont = (FONT *)fontsdata[FON_6x6].dat;
    sfont2 = (FONT *)fontsdata[FON_6x4].dat;
-   sfont3 = (FONT *)fontsdata[FON_12x8].dat;
    spfont = (FONT *)fontsdata[FON_6xPROP].dat;
    ssfont1 = (FONT *)fontsdata[FON_SUBSCREEN1].dat;
    ssfont2 = (FONT *)fontsdata[FON_SUBSCREEN2].dat;
