@@ -861,9 +861,9 @@ static void list_saves()
 static void draw_cursor(int pos)
 {
    if (pos < 3)
-      overtile8(framebuf, 0, 40, pos * 24 + 77, 1, 0);
+      overtile8(framebuf, HEART_TILE, 40, pos * 24 + 77, 1, 0);
    else
-      overtile8(framebuf, 0, 40, (pos - 3) * 16 + 153, 1, 0);
+      overtile8(framebuf, HEART_TILE, 40, (pos - 3) * 16 + 153, 1, 0);
 }
 
 static bool register_name()
@@ -1413,7 +1413,6 @@ void game_over(int type)
 
    int pos = 0;
    int f = -1;
-   int htile = 2;
    bool done = false;
 
    do
@@ -1475,7 +1474,7 @@ void game_over(int type)
       }
 
       rectfill(framebuf, 72, 72, 79, 127, 0);
-      puttile8(framebuf, htile, 72, pos * (type ? 12 : 24) + 72, 1, 0);
+      puttile8(framebuf, HEART_TILE, 72, pos * (type ? 12 : 24) + 72, 1, 0);
       advanceframe(true);
    }
    while (!zc_state && !done);
@@ -1519,7 +1518,6 @@ bool save_game(bool savepoint, int type)
    kill_sfx();
    loadfullpal();
 
-   int htile = 2;
    bool done = false;
    bool saved = false;
 
@@ -1587,7 +1585,7 @@ bool save_game(bool savepoint, int type)
          }
 
          rectfill(framebuf, 72, 72, 79, 127, 0);
-         puttile8(framebuf, htile, 72, pos * 24 + 72, 1, 0);
+         puttile8(framebuf, HEART_TILE, 72, pos * 24 + 72, 1, 0);
          advanceframe(true);
       }
       while (!zc_state && !done2);
@@ -1675,7 +1673,7 @@ bool save_game(bool savepoint, int type)
 
 
                rectfill(framebuf, 72, 72, 79, 127, 0);
-               puttile8(framebuf, htile, 72, pos2 * 24 + 96, 1, 0);
+               puttile8(framebuf, HEART_TILE, 72, pos2 * 24 + 96, 1, 0);
                advanceframe(true);
             }
             while (!zc_state && !done3);

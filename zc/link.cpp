@@ -1580,8 +1580,6 @@ attack:
 
    double a2 = fairyclk * 2 * PI / 80 + (PI / 2);
    int hearts = 0;
-   //  int htile = QHeader.dat_flags[ZQ_TILES] ? 2 : 0;
-   int htile = 2;
 
    do
    {
@@ -1597,7 +1595,7 @@ attack:
 
       double tx = cos(a2) * 53  + nx;
       double ty = -sin(a2) * 53 + ny + PLAYFIELD_OFFSET;
-      overtile8(dest, htile, int(tx), int(ty), 1, 0);
+      overtile8(dest, HEART_TILE, int(tx), int(ty), 1, 0);
       a2 -= PI / 4;
       ++hearts;
    }

@@ -154,8 +154,6 @@ extern int CSET_SHFT;
 #define BLACK         253
 #define WHITE         254
 
-#define BYTE_FILTER 0xFF
-
 #define SINGLE_TILE_SIZE    128
 #define TILES_PER_ROW       20
 #define TILE_ROWS_PER_PAGE  13
@@ -163,14 +161,7 @@ extern int CSET_SHFT;
 #define TILE_PAGES          252
 #define OLDMAXTILES         (TILES_PER_PAGE*6)              // 1560 tiles
 #define NEWMAXTILES         (TILES_PER_PAGE*TILE_PAGES)     // 32760 tiles
-#define NEWTILE_SIZE2       (NEWMAXTILES*SINGLE_TILE_SIZE)  // 4193280 bytes (new packed format, 6 pages)
-#define OLDTILE_SIZE2       (OLDMAXTILES*SINGLE_TILE_SIZE)  // 199680 bytes (new packed format, 6 pages)
-#define OLDTILE_SIZE        (TILES_PER_PAGE*4*SINGLE_TILE_SIZE)  // 133120 bytes (new packed format, 4 pages)
-#define TILEBUF_SIZE        (320*480)                       // 153600 bytes (old unpacked format)
-
-#define COMBOS_PER_ROW      20
-
-//#define MAGICDRAINRATE  2
+#define HEART_TILE          2
 
 // quest stuff
 #define ZQ_TILES        0
