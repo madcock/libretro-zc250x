@@ -23,6 +23,7 @@
 #define ZC_SF2_DIR          "sf2"                         /* Soundfont directory within system path */
 #define SYSTEM_FILE         "zcdata.dat"                  /* system file required for ZC */
 #define ZELDA_NSF_FILE      "zelda.nsf"                   /* Default zelda music file */
+#define SAVEFILE_EXT        "250x.sav"                    /* Need it different from ZC210 core */
 
 enum {ENC_METHOD_192B104 = 0, ENC_METHOD_192B105, ENC_METHOD_192B185, ENC_METHOD_211B9, ENC_METHOD_211B18, ENC_METHOD_MAX};
 

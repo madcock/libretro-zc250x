@@ -453,7 +453,7 @@ int load_savedgames()
 
    /* Calculate the save path to use */
    sprintf(spath, "%s%c%s", save_path, OTHER_PATH_SEPARATOR, get_filename(qst_path));
-   replace_extension(spath, spath, "sav");
+   replace_extension(spath, spath, SAVEFILE_EXT);
 
    if (saves == NULL)
    {
@@ -495,8 +495,8 @@ newdata:
    goto init;
 
 cantopen:
-   zc_message("Can't Open Saved Game File: %s, exiting...", spath);
-   return 2;
+   zc_message("Can't Open Saved Game File: %s, Creating new save file.", spath);
+   goto init;
 
 reset:
    if (f)
@@ -693,7 +693,7 @@ int save_savedgames()
 
    /* Calculate the save path to use */
    sprintf(spath, "%s%c%s", save_path, OTHER_PATH_SEPARATOR, get_filename(qst_path));
-   replace_extension(spath, spath, "sav");
+   replace_extension(spath, spath, SAVEFILE_EXT);
 
    PACKFILE *f = pack_fopen(spath, F_WRITE_PACKED);
 
