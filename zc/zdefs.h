@@ -852,7 +852,7 @@ struct itemdata
 #define ITEM_FLAG4     0x0800
 #define ITEM_FLAG5     0x1000
    uint16_t script;                                   // Which script the item is using
-   char count;
+   int8_t count;
    uint16_t amount;
    short setmax;
    uint16_t max;

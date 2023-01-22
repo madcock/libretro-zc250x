@@ -5381,12 +5381,10 @@ int read_one_ffscript(PACKFILE *f, zquestheader *, bool keepdata, int, uint16_t 
       }
       else
       {
-         if (is_string_command(temp_script.command))
-         {
-            /* set default value to avoid compiler warnings */
-            temp_script.arg1 = temp_script.arg2 = 0;
-         }
-         else
+         /* set default value */
+         temp_script.arg1 = temp_script.arg2 = 0;
+
+         if (!is_string_command(temp_script.command))
          {
             if (!p_igetl(&(temp_script.arg1), f, keepdata))
                return qe_invalid;
