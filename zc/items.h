@@ -21,7 +21,7 @@ class item : public sprite
 public:
    int pickup, clk2;
    int aclk, aframe;
-   char PriceIndex;
+   int8_t PriceIndex;
    bool flash, twohand, anim, subscreenItem;
    int o_tile, o_cset, o_speed, o_delay, frames;
    item(fix X, fix Y, fix Z, int i, int p, int c, bool isDummy = false);

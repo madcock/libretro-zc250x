@@ -338,7 +338,7 @@ int getCanonicalItemID(itemdata *items, int family)
    return lowestid;
 }
 
-void addOldStyleFamily(zinitdata *dest, itemdata *items, int family, char levels)
+void addOldStyleFamily(zinitdata *dest, itemdata *items, int family, signed char levels)
 {
    for (int i = 0; i < 8; i++)
    {

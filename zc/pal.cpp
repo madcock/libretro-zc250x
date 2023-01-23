@@ -680,7 +680,7 @@ void create_rgb_table_range(RGB_MAP *table, const PALETTE pal, unsigned char sta
       bestfit_init();
 
    memset(next, 255, sizeof(next));
-   memset(table->data, 0, sizeof(char) * 32 * 32 * 32);
+   memset(table->data, 0, sizeof(unsigned char) * 32 * 32 * 32);
 
    data = (unsigned char *)table->data;
 

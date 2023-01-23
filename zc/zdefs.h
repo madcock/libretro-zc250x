@@ -1473,7 +1473,7 @@ struct newcombo
 struct ZCHEATS
 {
    uint32_t flags;
-   char  codes[4][41];
+   int8_t  codes[4][41];
    //168
 };
 
@@ -1490,11 +1490,11 @@ struct zquestheader
    uint8_t  quest_number;
    uint8_t  old_rules[2];
    uint8_t  old_map_count;
-   char  old_str_count;
+   int8_t  old_str_count;
    //41
    uint8_t  data_flags[ZQ_MAXDATA];
    uint8_t  old_rules2[2];
-   char  old_options;
+   int8_t  old_options;
    char  version[9];
    //73
    char  title[65];
@@ -1651,7 +1651,7 @@ struct dmap
 {
    uint8_t map;
    uint16_t level;
-   char xoff;
+   int8_t xoff;
    uint8_t compass;
    uint16_t color;
    uint8_t midi;
@@ -2585,7 +2585,7 @@ int getHighestLevelOfFamily(gamedata *source, itemdata *items, int family, bool 
 int getItemID(itemdata *items, int family, int level);
 int getCanonicalItemID(itemdata *items, int family);
 int getItemIDPower(itemdata *items, int family, int power);
-void addOldStyleFamily(zinitdata *dest, itemdata *items, int family, char levels);
+void addOldStyleFamily(zinitdata *dest, itemdata *items, int family, signed char levels);
 int computeOldStyleBitfield(zinitdata *source, itemdata *items, int family);
 
 extern void flushItemCache();

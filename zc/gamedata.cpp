@@ -659,7 +659,7 @@ void gamedata::set_magicdrainrate(uint8_t r)
 }
 void gamedata::change_magicdrainrate(short r)
 {
-   change_generic((char)r, 1);
+   change_generic((signed char)r, 1);
    return;
 }
 

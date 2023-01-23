@@ -8715,7 +8715,7 @@ int readinitdata(PACKFILE *f, zquestheader *Header, bool keepdata)
 
       if (s_version < 10)
       {
-         char tempring, tempsword, tempshield, tempwallet, tempbracelet, tempamulet, tempbow;
+         signed char tempring, tempsword, tempshield, tempwallet, tempbracelet, tempamulet, tempbow;
 
          if (!p_getc(&tempring, f, true))
             return qe_invalid;
