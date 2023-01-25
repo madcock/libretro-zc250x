@@ -852,41 +852,9 @@ int init_game()
       game->set_hasplayed(1);
 
    update_subscreens();
-
    load_Sitems(&QMisc);
-
-   //load the previous weapons -DD
-   bool usesaved = (game->get_quest() == 0xFF); //What was wrong with firstplay?
-   int apos = 0;
-   int bpos = 0;
-
-   if (!get_bit(quest_rules, qr_SELECTAWPN))
-   {
-      Awpn = selectSword();
-      apos = -1;
-      bpos = selectWpn_new(SEL_VERIFY_RIGHT, usesaved ? game->bwpn : 0xFF, -1);
-   }
-   else
-   {
-      apos = selectWpn_new(SEL_VERIFY_RIGHT, usesaved ? game->awpn : 0xFF);
-      bpos = selectWpn_new(SEL_VERIFY_RIGHT, usesaved ? game->bwpn : 0xFF, apos);
-
-      if (bpos == 0xFF)
-      {
-         bpos = apos;
-         apos = 0;
-      }
-
-      Awpn = Bweapon(apos);
-      directItemA = directItem;
-   }
-
-   game->awpn = apos;
-   game->bwpn = bpos;
-   Bwpn = Bweapon(bpos);
-   directItemB = directItem;
+   verifyBothWeapons();
    update_subscr_items();
-
    reset_subscr_items();
 
    Link.setDontDraw(false);
