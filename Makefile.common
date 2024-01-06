@@ -8,8 +8,10 @@ ifneq (,$(findstring msvc2003,$(platform)))
 INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
 endif
 
+ifneq ($(STATIC_LINKING), 1)
 SOURCES_C   := $(LIBRETRO_COMM_DIR)/rthreads/rthreads.c \
 				$(LIBRETRO_COMM_DIR)/memmap/memalign.c
+endif
 
 SOURCES_CXX := $(CORE_DIR)/alport/3d.cpp \
 				$(CORE_DIR)/alport/bitmap.cpp \
